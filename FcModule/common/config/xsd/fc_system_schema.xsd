@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://fc.msf/common/config/type/system" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://fc.msf/common/config/type/system">
+
+    <xsd:element name="systemConf" type="tns:SystemConf"/>
+
+    <xsd:complexType name="SystemConf">
+        <xsd:all>
+            <xsd:element name="rest" type="tns:Rest"/>
+            <xsd:element name="slice" type="tns:Slice"/>
+            <xsd:element name="swClustersData" type="tns:SwClustersData"/>
+            <xsd:element name="traffic" type="tns:Traffic"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Rest">
+        <xsd:all>
+            <xsd:element name="server" type="tns:Server"/>
+            <xsd:element name="client" type="tns:Client"/>
+            <xsd:element name="json" type="tns:Json"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Server">
+        <xsd:all>
+            <xsd:element name="listeningAddress" type="xsd:string"/>
+            <xsd:element name="listeningPort" type="tns:port"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Client">
+        <xsd:all>
+            <xsd:element name="waitConnectionTimeout" type="tns:integer_of_0_or_more"/>
+            <xsd:element name="requestTimeout" type="tns:integer_of_0_or_more"/>
+        </xsd:all>
+    </xsd:complexType>
+    <xsd:complexType name="Json">
+        <xsd:all>
+            <xsd:element name="isPrettyPrinting" type="xsd:boolean"/>
+            <xsd:element name="isSerializeNulls" type="xsd:boolean"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Slice">
+        <xsd:all>
+            <xsd:element name="l2SlicesMagnificationNum" type="tns:magnification_num"/>
+            <xsd:element name="l3SlicesMagnificationNum" type="tns:magnification_num"/>
+            <xsd:element name="l2MaxSlicesNum" type="tns:integer_of_1_or_more"/>
+            <xsd:element name="l3MaxSlicesNum" type="tns:integer_of_1_or_more"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="SwClustersData">
+        <xsd:sequence>
+            <xsd:element name="swClusterData" type="tns:SwClusterData" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="SwClusterData">
+        <xsd:all>
+            <xsd:element name="swCluster" type="tns:SwCluster"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="SwCluster">
+        <xsd:all>
+            <xsd:element name="swClusterId" type="tns:sw_cluster_num" />
+            <xsd:element name="ecControlAddress" type="xsd:string" />
+            <xsd:element name="ecControlPort" type="tns:port" />
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Traffic">
+        <xsd:all>
+            <xsd:element name="interval" type="tns:integer_of_0_or_more"/>
+            <xsd:element name="dataRetentionPeriod" type="tns:integer_of_1_or_more"/>
+            <xsd:element name="tmToolPath" type="xsd:string"/>
+            <xsd:element name="tmInputFilePath" type="xsd:string"/>
+            <xsd:element name="tmOutputFilePath" type="xsd:string"/>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:simpleType name="sw_cluster_num">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="port">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="65535"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="integer_of_0_or_more">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="2147483647"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="integer_of_1_or_more">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="2147483647"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="magnification_num">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="2"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
+
