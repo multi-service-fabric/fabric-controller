@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://fc.msf/common/config/type/system"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://fc.msf/common/config/type/system">
+
+	<xsd:element name="systemConf" type="tns:SystemConf" />
+
+	<xsd:complexType name="SystemConf">
+		<xsd:all>
+			<xsd:element name="rest" type="tns:Rest" minOccurs="1"
+				maxOccurs="1" />
+			<xsd:element name="slice" type="tns:Slice" minOccurs="1"
+				maxOccurs="1" />
+			<xsd:element name="swClustersData" type="tns:SwClustersData"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="status" type="tns:Status" minOccurs="1"
+				maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="failure" type="tns:Failure" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+			<xsd:element name="traffic" type="tns:Traffic" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Rest">
+		<xsd:all>
+			<xsd:element name="server" type="tns:Server" minOccurs="1"
+				maxOccurs="1" />
+			<xsd:element name="client" type="tns:Client" minOccurs="1"
+				maxOccurs="1" />
+			<xsd:element name="json" type="tns:Json" minOccurs="1"
+				maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Server">
+		<xsd:all>
+			<xsd:element name="listeningAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="listeningPort" type="tns:port"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Client">
+		<xsd:all>
+			<xsd:element name="waitConnectionTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="requestTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+	<xsd:complexType name="Json">
+		<xsd:all>
+			<xsd:element name="isPrettyPrinting" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="isSerializeNulls" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Slice">
+		<xsd:all>
+			<xsd:element name="l2SlicesMagnificationNum" type="tns:magnification_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="l3SlicesMagnificationNum" type="tns:magnification_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="l2MaxSlicesNum" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="l3MaxSlicesNum" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="SwClustersData">
+		<xsd:sequence>
+			<xsd:element name="swClusterData" type="tns:SwClusterData"
+				maxOccurs="1" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SwClusterData">
+		<xsd:all>
+			<xsd:element name="swCluster" type="tns:SwCluster"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="SwCluster">
+		<xsd:all>
+			<xsd:element name="swClusterId" type="tns:sw_cluster_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="ecControlAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="ecControlPort" type="tns:port"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+
+	<xsd:simpleType name="sw_cluster_num">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1" />
+			<xsd:maxInclusive value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="port">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="65535" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="integer_of_0_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="integer_of_1_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="magnification_num">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1" />
+			<xsd:maxInclusive value="2" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="failure_link_num">
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="65535" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:complexType name="Status">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfoStatus"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="recvRestRequestUnitTime" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="sendRestRequestUnitTime" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Failure">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfoFailure"
+				minOccurs="0" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Traffic">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfoTraffic"
+				minOccurs="0" maxOccurs="unbounded"></xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="execCycle" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfoStatus">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticePort" type="tns:port" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfoFailure">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="noticePort" type="tns:port" minOccurs="1"
+				maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="isPhysicalUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="isClusterUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="isSliceUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="failureLinkNum" type="tns:failure_link_num"
+				minOccurs="0" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfoTraffic">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="noticePort" type="tns:port" minOccurs="1"
+				maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="isPhysicalUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="isClusterUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="isSliceUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
+

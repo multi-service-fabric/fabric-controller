@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<systemConf xmlns="http://fc.msf/common/config/type/system">
+    <!-- System setting config -->
+    <rest>
+        <server>
+            <!-- REST listening interface address -->
+            <listeningAddress>0.0.0.0</listeningAddress>
+            <!-- REST listening port -->
+            <listeningPort>18080</listeningPort>
+        </server>
+        <client>
+            <!-- REST wait connection timeout (second) -->
+            <!-- Infinite wait time in case of waitConnectionTimeout = 0 -->
+            <waitConnectionTimeout>30</waitConnectionTimeout>
+            <!--  REST request timeout (second) -->
+            <!-- Infinite wait time in case of requestTimeout = 0 -->
+            <requestTimeout>600</requestTimeout>
+        </client>
+        <json>
+            <!-- Whether the output JSON character string is formatted or not. -->
+            <isPrettyPrinting>true</isPrettyPrinting>
+            <!-- Whether the NULL objects in Java objects are serialized to JSON character string or not -->
+            <isSerializeNulls>false</isSerializeNulls>
+        </json>
+    </rest>
+    <slice>
+        <!-- Modification of default value is prohibited -->
+        <l2SlicesMagnificationNum>1</l2SlicesMagnificationNum>
+        <!-- Modification of default value is prohibited -->
+        <l3SlicesMagnificationNum>1</l3SlicesMagnificationNum>
+        <!-- Maximum L2 slice number -->
+        <l2MaxSlicesNum>100</l2MaxSlicesNum>
+        <!-- Maximum L3 slice number -->
+        <l3MaxSlicesNum>100</l3MaxSlicesNum>
+    </slice>
+    <swClustersData>
+        <swClusterData>
+            <swCluster>
+                <!-- ID of SW cluster -->
+                <swClusterId>1</swClusterId>
+                <!-- EC connection address of SW cluster -->
+                <ecControlAddress>0.0.0.0</ecControlAddress>
+                <!-- EC connection port number of SW cluster -->
+                <ecControlPort>18080</ecControlPort>
+            </swCluster>
+        </swClusterData>
+    </swClustersData>
+    <status>
+        <noticeDestInfo>
+            <!-- IP address of notification destination -->
+            <noticeAddress>1.1.1.1</noticeAddress>
+            <!-- Port number of notification destination -->
+            <noticePort>0</noticePort>
+        </noticeDestInfo>
+        <!-- Number of notification retry -->
+        <noticeRetryNum>5</noticeRetryNum>
+        <!-- Interval of notification retry (millisecond) -->
+        <noticeTimeout>500</noticeTimeout>
+        <!-- Unit time for counting the number of receiving REST requests (second) -->
+        <recvRestRequestUnitTime>3600</recvRestRequestUnitTime>
+        <!-- Unit time for counting the number of sending REST requests (second) -->
+        <sendRestRequestUnitTime>3600</sendRestRequestUnitTime>
+    </status>
+    <failure>
+        <noticeDestInfo>
+            <!-- IP address of notification destination -->
+            <noticeAddress>1.1.1.1</noticeAddress>
+            <!-- Port number of notification destination -->
+            <noticePort>0</noticePort>
+            <!-- Notification unit of failure: Physical unit -->
+            <isPhysicalUnit>true</isPhysicalUnit>
+            <!-- Notification unit of failure: Cluster unit -->
+            <isClusterUnit>true</isClusterUnit>
+            <!-- Notification unit of failure: Slice unit -->
+            <isSliceUnit>true</isSliceUnit>
+            <!-- Number of failed internal links -->
+            <failureLinkNum>1</failureLinkNum>
+        </noticeDestInfo>
+        <!-- Number of notification retry -->
+        <noticeRetryNum>5</noticeRetryNum>
+        <!-- Interval of notification retry (millisecond) -->
+        <noticeTimeout>500</noticeTimeout>
+    </failure>
+    <traffic>
+        <noticeDestInfo>
+            <!-- IP address of notification destination -->
+            <noticeAddress>1.1.1.1</noticeAddress>
+            <!-- Port number of notification destination -->
+            <noticePort>0</noticePort>
+            <!-- Notification unit of failure: Physical unit -->
+            <isPhysicalUnit>true</isPhysicalUnit>
+            <!-- Notification unit of failure: Cluster unit -->
+            <isClusterUnit>true</isClusterUnit>
+            <!-- Notification unit of failure: Slice unit -->
+            <isSliceUnit>true</isSliceUnit>
+        </noticeDestInfo>
+        <!-- Number of notification retry -->
+        <noticeRetryNum>5</noticeRetryNum>
+        <!-- Interval of notification retry (millisecond)-->
+        <noticeTimeout>500</noticeTimeout>
+        <!-- Interval of acquiring traffic information (second) -->
+        <execCycle>3600</execCycle>
+    </traffic>
+</systemConf>
+

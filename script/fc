@@ -1,0 +1,256 @@
+#!/bin/sh
+#
+#   fc OCF RA.
+#
+
+#######################################################################
+# OCF parameters:
+#   OCF_RESKEY_host_0 - host_0
+#   OCF_RESKEY_host_1 - host_1
+#   OCF_RESKEY_system_xml - destination of the system.xml
+#   OCF_RESKEY_fc_ctl - destination of the fc_ctl.sh
+#   OCF_RESKEY_fc_username - username
+#
+
+#######################################################################
+# Initialization:
+
+: ${OCF_FUNCTIONS_DIR=${OCF_ROOT}/lib/heartbeat}
+. ${OCF_FUNCTIONS_DIR}/ocf-shellfuncs
+
+#######################################################################
+fc_usage() {
+    cat <<END
+usage: $0 {start|stop|monitor}
+
+Expects to have a fully populated OCF RA-compliant environment set.
+END
+}
+
+#######################################################################
+# FC Application Data
+
+system_xml="${OCF_RESKEY_fc_system_xml}"
+fc_ctl="${OCF_RESKEY_fc_ctl}"
+username="${OCF_RESKEY_fc_username}"
+#######################################################################
+meta_data() {
+    cat <<END
+<?xml version="1.0"?>
+<!DOCTYPE resource-agent SYSTEM "ra-api-1.dtd">
+<resource-agent name="Dummy" version="0.9">
+<version>1.0</version>
+
+<longdesc lang="en">
+This is a FC Resource Agent.
+</longdesc>
+<shortdesc lang="en">FC resource agent</shortdesc>
+
+<parameters>
+<parameter name="host_0" unique="1">
+<longdesc lang="en">
+host_0
+</longdesc>
+<shortdesc lang="en">host_0</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="host_1" unique="1">
+<longdesc lang="en">
+host_1
+</longdesc>
+<shortdesc lang="en">host_1</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="fc_system_xml" unique="0">
+<longdesc lang="en">
+destination of the fc_system.xml
+</longdesc>
+<shortdesc lang="en">fc_system.xml</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="fc_ctl" unique="0">
+<longdesc lang="en">
+destination of the fc_ctl
+</longdesc>
+<shortdesc lang="en">fc_ctl.sh</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+<parameter name="fc_username" unique="0">
+<longdesc lang="en">
+username
+</longdesc>
+<shortdesc lang="en">username</shortdesc>
+<content type="string" default="" />
+</parameter>
+
+</parameters>
+
+<actions>
+<action name="start"        timeout="20" />
+<action name="stop"         timeout="20" />
+<action name="monitor"      timeout="20" interval="10" depth="0" />
+<action name="reload"       timeout="20" />
+<action name="migrate_to"   timeout="20" />
+<action name="migrate_from" timeout="20" />
+<action name="meta-data"    timeout="5" />
+<action name="validate-all"   timeout="20" />
+</actions>
+</resource-agent>
+END
+
+        exit $OCF_SUCCESS
+}
+
+listeningPort=`xmllint --format $system_xml | sed '2 s/xmlns=".*"//g' | xmllint --xpath "/systemConf/rest/server/listeningPort" - | sed 's/^.*<listeningPort.*>\(.*\)<\/listeningPort>.*$/\1/'`
+
+ocf_log debug listeningPort = $listeningPort
+ocf_log debug system_xml = $system_xml
+
+# fc_ctl.sh return codes.
+STATUS_CODE_0=0
+STATUS_CODE_1=1
+STATUS_CODE_2=2
+STATUS_CODE_3=3
+
+url="http://localhost:$listeningPort/v1/internal/MSFcontroller/status"
+updateStatusUrl="http://localhost:$listeningPort/v1/internal/MSFcontroller/status"
+
+#######################################################################
+
+fc_start() {
+    ret_code=$OCF_SUCCESS
+    su -l $username -c "$fc_ctl start"
+    ret=$?
+    if [ $ret -eq $STATUS_CODE_0 ]; then
+        # status OK
+        ocf_log debug "Status ok."
+    elif [ $ret -eq $STATUS_CODE_2 ]; then
+        # status already_running
+        ocf_log info "Already running.."
+    else
+        ocf_log err "failed to start."
+        ret_code=$OCF_ERR_GENERIC
+    fi
+    return $ret_code
+}
+
+fc_swset() {
+
+    DATA=`curl -i -H "Accept: application/json" -H "Content-type: application/json" -X PUT -d '{"service_status":"system switching"}'  $updateStatusUrl`
+
+    # In order to keep the line feed code as it is, enclose it with """
+    case "$DATA" in
+    *"HTTP/1.1 200 OK"*)
+       ;;
+    *) # In case that the HTTP response code is other than 200 (including timeouts, errors, etc.)
+       ocf_log err 'Illegal response of status.';;
+    esac
+
+}
+
+fc_stop() {
+    ret_code=$OCF_SUCCESS
+    su -l $username -c "$fc_ctl status"
+    ret=$?
+    if [ $ret -eq $STATUS_CODE_0 ]; then
+
+        # Retrieve own node
+        self=`crm_node -n`
+        ocf_log debug 'self=${self}'
+
+        # Check cluster status
+
+        # Get only "member"(Online) from the node list and delete the own node -> List of other nodes
+        other=`crm_node -l | grep member | grep -v $self`
+        ocf_log debug "other="$other
+        if [ ${#other} -eq 0 ]; then
+            # If the length of the list of other nodes is 0 -> There are no transitionable hosts
+            ocf_log info 'Host only running.'
+        else
+            # If the length of the list of other nodes is not 0 -> There are transitionable hosts
+            # Switch when both systems are operating
+            # Set during system switch
+            fc_swset
+        fi
+
+        su -l $username -c "$fc_ctl stop"
+        retctl=$?
+        if [ $retctl -ne $STATUS_CODE_0 ]; then
+            ocf_log info "Failed to stop."
+            #ret_code=$OCF_ERR_GENERIC
+            # Always return with SUCCESS
+            ret_code=$OCF_SUCCESS
+        fi
+
+    elif [ $ret -eq $STATUS_CODE_1 ]; then
+        ocf_log info "Not running."
+    else
+        ocf_log info "Failed to stop."
+        ret_code=$OCF_ERR_GENERIC
+    fi
+    return $ret_code
+}
+
+fc_monitor() {
+    ret_code=$OCF_SUCCESS
+    su -l "$username" -c "$fc_ctl status"
+    ret=$?
+    if [ $ret -eq $STATUS_CODE_0 ]; then
+
+        HTTP_CODE=`curl -s -o /tmp/curllog -w "%{http_code}" $url`
+        case "$HTTP_CODE" in
+        *"200"*)
+            # Format the contents of the log file, which is output from curl body, with python.
+            # Retrieve only the service_status with grep, then retrieves the last value enclosed by """.
+            SERVICE_STATUS=`cat /tmp/curllog | python -mjson.tool | grep -m 1 service_status | sed -r 's/^ *//;s/.*: *"//;s/",?//'`
+            case "$SERVICE_STATUS" in
+            *"running"*)
+                # In case of "running"
+                ocf_log debug 'Running...';;
+            *"shutdown in progress"* | *"system switching"*)
+                # In case of "shutdown in progress" or "system switching"
+                ocf_log err 'Stop in preparation or System switchover'
+                ;;
+            *)
+                ocf_log err 'Illegal response of status.'
+                ret_code=$OCF_ERR_GENERIC;;
+            esac
+            ;;
+        *) # In case that the HTTP response code is other than 200 (including timeouts, errors, etc.)
+            # Set the return value to OCF_ERR_GENERIC(1)
+            ocf_log err 'Response is not 200OK'
+            ret_code=$OCF_ERR_GENERIC;;
+        esac
+        rm /tmp/curllog
+    else
+        ocf_log err 'Script return code is not 0.'
+        ret_code=$OCF_NOT_RUNNING
+    fi
+    return $ret_code
+}
+
+case $__OCF_ACTION in
+meta-data)  meta_data
+        exit $OCF_SUCCESS
+        ;;
+start)      fc_start
+        ;;
+stop)       fc_stop
+        ;;
+monitor)    fc_monitor
+        ;;
+usage|help) fc_usage
+        exit $OCF_SUCCESS
+        ;;
+*)      fc_usage
+        exit $OCF_ERR_UNIMPLEMENTED
+        ;;
+esac
+rc=$?
+ocf_log debug "${OCF_RESOURCE_INSTANCE} $__OCF_ACTION : $rc"
+exit $rc
+

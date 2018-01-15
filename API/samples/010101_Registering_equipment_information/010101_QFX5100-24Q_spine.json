@@ -1,0 +1,197 @@
+﻿{
+        "equipment_type" : {
+                "platform" : "QFX5100-24Q(GS)",
+                "os" : "JUNOS",
+                "firmware" : "14.1X53-D35.3",
+                "router_type" : "normal",
+                "physical_if_name_syntax" : null,
+                "breakout_if_name_syntax" : "<PORTPREFIX><IFSLOTNAME>:<BREAKOUTIFSUFFIX>",
+                "breakout_if_name_suffix_list" : "0:1:2:3",
+                "capability" : {
+                        "vpn" : {
+                                    "l2" : false,
+                                    "l3" : false
+                        },
+                        "qos" : {
+                                    "remark": true, 
+                                    "remark_capability": null, 
+                                    "remark_default": null,
+                                    "shaping": false,
+                                    "egress_queue_capability": null, 
+                                    "egress_queue_default": null
+                        }
+                },
+                "dhcp" : {
+                        "dhcp_template" : "/root/setup/dhcp_template/dhcpd.conf.qfx5100",
+                        "config_template" : "/initial-config/juniper/ztp.conf.qfx5100-24q_GS",
+                        "initial_config" : "/initial-config/juniper/ztp.conf.qfx5100-24q_GS"
+                },
+                "snmp" : {
+                        "if_name_oid" : "1.3.6.1.2.1.31.1.1.1.1",
+                        "snmptrap_if_name_oid" : "1.3.6.1.2.1.31.1.1.1.1",
+                        "max_repetitions" : 100
+                },
+                "boot_complete_msg" : "UI_COMMIT_COMPLETED: commit complete",
+                "boot_error_msgs" : null,
+                "if_definitions" : {
+                        "ports" : [
+                                {
+                                        "speed" : "40g",
+                                        "port_prefix" : "et-"
+                                }, {
+                                        "speed" : "10g",
+                                        "port_prefix" : "xe-"
+                                }
+                        ],
+                        "lag_prefix" : "ae",
+                        "unit_connector" : "."
+                },
+                "slots" : [
+                        {
+                                "if_id" : "0",
+                                "if_slot" : "0/0/0",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "1",
+                                "if_slot" : "0/0/1",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "2",
+                                "if_slot" : "0/0/2",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "3",
+                                "if_slot" : "0/0/3",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "4",
+                                "if_slot" : "0/0/4",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "5",
+                                "if_slot" : "0/0/5",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "6",
+                                "if_slot" : "0/0/6",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "7",
+                                "if_slot" : "0/0/7",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "8",
+                                "if_slot" : "0/0/8",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "9",
+                                "if_slot" : "0/0/9",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "10",
+                                "if_slot" : "0/0/10",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "11",
+                                "if_slot" : "0/0/11",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "12",
+                                "if_slot" : "0/0/12",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "13",
+                                "if_slot" : "0/0/13",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "14",
+                                "if_slot" : "0/0/14",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "15",
+                                "if_slot" : "0/0/15",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "16",
+                                "if_slot" : "0/0/16",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "17",
+                                "if_slot" : "0/0/17",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "18",
+                                "if_slot" : "0/0/18",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "19",
+                                "if_slot" : "0/0/19",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "20",
+                                "if_slot" : "0/0/20",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "21",
+                                "if_slot" : "0/0/21",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "22",
+                                "if_slot" : "0/0/22",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }, {
+                                "if_id" : "23",
+                                "if_slot" : "0/0/23",
+                                "speed_capabilities" : [
+                                        "40g"
+                                ]
+                        }
+                ]
+        }
+}

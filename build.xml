@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE project>
+<project basedir="." default="release" name="FabricController">
+  <property environment="env" />
+  <property name="debuglevel" value="source,lines,vars" />
+  <property name="target" value="1.8" />
+  <property name="source" value="1.8" />
+
+  <path id="FC-lib.classpath">
+    <fileset dir="lib">
+      <include name="**/*.jar" />
+    </fileset>
+  </path>
+
+  <pathconvert property="FC-lib.manifest" refid="FC-lib.classpath" dirsep="/" pathsep=" ">
+    <map from="${basedir}${file.separator}lib${file.separator}" to="" />
+  </pathconvert>
+
+  <target name="clean">
+    <delete dir="classes" />
+    <delete file="./lib/${ant.project.name}.jar" />
+  </target>
+
+  <target depends="clean" name="init">
+    <mkdir dir="classes" />
+    <copy includeemptydirs="false" todir="classes">
+      <fileset dir="src">
+        <exclude name="**/*.launch" />
+        <exclude name="**/*.java" />
+      </fileset>
+    </copy>
+  </target>
+
+  <tstamp>
+    <format property="now.time" pattern="yyyyMMddHHmmss" />
+  </tstamp>
+
+  <target depends="init" name="build">
+    <echo message="${ant.project.name}: ${ant.file}" />
+    <javac  encoding="utf-8" debug="true" debuglevel="${debuglevel}" destdir="classes" includeantruntime="false" source="${source}" target="${target}">
+      <src path="src" />
+      <classpath refid="FC-lib.classpath" />
+    </javac>
+    <jar destfile="./lib/${ant.project.name}.jar">
+      <manifest>
+        <attribute name="Main-Class" value="msf.fc.FabricController" />
+        <attribute name="Class-Path" value=". ../conf/ ${FC-lib.manifest}" />
+      	<attribute name="Timestamp" value="${now.time}" />
+      </manifest>
+      <fileset dir="classes">
+        <include name="**/*.class" />
+        <include name="**/*.xsd" />
+        <include name="META-INF/*" />
+      </fileset>
+    </jar>
+  </target>
+
+
+  <target description="make release file." depends="build" name="release">
+    <tar destfile="release/msf-controller.tar">
+        <tarfileset file="./lib/${ant.project.name}.jar" prefix="lib" />
+      <tarfileset dir="./script" includes="**/*" prefix="bin" />
+      <tarfileset dir="./conf" includes="**/*" prefix="conf" />
+      <tarfileset dir="./sql" includes="**/*" prefix="sql" />
+    </tar>
+    <gzip src="release/msf-controller.tar" destfile="release/msf-controller.tar.gz" />
+    <delete file="release/msf-controller.tar" />
+
+  </target>
+
+</project>

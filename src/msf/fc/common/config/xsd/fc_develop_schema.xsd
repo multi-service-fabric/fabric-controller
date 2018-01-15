@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://fc.msf/common/config/type/develop"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://fc.msf/common/config/type/develop">
+
+	<xsd:element name="developConf" type="tns:DevelopConf" />
+
+	<xsd:complexType name="DevelopConf">
+		<xsd:all>
+			<xsd:element name="system" type="tns:System" />
+		</xsd:all>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="System">
+		<xsd:all>
+			<xsd:element name="asyncOperation" type="tns:AsyncOperation" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="executingOperationCheckCycle" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="lock" type="tns:Lock" maxOccurs="1" minOccurs="1"/>
+			<xsd:element name="notice" type="tns:Notice" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="AsyncOperation">
+		<xsd:all>
+			<xsd:element name="dataRetentionPeriod" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="maxAsyncRunnerThreadNum" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="invokeAllTimout" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="waitOperationResultTimeout" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="Lock">
+		<xsd:all>
+			<xsd:element name="lockRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="lockTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1" />
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:simpleType name="integer_of_1_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="integer_of_0_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+
+	<xsd:complexType name="Notice">
+		<xsd:sequence>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
