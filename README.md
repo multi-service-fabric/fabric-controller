@@ -33,7 +33,7 @@ FC manages multiple switches as one cluster. FC newly defined "edge-point" as a 
     - [API index](API/controller_api_index.md)
     - [Notification index](API/controller_api_notification_index.md)
     - [API](API/controller_api.xlsx)
-    - [notification](controller_api_notification.xlsx)
+    - [notification](API/controller_api_notification.xlsx)
     - API samples `/API/samples`
 
 
