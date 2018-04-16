@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
+import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcInternalLinkIf;
 import msf.fc.common.data.FcLagIf;
@@ -14,11 +16,16 @@ import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.node.interfaces.physicalifs.FcAbstractPhysicalInterfaceScenarioBase;
+import msf.fc.rest.ec.node.interfaces.breakout.data.BreakoutIfReadEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.breakout.data.entity.BreakoutIfEcEntity;
+import msf.fc.rest.ec.node.interfaces.data.InterfaceReadListEcResponseBody;
+import msf.fc.rest.ec.node.interfaces.lag.data.LagIfReadEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfBreakoutIfEcEntity;
 import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfEcEntity;
 import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfPhysicalIfEcEntity;
+import msf.fc.rest.ec.node.interfaces.physical.data.PhysicalIfReadEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.physical.data.entity.PhysicalIfEcEntity;
+import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.InterfaceType;
 import msf.mfcfc.common.exception.MsfException;
@@ -29,24 +36,29 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.AbstractInterfaceScenarioBase;
 import msf.mfcfc.node.interfaces.breakoutifs.data.entity.BreakoutIfBaseIfEntity;
 import msf.mfcfc.node.interfaces.breakoutifs.data.entity.BreakoutIfEntity;
+import msf.mfcfc.node.interfaces.breakoutifs.data.entity.BreakoutIfQosEntity;
 import msf.mfcfc.node.interfaces.internalifs.data.entity.InternalLinkIfEntity;
 import msf.mfcfc.node.interfaces.lagifs.data.entity.LagIfEntity;
 import msf.mfcfc.node.interfaces.lagifs.data.entity.LagIfInternalOptionEntity;
 import msf.mfcfc.node.interfaces.lagifs.data.entity.LagIfOppositeEntity;
+import msf.mfcfc.node.interfaces.lagifs.data.entity.LagIfQosEntity;
 import msf.mfcfc.node.interfaces.physicalifs.data.entity.PhysicalIfBreakoutEntity;
 import msf.mfcfc.node.interfaces.physicalifs.data.entity.PhysicalIfEntity;
 import msf.mfcfc.node.interfaces.physicalifs.data.entity.PhysicalIfIfEntity;
 import msf.mfcfc.node.interfaces.physicalifs.data.entity.PhysicalIfOppositeIfEntity;
+import msf.mfcfc.node.interfaces.physicalifs.data.entity.PhysicalIfQosEntity;
 import msf.mfcfc.rest.common.AbstractResponseBody;
+import msf.mfcfc.rest.common.JsonUtil;
+import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement common process of interface-related processing in
- * configuration management function.
+ * Abstract class to implement the common process of interface-related
+ * processing in configuration management function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request class that inherited the RestRequestBase class
+ *          Request class that inherits the RestRequestBase class
  */
 public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
     extends AbstractInterfaceScenarioBase<T> {
@@ -178,6 +190,14 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
       lagIfEntity.setBreakoutIfIdList(breakoutIfIdList);
 
       lagIfEntity.setMinimumLinks(minimumLinks);
+
+      LagIfQosEntity qos = new LagIfQosEntity();
+      qos.setRemark(lagIfEcEntity.getQos().getRemark());
+      qos.setRemarkCapabilityList(lagIfEcEntity.getQos().getRemarkMenuList());
+      qos.setShaping(lagIfEcEntity.getQos().getShaping());
+      qos.setEgressQueueCapabilityList(lagIfEcEntity.getQos().getEgressMenuList());
+      lagIfEntity.setQos(qos);
+
       return lagIfEntity;
     } finally {
       logger.methodEnd();
@@ -257,6 +277,14 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
       }
       physicalIfData.setSpeed(physicalIfEcResponseData.getLinkSpeed());
       physicalIfData.setIfName(physicalIfEcResponseData.getIfName());
+
+      PhysicalIfQosEntity qos = new PhysicalIfQosEntity();
+      qos.setRemark(physicalIfEcResponseData.getQos().getRemark());
+      qos.setRemarkCapabilityList(physicalIfEcResponseData.getQos().getRemarkMenuList());
+      qos.setShaping(physicalIfEcResponseData.getQos().getShaping());
+      qos.setEgressQueueCapabilityList(physicalIfEcResponseData.getQos().getEgressMenuList());
+      physicalIfData.setQos(qos);
+
       if (CollectionUtils.isNotEmpty(breakoutIfEcList)) {
         for (BreakoutIfEcEntity breakoutIfEcEntity : breakoutIfEcList) {
           if (breakoutIfEcEntity.getBasePhysicalIfId().equals(physicalIf.getPhysicalIfId())) {
@@ -344,6 +372,14 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
       BreakoutIfBaseIfEntity baseIf = new BreakoutIfBaseIfEntity();
       baseIf.setPhysicalIfId(breakoutIfEcEntity.getBasePhysicalIfId());
       breakoutIfEntity.setBaseIf(baseIf);
+
+      BreakoutIfQosEntity qos = new BreakoutIfQosEntity();
+      qos.setRemark(breakoutIfEcEntity.getQos().getRemark());
+      qos.setRemarkCapabilityList(breakoutIfEcEntity.getQos().getRemarkMenuList());
+      qos.setShaping(breakoutIfEcEntity.getQos().getShaping());
+      qos.setEgressQueueCapabilityList(breakoutIfEcEntity.getQos().getEgressMenuList());
+      breakoutIfEntity.setQos(qos);
+
       return breakoutIfEntity;
     } finally {
       logger.methodEnd();
@@ -365,7 +401,8 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
 
   protected RestResponseBase createRestResponse(AbstractResponseBody body, int statusCode) {
     try {
-      logger.methodStart(new String[] { "body" }, new Object[] { ToStringBuilder.reflectionToString(body) });
+      logger.methodStart(new String[] { "body", "statusCode" },
+          new Object[] { ToStringBuilder.reflectionToString(body), statusCode });
 
       RestResponseBase response = new RestResponseBase(statusCode, body);
       return response;
@@ -376,7 +413,7 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
 
   protected void checkNode(SessionWrapper sessionWrapper, Integer nodeType, Integer nodeId) throws MsfException {
     try {
-      logger.methodStart(new String[] { "sessionWrapper", "swClusterId", "nodeType", "nodeId" },
+      logger.methodStart(new String[] { "sessionWrapper", "nodeType", "nodeId" },
           new Object[] { sessionWrapper, nodeType, nodeId });
       FcNodeDao nodeDao = new FcNodeDao();
       FcNode node = nodeDao.read(sessionWrapper, nodeType, nodeId);
@@ -389,4 +426,102 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
     }
   }
 
+  protected InterfaceReadListEcResponseBody sendInterfaceReadList(Integer ecNodeId) throws MsfException {
+    try {
+      logger.methodStart();
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.IF_READ_LIST.getHttpMethod(),
+          EcRequestUri.IF_READ_LIST.getUri(String.valueOf(ecNodeId)), null, ecControlIpAddress, ecControlPort);
+
+      InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = JsonUtil.fromJson(
+          restResponseBase.getResponseBody(), InterfaceReadListEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
+          interfaceReadListEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
+
+      return interfaceReadListEcResponseBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected PhysicalIfReadEcResponseBody sendPhysicalInterfaceRead(FcNode node, String ifId) throws MsfException {
+    try {
+      logger.methodStart();
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.PHYSICAL_IF_READ.getHttpMethod(),
+          EcRequestUri.PHYSICAL_IF_READ.getUri(String.valueOf(node.getEcNodeId()), ifId), null, ecControlIpAddress,
+          ecControlPort);
+
+      PhysicalIfReadEcResponseBody physicalIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+          PhysicalIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
+          physicalIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
+
+      return physicalIfReadEcResponseBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected LagIfReadEcResponseBody sendLagInterfaceRead(FcNode node, String lagIfId) throws MsfException {
+    try {
+      logger.methodStart();
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.LAG_IF_READ.getHttpMethod(),
+          EcRequestUri.LAG_IF_READ.getUri(String.valueOf(node.getEcNodeId()), lagIfId), null, ecControlIpAddress,
+          ecControlPort);
+
+      LagIfReadEcResponseBody lagIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+          LagIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
+          lagIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
+
+      return lagIfReadEcResponseBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected BreakoutIfReadEcResponseBody sendBreakoutInterfaceRead(FcNode node, String breakoutIfId)
+      throws MsfException {
+    try {
+      logger.methodStart();
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.BREAKOUT_IF_READ.getHttpMethod(),
+          EcRequestUri.BREAKOUT_IF_READ.getUri(String.valueOf(node.getEcNodeId()), breakoutIfId), null,
+          ecControlIpAddress, ecControlPort);
+
+      BreakoutIfReadEcResponseBody breakoutIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+          BreakoutIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
+          breakoutIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
+
+      return breakoutIfReadEcResponseBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
 }

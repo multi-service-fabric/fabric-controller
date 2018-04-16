@@ -70,7 +70,7 @@ public abstract class AbstractRestHandler {
   }
 
   protected void loggingResponseJsonBody(String jsonBody) {
-    logger.debug("Http request json parameter = {0}", jsonBody);
+    logger.debug("Http response json parameter = {0}", jsonBody);
   }
 
   protected String getReuqestUri() {
@@ -86,11 +86,29 @@ public abstract class AbstractRestHandler {
   }
 
   protected void setCommonData(RestRequestBase restRequestBase) {
-    restRequestBase.setRequestUri(getReuqestUri());
+    restRequestBase.setRequestUri(removeTrailingSlash(getReuqestUri()));
     restRequestBase.setRequestMethod(getHttpMethod());
     restRequestBase.setRequestQueryString(getQueryString());
     restRequestBase.setSourceIpAddress(httpServletRequest.getRemoteAddr());
 
   }
 
+  private String removeTrailingSlash(String targetUri) {
+    if (targetUri == null) {
+      return null;
+    }
+
+    for (;;) {
+
+      if (targetUri.endsWith("/")) {
+        StringBuffer sb = new StringBuffer(targetUri);
+        int index = sb.lastIndexOf("/");
+
+        sb.deleteCharAt(index);
+        targetUri = sb.toString();
+      } else {
+        return targetUri;
+      }
+    }
+  }
 }

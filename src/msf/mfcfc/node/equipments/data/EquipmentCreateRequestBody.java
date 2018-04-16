@@ -16,23 +16,17 @@ import msf.mfcfc.node.equipments.data.entity.EquipmentSlotEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentTypeEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
-
 public class EquipmentCreateRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(EquipmentCreateRequestBody.class);
 
-  
   @SerializedName("equipment_type")
   private EquipmentTypeEntity equipmentType;
 
-  
   public EquipmentTypeEntity getEquipmentType() {
     return equipmentType;
   }
 
-  
   public void setEquipmentType(EquipmentTypeEntity equipmentType) {
     this.equipmentType = equipmentType;
   }
@@ -52,7 +46,6 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
   }
 
   private void validateEquipmentType() throws MsfException {
-
 
     if (equipmentType.getEquipmentTypeId() != null) {
       ParameterCheckUtil.checkNumericId(equipmentType.getEquipmentTypeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
@@ -78,7 +71,6 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
         throw new IllegalArgumentException(MessageFormat.format("routerType={0}", equipmentType.getRouterTypeEnum()));
     }
 
-
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability());
 
     ParameterCheckUtil.checkNotNull(equipmentType.getDhcp());
@@ -86,7 +78,6 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
     ParameterCheckUtil.checkNotNull(equipmentType.getSnmp());
 
     ParameterCheckUtil.checkNotNullAndLength(equipmentType.getBootCompleteMsg());
-
 
     ParameterCheckUtil.checkNotNull(equipmentType.getIfDefinitions());
 
@@ -101,21 +92,40 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
 
   private void validateCapability() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getVpn());
     validateVpn();
+    validateQos();
   }
 
   private void validateVpn() throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getVpn().getL2());
 
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getVpn().getL3());
   }
 
-  private void validateDhcp() throws MsfException {
+  private void validateQos() throws MsfException {
 
+    Boolean remark = equipmentType.getCapability().getQos().getRemark();
+    ParameterCheckUtil.checkNotNull(remark);
+    if (remark) {
+
+      ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getQos().getRemarkCapabilityList());
+
+      ParameterCheckUtil.checkNotNullAndLength(equipmentType.getCapability().getQos().getRemarkDefault());
+    }
+
+    Boolean shaping = equipmentType.getCapability().getQos().getShaping();
+    ParameterCheckUtil.checkNotNull(shaping);
+    if (shaping) {
+
+      ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getQos().getEgressQueueCapabilityList());
+
+      ParameterCheckUtil.checkNotNullAndLength(equipmentType.getCapability().getQos().getEgressQueueDefault());
+    }
+  }
+
+  private void validateDhcp() throws MsfException {
 
     ParameterCheckUtil.checkNotNullAndLength(equipmentType.getDhcp().getDhcpTemplate());
 
@@ -126,15 +136,12 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
 
   private void validateSnmp() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(equipmentType.getSnmp().getIfNameOid());
-
 
     ParameterCheckUtil.checkNotNull(equipmentType.getSnmp().getMaxRepetitions());
   }
 
   private void validateIfDefinitions() throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(equipmentType.getIfDefinitions().getPortList());
 
@@ -166,7 +173,6 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
     }
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

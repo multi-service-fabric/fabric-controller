@@ -1,13 +1,12 @@
+
 package msf.mfcfc.core.operation;
 
 import java.util.TimerTask;
 
-
 public abstract class AbstractOperationNotifyTimerTask extends TimerTask {
 
-  
   private String clusterId;
-  
+
   private String lowerOperationId;
 
   public String getClusterId() {

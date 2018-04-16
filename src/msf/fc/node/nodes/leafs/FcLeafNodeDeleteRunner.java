@@ -37,7 +37,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Leaf node deletion.
+ * Class to implement the asynchronous processing in Leaf node deletion.
  *
  * @author NTT
  *
@@ -95,6 +95,7 @@ public class FcLeafNodeDeleteRunner extends FcAbstractLeafNodeRunnerBase {
             List<FcNode> borderLeafNodeList = getOtherBorderLeafNodeList(fcNodeList, deleteNode.getNodeId());
             List<FcNode> leafNodes = new ArrayList<>();
             leafNodes.add(deleteNode);
+
             leafNodes.addAll(borderLeafNodeList);
 
             List<FcNode> oppositeSpineNodeList = getOppositeNodeList(fcNodeList, NodeType.SPINE);

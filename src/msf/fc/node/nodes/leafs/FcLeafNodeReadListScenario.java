@@ -68,7 +68,7 @@ public class FcLeafNodeReadListScenario extends FcAbstractLeafNodeScenarioBase<L
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (request.getFormat() != null) {
         ParameterCheckUtil.checkNotNull(request.getFormatEnum());

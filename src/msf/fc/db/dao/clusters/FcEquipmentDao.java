@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.clusters;
 
 import java.util.List;
@@ -12,13 +13,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcEquipmentDao extends FcAbstractCommonDao<FcEquipment, Integer> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcEquipmentDao.class);
 
-
-  
   public List<FcEquipment> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -29,7 +27,6 @@ public class FcEquipmentDao extends FcAbstractCommonDao<FcEquipment, Integer> {
     }
   }
 
-  
   public FcEquipment readFromBiggestId(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -41,7 +38,6 @@ public class FcEquipmentDao extends FcAbstractCommonDao<FcEquipment, Integer> {
       logger.methodEnd();
     }
   }
-
 
   @Override
   public FcEquipment read(SessionWrapper session, Integer pk) throws MsfException {

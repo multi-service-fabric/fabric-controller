@@ -18,7 +18,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpCreateRequestBody;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * Class to implement asynchronous processing in L3CP generation.
+ * Class to implement the asynchronous processing in L3CP addition.
  *
  * @author NTT
  *
@@ -31,12 +31,12 @@ public class FcL3CpCreateRunner extends FcAbstractL3CpRunnerBase {
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L3CP control
    * @param requestBody
-   *          Request body for L3CP generation
+   *          Request body for L3CP addition
    */
   public FcL3CpCreateRunner(L3CpRequest request, L3CpCreateRequestBody requestBody) {
     this.request = request;
@@ -74,7 +74,7 @@ public class FcL3CpCreateRunner extends FcAbstractL3CpRunnerBase {
       processCreateL3Cp(sessionWrapper, l3SliceAfterLock, nodeAfterLock, cpId, edgePointId, requestBody.getVlanId(),
           requestBody.getMtu(), requestBody.getIpv4Address(), requestBody.getIpv6Address(), requestBody.getIpv4Prefix(),
           requestBody.getIpv6Prefix(), requestBody.getBgp(), requestBody.getStaticRouteList(), requestBody.getVrrp(),
-          requestBody.getTrafficThreshold());
+          requestBody.getTrafficThreshold(), requestBody.getQos());
 
       String requestJson = makeCreateL3VlanIfData(createVlanIfEntityList, l3SliceAfterLock.getVrfId(),
           l3SliceAfterLock.getPlane());

@@ -1,11 +1,6 @@
 
 package msf.fc.failure.status;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +16,12 @@ import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcPhysicalIf;
+import msf.fc.common.data.FcVlanIf;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.slices.FcVlanIfDao;
 import msf.mfcfc.common.constant.ClusterType;
 import msf.mfcfc.common.constant.FailureStatus;
 import msf.mfcfc.common.constant.InterfaceType;
-import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
@@ -44,8 +40,10 @@ import msf.mfcfc.failure.status.data.entity.FailureStatusClusterUnitEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusIfFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusNodeFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusPhysicalUnitEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceClusterLinkFailureEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceFailureEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 import msf.mfcfc.rest.common.JsonUtil;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * Implementation class for failure information notification.
@@ -90,7 +88,6 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
 
       requestBody.validate();
 
-
       this.requestBody = requestBody;
 
     } finally {
@@ -107,9 +104,7 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
       try {
         session.openSession();
 
-
         Failure systemConfFailure = FcConfigManager.getInstance().getSystemConfFailure();
-
 
         if (systemConfFailure.getNoticeDestInfo().isEmpty()) {
 
@@ -117,15 +112,15 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
           return responseFailureNotifyData();
         }
 
-
         boolean isCluster = false;
+
+        boolean isSlice = false;
         for (NoticeDestInfoFailure info : systemConfFailure.getNoticeDestInfo()) {
           isCluster |= info.isIsClusterUnit();
+          isSlice |= info.isIsSliceUnit();
         }
 
-
         Map<String, FcNode> fcNodeMap = new HashMap<>();
-
 
         Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoEcMap = new HashMap<>();
         ifInfoEcMap.put(InterfaceType.PHYSICAL_IF, new HashMap<String, List<LogicalIfStatusIfEntity>>());
@@ -135,31 +130,40 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
 
         int clusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
 
-
-        List<FailureStatusNodeFailureEntity> nodes = getNodeFailureList(session, fcNodeMap, clusterId,
+        List<FailureStatusNodeFailureEntity> nodeList = getNodeFailureList(session, fcNodeMap, clusterId,
             requestBody.getUpdateLogicalIfStatusOption().getNodeList());
 
-
-        List<FailureStatusIfFailureEntity> ifs = getIfFailureList(session, fcNodeMap, clusterId,
+        List<FailureStatusIfFailureEntity> ifList = getIfFailureList(session, fcNodeMap, clusterId,
             requestBody.getUpdateLogicalIfStatusOption().getIfList(), ifInfoEcMap);
 
+        List<FailureStatusClusterFailureEntity> clusterList = new ArrayList<>();
 
-        List<FailureStatusClusterFailureEntity> clusters = new ArrayList<>();
-        if (isCluster) {
+        FailureStatusSliceUnitEntity sliceEntity = new FailureStatusSliceUnitEntity();
 
+        if (isCluster | isSlice) {
 
-          addIfFailureDownNode(fcNodeMap, requestBody.getUpdateLogicalIfStatusOption().getNodeList(), ifInfoEcMap);
+          addIfFailureDownNode(session, fcNodeMap, requestBody.getUpdateLogicalIfStatusOption().getNodeList(),
+              ifInfoEcMap);
 
+          if (isSlice) {
+            sliceEntity = createSliceNotifyInfo(session, ifInfoEcMap, null);
+          }
 
-          Map<ClusterType, Map<String, FailureStatus>> failureInfoMap = getClusterNotifyInfo(session, ifInfoEcMap,
-              null);
-          clusters.addAll(getClusterFailureEntityList(failureInfoMap, clusterId));
+          if (isCluster) {
+
+            Map<ClusterType, Map<String, FailureStatus>> failureInfoMap = createClusterNotifyInfo(session, ifInfoEcMap,
+                null);
+
+            clusterList.addAll(getClusterFailureEntityList(failureInfoMap, clusterId));
+          }
         }
 
         int retry = systemConfFailure.getNoticeRetryNum();
         int timeout = systemConfFailure.getNoticeTimeout();
 
-        noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), ifs, nodes, clusters, retry, timeout);
+        noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), ifList, nodeList, clusterList,
+            (sliceEntity == null) ? new ArrayList<>() : sliceEntity.getSliceList(),
+            (sliceEntity == null) ? null : sliceEntity.getClusterLink(), retry, timeout);
 
         return responseFailureNotifyData();
       } catch (MsfException msfException) {
@@ -173,7 +177,6 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     }
   }
 
-  
   private List<FailureStatusNodeFailureEntity> getNodeFailureList(SessionWrapper session, Map<String, FcNode> fcNodeMap,
       int clusterId, List<LogicalIfStatusNodeEntity> ecNodes) throws NumberFormatException, MsfException {
 
@@ -199,14 +202,12 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
         continue;
       }
 
-
       nodes.add(getNodeFailureEntity(ecNode, fcNode, clusterId));
     }
 
     return nodes;
   }
 
-  
   private List<FailureStatusIfFailureEntity> getIfFailureList(SessionWrapper session, Map<String, FcNode> fcNodeMap,
       int clusterId, List<LogicalIfStatusIfEntity> ecIfs,
       Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoEcMap) throws MsfException {
@@ -232,7 +233,6 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
         continue;
       }
 
-
       if (InterfaceType.VLAN_IF != ife.getIfTypeEnum()) {
         ifs.add(getIfFailureEntity(ife, fcNode, clusterId));
       }
@@ -243,58 +243,74 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     return ifs;
   }
 
-  
   private void noticeFailureInfo(List<NoticeDestInfoFailure> noticeDestInfo, List<FailureStatusIfFailureEntity> ifs,
-      List<FailureStatusNodeFailureEntity> nodes, List<FailureStatusClusterFailureEntity> clusters, int retry,
-      int timeout) {
+      List<FailureStatusNodeFailureEntity> nodes, List<FailureStatusClusterFailureEntity> clusters,
+      List<FailureStatusSliceFailureEntity> sliceList, FailureStatusSliceClusterLinkFailureEntity clusterLink,
+      int retry, int timeout) {
 
     for (NoticeDestInfoFailure destInfo : noticeDestInfo) {
 
-
-      RestRequestBase request = createRequest(destInfo, ifs, nodes, clusters);
+      RestRequestBase request = createRequest(destInfo, ifs, nodes, clusters, sliceList, clusterLink);
       if (request == null) {
 
+        logger.debug("no data for notify. dest = {0}", ToStringBuilder.reflectionToString(destInfo));
         continue;
       }
       notifyFailureInfo(request, destInfo.getNoticeAddress(), destInfo.getNoticePort(), timeout, retry);
     }
   }
 
-  
-  private RestRequestBase createRequest(NoticeDestInfoFailure destInfo, List<FailureStatusIfFailureEntity> ifs,
-      List<FailureStatusNodeFailureEntity> nodes, List<FailureStatusClusterFailureEntity> clusters) {
+  @SuppressWarnings("unchecked")
+  private RestRequestBase createRequest(NoticeDestInfoFailure destInfo, List<FailureStatusIfFailureEntity> ifList,
+      List<FailureStatusNodeFailureEntity> nodeList, List<FailureStatusClusterFailureEntity> clusterList,
+      List<FailureStatusSliceFailureEntity> sliceList, FailureStatusSliceClusterLinkFailureEntity clusterLink) {
     try {
-      logger.methodStart(new String[] { "destInfo", "ifs", "nodes", "clusters" },
-          new Object[] { ToStringBuilder.reflectionToString(destInfo), ToStringBuilder.reflectionToString(ifs),
-              ToStringBuilder.reflectionToString(nodes), ToStringBuilder.reflectionToString(clusters) });
+      logger.methodStart(new String[] { "destInfo", "ifList", "nodeList", "clusterList", "sliceList", "clusterLink" },
+          new Object[] { ToStringBuilder.reflectionToString(destInfo), ToStringBuilder.reflectionToString(ifList),
+              ToStringBuilder.reflectionToString(nodeList), ToStringBuilder.reflectionToString(clusterList),
+              ToStringBuilder.reflectionToString(sliceList), ToStringBuilder.reflectionToString(clusterLink) });
 
       boolean isNotice = false;
 
-      List<FailureStatusClusterFailureEntity> clustersCp = deepcopy(clusters);
+      List<FailureStatusClusterFailureEntity> clusterListCp = (List<FailureStatusClusterFailureEntity>) deepCopy(
+          clusterList);
+      List<FailureStatusSliceFailureEntity> sliceListCp = (List<FailureStatusSliceFailureEntity>) deepCopy(sliceList);
 
       FailureStatusNotifyRequestBody request = new FailureStatusNotifyRequestBody();
 
-
       if (destInfo.isIsPhysicalUnit()) {
-        if (!ifs.isEmpty() || !nodes.isEmpty()) {
+        if (!ifList.isEmpty() || !nodeList.isEmpty()) {
           isNotice = true;
         }
         FailureStatusPhysicalUnitEntity physicalUnit = new FailureStatusPhysicalUnitEntity();
-        physicalUnit.setIfList(ifs);
-        physicalUnit.setNodeList(nodes);
+        physicalUnit.setIfList(ifList);
+        physicalUnit.setNodeList(nodeList);
         request.setPhysicalUnit(physicalUnit);
       }
 
-
       if (destInfo.isIsClusterUnit()) {
-        if (!clustersCp.isEmpty()) {
+        if (!clusterListCp.isEmpty()) {
           isNotice = true;
         }
         FailureStatusClusterUnitEntity clusterUnit = new FailureStatusClusterUnitEntity();
-        updateInternalFailureStatus(destInfo, clustersCp);
 
-        clusterUnit.setClusterList(clustersCp);
+        updateInternalFailureStatusClusterUnit(destInfo, clusterListCp);
+
+        clusterUnit.setClusterList(clusterListCp);
         request.setClusterUnit(clusterUnit);
+      }
+
+      if (destInfo.isIsSliceUnit()) {
+        if (!sliceListCp.isEmpty() || clusterLink != null) {
+          isNotice = true;
+        }
+        FailureStatusSliceUnitEntity sliceUnit = new FailureStatusSliceUnitEntity();
+
+        updateInternalFailureStatusSliceUnit(destInfo, sliceListCp);
+        sliceUnit.setSliceList(sliceListCp);
+        sliceUnit.setClusterLink(clusterLink);
+        request.setSliceUnit(sliceUnit);
+
       }
 
       RestRequestBase requestBase = null;
@@ -309,81 +325,49 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     }
   }
 
-  
-  @SuppressWarnings("unchecked")
-  private List<FailureStatusClusterFailureEntity> deepcopy(List<FailureStatusClusterFailureEntity> obj) {
-    try {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      new ObjectOutputStream(baos).writeObject(obj);
-      return (List<FailureStatusClusterFailureEntity>) new ObjectInputStream(
-          new ByteArrayInputStream(baos.toByteArray())).readObject();
-    } catch (IOException | ClassNotFoundException ioe) {
-      throw new IllegalArgumentException();
-    }
-  }
-
-  
-  private void updateInternalFailureStatus(NoticeDestInfoFailure destInfo,
-      List<FailureStatusClusterFailureEntity> clusters) {
+  private void updateInternalFailureStatusClusterUnit(NoticeDestInfoFailure destInfo,
+      List<FailureStatusClusterFailureEntity> clusterList) {
 
     Integer failureLinkNum = destInfo.getFailureLinkNum();
     if (failureLinkNum == null) {
       return;
     }
 
+    if (failureLinkNum.intValue() > getDownLinks()) {
+      return;
+    }
+
+    for (FailureStatusClusterFailureEntity cluster : clusterList) {
+      if (ClusterType.INTERNAL.getMessage().equals(cluster.getType())) {
+        cluster.setFailureStatusEnum(FailureStatus.DOWN);
+      }
+    }
+  }
+
+  private void updateInternalFailureStatusSliceUnit(NoticeDestInfoFailure destInfo,
+      List<FailureStatusSliceFailureEntity> sliceList) {
+
+    Integer failureLinkNum = destInfo.getFailureLinkNum();
+    if (failureLinkNum == null) {
+      return;
+    }
 
     if (failureLinkNum.intValue() > getDownLinks()) {
       return;
     }
 
-
-    for (FailureStatusClusterFailureEntity cluster : clusters) {
-      if (ClusterType.INTERNAL.getMessage().equals(cluster.getType())) {
-        cluster.setFailureStatusEnum(FailureStatus.DOWN);
-      }
-    }
-
-  }
-
-  
-  private void notifyFailureInfo(RestRequestBase request, String ipAddress, int port, int timeout, int retryNum) {
-
-    try {
-      logger.methodStart(new String[] { "request", "ipAddress", "port", "timeout", "retryNum" },
-          new Object[] { request, ipAddress, port, timeout, retryNum });
-
-      for (int cnt = 0; cnt <= retryNum; cnt++) {
-        try {
-          RestClient.sendRequest(MfcFcRequestUri.FAILURE_NOTIFY.getHttpMethod(),
-              MfcFcRequestUri.FAILURE_NOTIFY.getUri(), request, ipAddress, port);
-          break;
-        } catch (MsfException msfException) {
-
-          try {
-            Thread.sleep(timeout);
-          } catch (InterruptedException ie) {
-
-          }
-        }
-      }
-    } finally {
-      logger.methodEnd();
+    for (FailureStatusSliceFailureEntity slice : sliceList) {
+      slice.setFailureStatusEnum(FailureStatus.DOWN);
     }
   }
 
-  
   private RestResponseBase responseFailureNotifyData() {
-    try {
-      logger.methodStart();
-      return new RestResponseBase(HttpStatus.OK_200, (String) null);
-    } finally {
-      logger.methodEnd();
-    }
+    return new RestResponseBase(HttpStatus.OK_200, (String) null);
   }
 
-  
-  private void addIfFailureDownNode(Map<String, FcNode> fcNodeMap, List<LogicalIfStatusNodeEntity> nodes,
-      Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoEcMap) throws MsfException {
+  protected void addIfFailureDownNode(SessionWrapper session, Map<String, FcNode> fcNodeMap,
+      List<LogicalIfStatusNodeEntity> nodes, Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoEcMap)
+      throws MsfException {
 
     if (nodes == null) {
       return;
@@ -413,10 +397,14 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
       List<FcLagIf> lagIfs = fcNode.getLagIfs();
       List<LogicalIfStatusIfEntity> logicalLagIfs = getLogicalIfLagIf(logicalIfNode.getNodeId(), lagIfs);
       setMapList(ifInfoEcMap.get(InterfaceType.LAG_IF), logicalLagIfs);
+
+      FcVlanIfDao fcVlanIfDao = new FcVlanIfDao();
+      List<FcVlanIf> vlanIfs = fcVlanIfDao.readList(session, fcNode.getNodeInfoId());
+      List<LogicalIfStatusIfEntity> logicalVlanIfs = getLogicalIfVlanIf(logicalIfNode.getNodeId(), vlanIfs);
+      setMapList(ifInfoEcMap.get(InterfaceType.VLAN_IF), logicalVlanIfs);
     }
   }
 
-  
   private List<LogicalIfStatusIfEntity> getLogicalIfPhysicalIf(String ecNodeId, List<FcPhysicalIf> physicalIfs) {
 
     List<LogicalIfStatusIfEntity> failureIfList = new ArrayList<>();
@@ -428,7 +416,6 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     return failureIfList;
   }
 
-  
   private List<LogicalIfStatusIfEntity> getLogicalIfBreakoutIf(String ecNodeId, List<FcBreakoutIf> breakoutIfs) {
 
     List<LogicalIfStatusIfEntity> failureIfList = new ArrayList<>();
@@ -440,7 +427,6 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     return failureIfList;
   }
 
-  
   private List<LogicalIfStatusIfEntity> getLogicalIfLagIf(String ecNodeId, List<FcLagIf> lagIfs) {
 
     List<LogicalIfStatusIfEntity> failureIfList = new ArrayList<>();
@@ -451,7 +437,17 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
     return failureIfList;
   }
 
-  
+  private List<LogicalIfStatusIfEntity> getLogicalIfVlanIf(String ecNodeId, List<FcVlanIf> vlanIfs) {
+
+    List<LogicalIfStatusIfEntity> failureIfList = new ArrayList<>();
+    for (FcVlanIf vlanIf : vlanIfs) {
+      LogicalIfStatusIfEntity logicalIf = getLogicalIf(vlanIf.getId().getVlanIfId().toString(),
+          FailureStatus.DOWN.getMessage(), ecNodeId, InterfaceType.VLAN_IF);
+      failureIfList.add(logicalIf);
+    }
+    return failureIfList;
+  }
+
   private LogicalIfStatusIfEntity getLogicalIf(String ecNodeId, InterfaceType ifType, String ifId) {
 
     LogicalIfStatusIfEntity ifFailure = new LogicalIfStatusIfEntity();

@@ -44,7 +44,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Lag interface generation.
+ * Class to implement the asynchronous processing in Lag interface addition.
  *
  * @author NTT
  *

@@ -26,7 +26,7 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceCreateResponseBody;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceRequest;
 
 /**
- * Implementation class for L3 slice generation.
+ * Implementation class for L3 slice addition.
  *
  * @author NTT
  *
@@ -68,6 +68,8 @@ public class FcL3SliceCreateScenario extends FcAbstractL3SliceScenarioBase<L3Sli
         logger.methodStart();
 
         checkRrConfiguration();
+
+        checkRemarkMenuList(requestBody.getRemarkMenu());
 
         try {
           sessionWrapper.openSession();

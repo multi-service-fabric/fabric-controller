@@ -47,6 +47,10 @@ public class ObjectFactory {
     return new Json();
   }
 
+  public Controller createController() {
+    return new Controller();
+  }
+
   public NoticeDestInfoTraffic createNoticeDestInfoTraffic() {
     return new NoticeDestInfoTraffic();
   }
@@ -61,6 +65,10 @@ public class ObjectFactory {
 
   public SwClustersData createSwClustersData() {
     return new SwClustersData();
+  }
+
+  public Qos createQos() {
+    return new Qos();
   }
 
   public Slice createSlice() {

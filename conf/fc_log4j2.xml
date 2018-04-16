@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
 <configuration status="off" shutdownHook="disable">
-
   <Properties>
     <Property name="logLevel">info</Property>
     <Property name="responseLogLevel">info</Property>

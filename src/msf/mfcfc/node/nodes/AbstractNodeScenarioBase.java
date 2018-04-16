@@ -13,7 +13,7 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement common process of node-related processing in
+ * Abstract class to implement the common process of node-related processing in
  * configuration management function.
  *
  * @author NTT

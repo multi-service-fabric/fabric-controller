@@ -3,12 +3,17 @@ package msf.fc.node.interfaces.edgepoints;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcEdgePoint;
 import msf.fc.db.dao.clusters.FcEdgePointDao;
+import msf.fc.rest.ec.node.interfaces.breakout.data.entity.BreakoutIfEcEntity;
+import msf.fc.rest.ec.node.interfaces.data.InterfaceReadListEcResponseBody;
+import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfEcEntity;
+import msf.fc.rest.ec.node.interfaces.physical.data.entity.PhysicalIfEcEntity;
 import msf.fc.rest.ec.node.nodes.data.NodeReadListEcResponseBody;
 import msf.fc.rest.ec.node.nodes.data.entity.NodeEcEntity;
 import msf.mfcfc.common.constant.EcRequestUri;
@@ -70,7 +75,7 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (request.getFormat() != null) {
         ParameterCheckUtil.checkNotNull(request.getFormatEnum());
@@ -130,17 +135,19 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         if (!fcEdgePoints.isEmpty()) {
 
           NodeReadListEcResponseBody nodeReadListEcResponseBody = sendNodeReadList();
+          TreeMap<Integer, InterfaceReadListEcResponseBody> interfaceInfoWithEdgePoint = sendInterfaceInfoWithEdgePoint(
+              fcEdgePoints);
           if (RestUserTypeOption.OPERATOR.getMessage().equals(userType)) {
 
             EdgePointReadDetailListOwnerResponseBody body = new EdgePointReadDetailListOwnerResponseBody();
-            body.setEdgePointList(
-                getEdgePoinForOwnertEntities(fcEdgePoints, sessionWrapper, nodeReadListEcResponseBody.getNodeList()));
+            body.setEdgePointList(getEdgePointForOwnertEntities(fcEdgePoints, sessionWrapper,
+                nodeReadListEcResponseBody.getNodeList(), interfaceInfoWithEdgePoint));
             return createRestResponse(body, HttpStatus.OK_200);
           } else {
 
             EdgePointReadDetailListUserResponseBody body = new EdgePointReadDetailListUserResponseBody();
-            body.setEdgePointList(
-                getEdgePointForUserEntities(fcEdgePoints, sessionWrapper, nodeReadListEcResponseBody.getNodeList()));
+            body.setEdgePointList(getEdgePointForUserEntities(fcEdgePoints, sessionWrapper,
+                nodeReadListEcResponseBody.getNodeList(), interfaceInfoWithEdgePoint));
             return createRestResponse(body, HttpStatus.OK_200);
           }
         } else {
@@ -190,8 +197,9 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
     }
   }
 
-  private List<EdgePointForOwnerEntity> getEdgePoinForOwnertEntities(List<FcEdgePoint> fcEdgePoints,
-      SessionWrapper sessionWrapper, List<NodeEcEntity> nodeList) throws MsfException {
+  private List<EdgePointForOwnerEntity> getEdgePointForOwnertEntities(List<FcEdgePoint> fcEdgePoints,
+      SessionWrapper sessionWrapper, List<NodeEcEntity> nodeList,
+      TreeMap<Integer, InterfaceReadListEcResponseBody> interfaceInfoWithEdgePoint) throws MsfException {
     try {
       logger.methodStart();
       ArrayList<EdgePointForOwnerEntity> edgePoinForOwnertEntities = new ArrayList<>();
@@ -200,17 +208,46 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         isExist = false;
         for (NodeEcEntity nodeEcEntity : nodeList) {
           String ecNodeId = null;
+          Object interfaceQosResponseBody = null;
 
           if (fcEdgePoint.getPhysicalIf() != null) {
             ecNodeId = String.valueOf(fcEdgePoint.getPhysicalIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getPhysicalIf().getNode().getEcNodeId());
+            for (PhysicalIfEcEntity physicalIfEcEntity : interfaceReadListEcResponseBody.getIfs().getPhysicalIfList()) {
+              if (fcEdgePoint.getPhysicalIf().getPhysicalIfId().equals(physicalIfEcEntity.getPhysicalIfId())) {
+                interfaceQosResponseBody = physicalIfEcEntity.getQos();
+                break;
+              }
+            }
           } else if (fcEdgePoint.getLagIf() != null) {
             ecNodeId = String.valueOf(fcEdgePoint.getLagIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getLagIf().getNode().getEcNodeId());
+            for (LagIfEcEntity lagIfEcEntity : interfaceReadListEcResponseBody.getIfs().getLagIfList()) {
+              if (fcEdgePoint.getLagIf().getLagIfId().equals(Integer.valueOf(lagIfEcEntity.getLagIfId()))) {
+                interfaceQosResponseBody = lagIfEcEntity.getQos();
+                break;
+              }
+            }
           } else {
             ecNodeId = String.valueOf(fcEdgePoint.getBreakoutIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getBreakoutIf().getNode().getEcNodeId());
+            for (BreakoutIfEcEntity breakoutIfEcEntity : interfaceReadListEcResponseBody.getIfs().getBreakoutIfList()) {
+              if (fcEdgePoint.getBreakoutIf().getBreakoutIfId().equals(breakoutIfEcEntity.getBreakoutIfId())) {
+                interfaceQosResponseBody = breakoutIfEcEntity.getQos();
+                break;
+              }
+            }
           }
 
           if (ecNodeId.equals(nodeEcEntity.getNodeId())) {
-            edgePoinForOwnertEntities.add(getEdgePointForOwner(fcEdgePoint, sessionWrapper, nodeEcEntity));
+            edgePoinForOwnertEntities
+                .add(getEdgePointForOwner(fcEdgePoint, sessionWrapper, nodeEcEntity, interfaceQosResponseBody));
             isExist = true;
             break;
           }
@@ -227,7 +264,8 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
   }
 
   private List<EdgePointForUserEntity> getEdgePointForUserEntities(List<FcEdgePoint> fcEdgePoints,
-      SessionWrapper sessionWrapper, List<NodeEcEntity> nodeList) throws MsfException {
+      SessionWrapper sessionWrapper, List<NodeEcEntity> nodeList,
+      TreeMap<Integer, InterfaceReadListEcResponseBody> interfaceInfoWithEdgePoint) throws MsfException {
     try {
       logger.methodStart();
       ArrayList<EdgePointForUserEntity> edgePointForUserEntities = new ArrayList<>();
@@ -236,17 +274,46 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         isExist = false;
         for (NodeEcEntity nodeEcEntity : nodeList) {
           String ecNodeId = null;
+          Object interfaceQosResponseBody = null;
 
           if (fcEdgePoint.getPhysicalIf() != null) {
             ecNodeId = String.valueOf(fcEdgePoint.getPhysicalIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getPhysicalIf().getNode().getEcNodeId());
+            for (PhysicalIfEcEntity physicalIfEcEntity : interfaceReadListEcResponseBody.getIfs().getPhysicalIfList()) {
+              if (fcEdgePoint.getPhysicalIf().getPhysicalIfId().equals(physicalIfEcEntity.getPhysicalIfId())) {
+                interfaceQosResponseBody = physicalIfEcEntity.getQos();
+                break;
+              }
+            }
           } else if (fcEdgePoint.getLagIf() != null) {
             ecNodeId = String.valueOf(fcEdgePoint.getLagIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getLagIf().getNode().getEcNodeId());
+            for (LagIfEcEntity lagIfEcEntity : interfaceReadListEcResponseBody.getIfs().getLagIfList()) {
+              if (fcEdgePoint.getLagIf().getLagIfId().equals(Integer.valueOf(lagIfEcEntity.getLagIfId()))) {
+                interfaceQosResponseBody = lagIfEcEntity.getQos();
+                break;
+              }
+            }
           } else {
             ecNodeId = String.valueOf(fcEdgePoint.getBreakoutIf().getNode().getEcNodeId());
+
+            InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = interfaceInfoWithEdgePoint
+                .get(fcEdgePoint.getBreakoutIf().getNode().getEcNodeId());
+            for (BreakoutIfEcEntity breakoutIfEcEntity : interfaceReadListEcResponseBody.getIfs().getBreakoutIfList()) {
+              if (fcEdgePoint.getBreakoutIf().getBreakoutIfId().equals(breakoutIfEcEntity.getBreakoutIfId())) {
+                interfaceQosResponseBody = breakoutIfEcEntity.getQos();
+                break;
+              }
+            }
           }
 
           if (ecNodeId.equals(nodeEcEntity.getNodeId())) {
-            edgePointForUserEntities.add(getEdgePointForUser(fcEdgePoint, sessionWrapper, nodeEcEntity));
+            edgePointForUserEntities
+                .add(getEdgePointForUser(fcEdgePoint, sessionWrapper, nodeEcEntity, interfaceQosResponseBody));
             isExist = true;
             break;
           }
@@ -270,6 +337,32 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         edgePointIdList.add(String.valueOf(fcEdgePoint.getEdgePointId()));
       }
       return edgePointIdList;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private TreeMap<Integer, InterfaceReadListEcResponseBody> sendInterfaceInfoWithEdgePoint(
+      List<FcEdgePoint> fcEdgePoints) throws MsfException {
+    try {
+      logger.methodStart();
+      TreeMap<Integer, InterfaceReadListEcResponseBody> edgePointNodeMap = new TreeMap<>();
+
+      for (FcEdgePoint fcEdgePoint : fcEdgePoints) {
+        Integer ecNodeId;
+        if (fcEdgePoint.getPhysicalIf() != null) {
+          ecNodeId = fcEdgePoint.getPhysicalIf().getNode().getEcNodeId();
+        } else if (fcEdgePoint.getLagIf() != null) {
+          ecNodeId = fcEdgePoint.getLagIf().getNode().getEcNodeId();
+        } else {
+          ecNodeId = fcEdgePoint.getBreakoutIf().getNode().getEcNodeId();
+        }
+
+        if (!edgePointNodeMap.containsKey(ecNodeId)) {
+          edgePointNodeMap.put(ecNodeId, sendInterfaceReadList(ecNodeId));
+        }
+      }
+      return edgePointNodeMap;
     } finally {
       logger.methodEnd();
     }

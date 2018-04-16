@@ -1,7 +1,7 @@
 ## Controller API index
 
 **Version 1.0**
-**Copyright(c) 2017 Nippon Telegraph and Telephone Corporation**
+**Copyright(c) 2018 Nippon Telegraph and Telephone Corporation**
 
 ### Common API
 |group|Interface(API) description|Identification ID|Method|URI|URI example|
@@ -18,6 +18,10 @@
 ||Getting equipment list in switch cluster|010102|GET|/v1/equipment-types|/v1/equipment-types|
 ||Getting equipment information|010103|GET|/v1/equipment-types/{equipment_type_id}|/v1/equipment-types/10|
 ||Deleting equipment information|010104|DELETE|/v1/equipment-types/{equipment_type_id}|/v1/equipment-types/{equipment_type_id}|
+|Switch-cluster management|Adding Switch-cluster|010201|POST|/v1/clusters|/v1/clusters|
+||Getting list of Switch-cluster|010202|GET|/v1/clusters|/v1/clusters|
+||Getting information of Switch-cluster|010203|GET|/v1/clusters/{cluster_id}|/v1/clusters/1|
+||Deleting Switch-cluster|010204|DELETE|/v1/clusters/{cluster_id}|/v1/clusters/1|
 |Node information|Getting list of nodes|010301|GET|/v1/clusters/{cluster_id}/nodes|/v1/clusters/1/nodes|
 |Leaf management|Adding Leaf- node|010401|POST|/v1/clusters/{cluster_id}/nodes/leafs|/v1/clusters/1/nodes/leafs|
 ||Getting list of Leaf-nodes|010402|GET|/v1/clusters/{cluster_id}/nodes/leafs|/v1/clusters/1/nodes/leafs|
@@ -43,6 +47,10 @@
 ||Getting list of Link-aggregation interfaces|011102|GET|/v1/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs|/v1/clusters/1/nodes/leafs/1/interfaces/lag-ifs|
 ||Getting information of Link-aggregation interface|011103|GET|/v1/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|
 ||Deleting Link-aggregation interface|011105|DELETE|/v1/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|
+|Interface management (Inter-cluster link interface)|Creating inter-cluster link interface|011201|POST|/v1/clusters/{cluster_id}/interfaces/cluster-link-ifs|/v1/clusters/1/points/cluster-link-ifs|
+||Getting list of inter-cluster link interfaces|011202|GET|/v1/clusters/{cluster_id}/interfaces/cluster-link-ifs|/v1/clusters/1/points/cluster-link-ifs|
+||Getting information of inter-cluster link interface|011203|GET|/v1/clusters/{cluster_id}/interfaces/cluster-link-ifs/｛cluster_link_if_id｝|/v1/clusters/1/points/cluster-link-ifs/1|
+||Deleting inter-cluster link interface|011204|DELETE|/v1/clusters/{cluster_id}/interfaces/cluster-link-ifs/｛cluster_link_if_id｝|/v1/clusters/1/points/cluster-link-ifs/1|
 |Edge point management|Creating edge-point|011401|POST|/v1/clusters/{cluster_id}/points/edge-points|/v1/clusters/1/points/edge-points|
 ||Getting list of edge-points|011402|GET|/v1/clusters/{cluster_id}/points/edge-points|/v1/clusters/1/points/edge-points|
 ||Getting infromation of edge-point|011403|GET|/v1/clusters/{cluster_id}/points/edge-points/{edge_point_id}|/v1/clusters/1/points/edge-points/1|
@@ -52,11 +60,13 @@
 |group|Interface(API) description|Identification ID|Method|URI|URI example|
 |:----|:----|:----|:----|:----|:----|
 |Slice|Creating Slice|020101|POST|/v1/slices/{slice_type}|/v1/slices/l2vpn/1<br>/v1/slices/l3vpn/100|
+||Changing Slice|020102|PUT|/v1/slices/{slice_type}/{slice_id}|/v1/slices/l2vpn/1<br>/v1/slices/l3vpn/100|
 ||Deleting Slice|020103|DELETE|/v1/slices/{slice_type}/{slice_id}|/v1/slices/l2vpn/1<br>/v1/slices/l3vpn/100|
 ||Getting information of Slice|020104|GET|/v1/slices/{slice_type}/{slice_id}|v1/slices/l2vpn/1<br>/v1/slices/l3vpn/100|
 ||Getting list of Slices|020105|GET|/v1/slices/{slice_type}|/v1/slices/l2vpn/1<br>/v1/slices/l3vpn/100|
 |CP|Creating or deleting CP|020201|PATCH|/v1/slices/{slice_type}/{slice_id}/cps|//v1/slices/l2vpn/1/cps<br>/v1/slices/l3vpn/100/cps|
 ||Creating CP|020202|POST|/v1/slices/{slice_type}/{slice_id}/cps|/v1/slices/l2vpn/1/cps<br>/v1/slices/l3vpn/100/cps|
+||Changing CP|020203|PUT|/v1/slices/{slice_type}/{slice_id}/cps/{cp_id}|/v1/slices/l2vpn/1/cps/1<br>/v1/slices/l3vpn/100/cps/10|
 ||Deleting CP|020204|DELETE|/v1/slices/{slice_type}/{slice_id}/cps/{cp_id}|/v1/slices/l2vpn/1/cps/1<br>/v1/slices/l3vpn/100/cps/10|
 ||Getting information of CP|020205|GET|/v1/slices/{slice_type}/{slice_id}/cps/{cp_id}|/v1/slices/l2vpn/1/cps/1<br>/v1/slices/l3vpn/100/cps/10|
 ||Getting lists of CP|020206|GET|/v1/slices/{slice_type}/{slice_id}/cps|/v1/slices/l2vpn/1/cps<br>/v1/slices/l3vpn/100/cps|

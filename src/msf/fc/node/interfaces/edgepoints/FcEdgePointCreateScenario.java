@@ -82,7 +82,7 @@ public class FcEdgePointCreateScenario extends FcAbstractEdgePointScenarioBase<E
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       EdgePointCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           EdgePointCreateRequestBody.class);

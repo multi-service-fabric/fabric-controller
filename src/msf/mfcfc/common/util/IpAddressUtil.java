@@ -18,6 +18,7 @@ import msf.mfcfc.common.log.MsfLogger;
  *
  */
 public class IpAddressUtil {
+
   private static final MsfLogger logger = MsfLogger.getInstance(IpAddressUtil.class);
 
   public static final int FREE_IP_ADDRESS = 0;

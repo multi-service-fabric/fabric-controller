@@ -31,7 +31,6 @@ public final class AsyncExecutor {
    *
    * @return AsyncExecutor instance
    */
-
   public static AsyncExecutor getInstance() {
     return instance;
   }

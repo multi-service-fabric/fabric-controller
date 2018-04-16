@@ -1,13 +1,11 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum EcVlanIfUpdateOperationType {
 
-  
   ADD("add"),
-  
-  DELETE("delete");
 
+  DELETE("delete");
 
   private String message;
 
@@ -15,12 +13,10 @@ public enum EcVlanIfUpdateOperationType {
     this.message = message;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static EcVlanIfUpdateOperationType getEnumFromMessage(String message) {
     for (EcVlanIfUpdateOperationType enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

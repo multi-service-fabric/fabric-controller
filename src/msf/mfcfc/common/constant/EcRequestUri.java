@@ -1,10 +1,8 @@
 
 package msf.mfcfc.common.constant;
 
-
 public enum EcRequestUri {
 
-  
   OPERATION_REQUEST(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -12,7 +10,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   EQUIPMENT_CREATE(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -20,7 +17,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   EQUIPMENT_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -28,16 +24,13 @@ public enum EcRequestUri {
     }
   }),
 
-  
   EQUIPMENT_READ(HttpMethod.GET, new RequestUriInterface() {
-
     @Override
     public String makeUri(String... args) {
       return "/v1/internal/equipment-types/" + args[0];
     }
   }),
 
-  
   EQUIPMENT_DELETE(HttpMethod.DELETE, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -45,7 +38,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   NODE_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -53,7 +45,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   NODE_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -61,7 +52,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   NODE_CREATE_DELETE_REQUEST(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -69,7 +59,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   IF_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -77,7 +66,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   PHYSICAL_IF_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -85,7 +73,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   PHYSICAL_IF_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -93,7 +80,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   PHYSICAL_IF_UPDATE(HttpMethod.PUT, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -101,7 +87,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LAG_IF_CREATE(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -109,7 +94,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LAG_IF_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -117,7 +101,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LAG_IF_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -125,7 +108,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LAG_IF_DELETE(HttpMethod.DELETE, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -133,7 +115,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LAG_IF_UPDATE(HttpMethod.PUT, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -141,7 +122,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   BREAKOUT_IF_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -149,7 +129,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   BREAKOUT_IF_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -157,7 +136,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   IF_OPERATION_REQUEST(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -165,7 +143,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   SERVICE_RECOVERY_CREATE(HttpMethod.POST, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -173,7 +150,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   VLAN_IF_UPDATE(HttpMethod.PUT, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -181,7 +157,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   VLAN_IF_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -189,7 +164,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   VLAN_IF_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -197,7 +171,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   TRAFFIC_READ_LIST(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -205,7 +178,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   TRAFFIC_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -213,7 +185,6 @@ public enum EcRequestUri {
     }
   }),
 
-  
   STATUS_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
@@ -221,14 +192,12 @@ public enum EcRequestUri {
     }
   }),
 
-  
   LOG_READ(HttpMethod.GET, new RequestUriInterface() {
     @Override
     public String makeUri(String... args) {
       return "/v1/internal/ec_ctrl/log";
     }
   });
-
 
   private HttpMethod httpMethod;
 
@@ -239,17 +208,14 @@ public enum EcRequestUri {
     this.requestUri = requestUri;
   }
 
-  
   public HttpMethod getHttpMethod() {
     return httpMethod;
   }
 
-  
   public String getUri(String... uriParams) {
     return requestUri.makeUri(uriParams);
   }
 
-  
   private interface RequestUriInterface {
     public String makeUri(String... args);
   }

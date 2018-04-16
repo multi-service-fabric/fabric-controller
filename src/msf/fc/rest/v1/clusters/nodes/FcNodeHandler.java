@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.nodes;
 
 import javax.ws.rs.Consumes;

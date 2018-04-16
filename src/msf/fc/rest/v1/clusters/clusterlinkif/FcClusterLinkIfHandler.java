@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.clusterlinkif;
 
 import javax.ws.rs.Consumes;
@@ -20,7 +21,7 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * Configuration management Intercluster link management.
+ * Configuration management inter-cluster link management.
  *
  * @author NTT
  */
@@ -30,7 +31,7 @@ public class FcClusterLinkIfHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcClusterLinkIfHandler.class);
 
   /**
-   * Intercluster link IF generation.
+   * Inter-cluster link IF generation.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -70,12 +71,12 @@ public class FcClusterLinkIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * Intercluster link IF reduction.
+   * Inter-cluster link IF reduction.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param clusterLinkIfId
-   *          Intercluster link IF ID (URI parameter)
+   *          inter-cluster link IF ID (URI parameter)
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort

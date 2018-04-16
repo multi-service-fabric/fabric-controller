@@ -67,7 +67,7 @@ public class FcBreakoutInterfaceReadListScenario extends FcAbstractBreakoutInter
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))
           && !NodeType.SPINE.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {

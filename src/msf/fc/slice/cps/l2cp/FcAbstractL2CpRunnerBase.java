@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcEdgePoint;
 import msf.fc.common.data.FcL2Cp;
@@ -24,6 +26,7 @@ import msf.fc.rest.ec.core.operation.data.entity.OperationCreateUpdateL2VlanIfOp
 import msf.fc.rest.ec.core.operation.data.entity.OperationCreateVlanIfEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationDeleteUpdateL2VlanIfOptionEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationDeleteVlanIfEcEntity;
+import msf.fc.rest.ec.core.operation.data.entity.OperationQosEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationUpdateVlanIfEcEntity;
 import msf.fc.rest.ec.node.interfaces.vlan.data.VlanIfReadEcResponseBody;
 import msf.fc.slice.cps.FcAbstractCpRunnerBase;
@@ -36,9 +39,10 @@ import msf.mfcfc.common.util.EsiUtil;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
+import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpQosCreateEntity;
 
 /**
- * Abstract class to implement common process of L2CP-related asynchronous
+ * Abstract class to implement the common process of L2CP-related asynchronous
  * runner processing in slice management function.
  *
  * @author NTT
@@ -59,10 +63,10 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
   protected List<OperationDeleteVlanIfEcEntity> deleteVlanIfEntityList = new ArrayList<>();
 
   protected OperationCreateVlanIfEcEntity makeOperationCreateVlanIfEcEntity(SessionWrapper sessionWrapper, FcL2Cp l2Cp,
-      String portMode, Integer vlanId) throws MsfException {
+      String portMode, Integer vlanId, L2CpQosCreateEntity qosEntity) throws MsfException {
     try {
-      logger.methodStart(new String[] { "sessionWrapper", "l2Cp", "portMode", "vlanId" },
-          new Object[] { sessionWrapper, l2Cp, portMode, vlanId });
+      logger.methodStart(new String[] { "sessionWrapper", "l2Cp", "portMode", "vlanId", "qosEntity" },
+          new Object[] { sessionWrapper, l2Cp, portMode, vlanId, ToStringBuilder.reflectionToString(qosEntity) });
       FcNodeDao nodeDao = new FcNodeDao();
       FcNode requestTargetNode = nodeDao.read(sessionWrapper, l2Cp.getEdgePoint().getEdgePointId());
       OperationBaseIfEcEntity baseIfEntity = new OperationBaseIfEcEntity();
@@ -75,7 +79,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
       entity.setLacpSystemId(getNextLacpSystemId(l2Cp.getEsi()));
       entity.setNodeId(String.valueOf(requestTargetNode.getEcNodeId()));
       entity.setPortMode(portMode);
-
+      entity.setQos(makeOperationQosEcEntity(l2Cp, qosEntity));
       entity.setVlanId(vlanId);
       entity.setVlanIfId(String.valueOf(l2Cp.getVlanIf().getId().getVlanIfId()));
       return entity;
@@ -184,11 +188,14 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
   }
 
   protected void processCreateL2Cp(SessionWrapper sessionWrapper, FcL2Slice l2Slice, FcNode node, String cpId,
-      int edgePointId, String portMode, int vlanId, String pairCpId, String esi) throws MsfException {
+      int edgePointId, String portMode, int vlanId, String pairCpId, String esi, L2CpQosCreateEntity qosEntity)
+      throws MsfException {
     try {
       logger.methodStart(
-          new String[] { "sessionWrapper", "l2Slice", "node", "cpId", "edgePointId", "portMode", "vlanId", "pairCpId" },
-          new Object[] { sessionWrapper, l2Slice, node, cpId, edgePointId, portMode, vlanId, pairCpId });
+          new String[] { "sessionWrapper", "l2Slice", "node", "cpId", "edgePointId", "portMode", "vlanId", "pairCpId",
+              "qosEntity" },
+          new Object[] { sessionWrapper, l2Slice, node, cpId, edgePointId, portMode, vlanId, pairCpId,
+              ToStringBuilder.reflectionToString(qosEntity) });
 
       checkL2NwConstraints(sessionWrapper, l2Slice, node, vlanId, edgePointId);
 
@@ -216,8 +223,11 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             logger.debug("l2cp found with same esi. cp id = {0}", pairL2Cp.getId().getCpId());
             FcNode pairNode = getNodeAndCheck(sessionWrapper, pairL2Cp.getEdgePoint().getEdgePointId());
 
-            checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId().intValue(),
-                pairL2Cp.getVlanIf().getId().getVlanIfId(), null, null);
+            if (!checkCreateProcessedPairCpId(newL2Cp.getEsi())) {
+
+              checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId().intValue(),
+                  pairL2Cp.getVlanIf().getId().getVlanIfId(), null, null);
+            }
 
             checkCreateTargetNode(sessionWrapper, pairL2Cp.getId().getCpId(), edgePointId,
                 pairL2Cp.getEdgePoint().getEdgePointId());
@@ -226,7 +236,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
       }
 
       OperationCreateVlanIfEcEntity createVlanIfEntity = makeOperationCreateVlanIfEcEntity(sessionWrapper, newL2Cp,
-          portMode, vlanId);
+          portMode, vlanId, qosEntity);
       createVlanIfEntityList.add(createVlanIfEntity);
 
       l2CpDao.create(sessionWrapper, newL2Cp);
@@ -585,5 +595,38 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
     } finally {
       logger.methodEnd();
     }
+  }
+
+  protected boolean checkCreateProcessedPairCpId(String esi) {
+    try {
+      logger.methodStart();
+
+      for (OperationCreateVlanIfEcEntity entity : createVlanIfEntityList) {
+
+        if (esi != null && esi.equals(entity.getEsi())) {
+          return true;
+        }
+      }
+      return false;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private OperationQosEcEntity makeOperationQosEcEntity(FcL2Cp fcL2Cp, L2CpQosCreateEntity qosEntity)
+      throws MsfException {
+    OperationQosEcEntity qosEcEntity = new OperationQosEcEntity();
+
+    if (fcL2Cp.getL2Slice().getRemarkMenu() == null && (qosEntity == null || (qosEntity.getEgressQueueMenu() == null
+        && qosEntity.getEgressShapingRate() == null && qosEntity.getIngressShapingRate() == null))) {
+      return null;
+    }
+    qosEcEntity.setRemarkMenu(fcL2Cp.getL2Slice().getRemarkMenu());
+    if (qosEntity != null) {
+      qosEcEntity.setEgressQueue(qosEntity.getEgressQueueMenu());
+      qosEcEntity.setInflowShapingRate(qosEntity.getIngressShapingRate());
+      qosEcEntity.setOutflowShapingRate(qosEntity.getEgressShapingRate());
+    }
+    return qosEcEntity;
   }
 }

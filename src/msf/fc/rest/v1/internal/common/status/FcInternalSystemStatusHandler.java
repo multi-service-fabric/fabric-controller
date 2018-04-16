@@ -9,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import msf.fc.core.status.scenario.FcInternalSystemStatusNotifyScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -16,27 +17,28 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.core.status.scenario.InternalSystemStatusReadScenario;
 import msf.mfcfc.core.status.scenario.InternalSystemStatusUpdateScenario;
 import msf.mfcfc.core.status.scenario.data.InternalSystemStatusRequest;
+import msf.mfcfc.core.status.scenario.data.SystemStatusNotifyRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * REST request handler class of system status via internal interface.
+ * REST request handler class of system status via intra-cluster link IF.
  *
  * @author NTT
  */
-@Path("/v1/internal/MSFcontroller")
+@Path("/v1")
 public class FcInternalSystemStatusHandler extends AbstractRestHandler {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcInternalSystemStatusHandler.class);
 
   /**
-   * System status change (internal).
+   * System status modification (internal).
    *
    * @param requestBody
    *          Request message body
    * @return response data
    */
   @PUT
-  @Path("/status")
+  @Path("/internal/MSFcontroller/status")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response update(String requestBody) {
@@ -64,7 +66,7 @@ public class FcInternalSystemStatusHandler extends AbstractRestHandler {
    * @return response data
    */
   @GET
-  @Path("/status")
+  @Path("/internal/MSFcontroller/status")
   @Produces(MediaType.APPLICATION_JSON)
   @Consumes(MediaType.APPLICATION_JSON)
   public Response read() {
@@ -76,6 +78,37 @@ public class FcInternalSystemStatusHandler extends AbstractRestHandler {
       setCommonData(request);
 
       InternalSystemStatusReadScenario scenario = new InternalSystemStatusReadScenario(OperationType.PRIORITY,
+          SystemInterfaceType.INTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * System status notification.
+   *
+   * @param requestBody
+   *          Request message body
+   *
+   * @return response data
+   */
+  @PUT
+  @Path("/internal/controller/ec_em/status")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response notify(String requestBody) {
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      loggingRequestJsonBody(requestBody);
+      SystemStatusNotifyRequest request = new SystemStatusNotifyRequest(requestBody, null, null);
+
+      setCommonData(request);
+
+      FcInternalSystemStatusNotifyScenario scenario = new FcInternalSystemStatusNotifyScenario(OperationType.PRIORITY,
           SystemInterfaceType.INTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
       return createResponse(restResponseBase);

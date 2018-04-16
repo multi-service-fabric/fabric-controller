@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration>
+<configuration status="off" shutdownHook="disable">
+  <Properties>
+    <Property name="logLevel">info</Property>
+    <Property name="responseLogLevel">info</Property>
+    <Property name="logPath">../logs</Property>
+    <Property name="responseAPILogPath">../logs/api_access</Property>
+    <Property name="responseProcessingLogPath">../logs/processing</Property>
+    <Property name="logFormat">[%d{yyyy/MM/dd HH:mm:ss.SSS}] [%-5p] [tid=%t] (%C{1}::%M():%L):%m%n</Property>
+  </Properties>
+
+  <CustomLevels>
+    <CustomLevel name="PERFORMANCE" intLevel="450" />
+  </CustomLevels>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="${logFormat}" />
+    </Console>
+
+    <RollingFile name="MfcRollingFile" fileName="${logPath}/mfc.log" filePattern="${logPath}/mfc_%d{yyyyMMdd}-%i.log.gz">
+      <PatternLayout pattern="${logFormat}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="250 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="20"/>
+    </RollingFile>
+
+    <RollingFile name="HttpRollingFile" fileName="${logPath}/mfc_http_access.log" filePattern="${logPath}/mfc_http_access_%d{yyyyMMdd}-%i.log.gz">
+      <PatternLayout pattern="${logFormat}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy />
+        <OnStartupTriggeringPolicy />
+        <SizeBasedTriggeringPolicy size="250 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="20"/>
+    </RollingFile>
+
+    <RollingFile name="ResponseAPIRollingFile" fileName="${responseAPILogPath}/mfc_api_access.log" filePattern="${responseAPILogPath}/mfc_api_access_%d{yyyyMMdd}.log">
+      <PatternLayout pattern="${logFormat}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+
+    <RollingFile name="ResponseProcessingRollingFile"  fileName="${responseProcessingLogPath}/mfc_processing.log" filePattern="${responseProcessingLogPath}/mfc_processing_%d{yyyyMMdd}.log">
+      <PatternLayout pattern="${logFormat}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1"/>
+      </Policies>
+    </RollingFile>
+  </Appenders>
+
+  <Loggers>
+
+    <Root>
+      <AppenderRef ref="Console" />
+    </Root>
+
+    <Logger name="msf" level="${logLevel}" additivity="false">
+      <AppenderRef ref="MfcRollingFile" />
+      <AppenderRef ref="ResponseProcessingRollingFile" level="${responseLogLevel}" />
+    </Logger>
+
+    <Logger name="msf.mfcfc.rest.common.AbstractRestHandler" level="${logLevel}" additivity="true">
+      <AppenderRef ref="HttpRollingFile" />
+      <AppenderRef ref="ResponseAPIRollingFile" level="${responseLogLevel}" />
+    </Logger>
+
+  </Loggers>
+
+</configuration>

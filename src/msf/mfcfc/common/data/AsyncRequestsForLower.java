@@ -7,7 +7,6 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import msf.mfcfc.common.exception.MsfException;
 
-
 public class AsyncRequestsForLower {
 
   private AsyncRequestsForLowerPK id;
@@ -113,7 +112,6 @@ public class AsyncRequestsForLower {
     this.asyncRequestsForLowerRollback = asyncRequestsForLowerRollback;
   }
 
-  
   @Override
   public String toString() {
     return new ReflectionToStringBuilder(this)

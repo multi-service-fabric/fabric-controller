@@ -11,7 +11,7 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.db.SessionWrapper;
 
 /**
- * Abstract class to implement common process of physical interface-related
+ * Abstract class to implement the common process of physical interface-related
  * processing in configuration management function.
  *
  *

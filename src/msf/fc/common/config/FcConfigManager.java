@@ -1,6 +1,8 @@
 
 package msf.fc.common.config;
 
+import java.util.List;
+
 import javax.xml.bind.JAXBException;
 
 import org.xml.sax.SAXException;
@@ -18,8 +20,8 @@ import msf.mfcfc.common.constant.IpAddressType;
 import msf.mfcfc.common.log.MsfLogger;
 
 /**
- * Class to provide the initialization function, living confirmation and
- * termination of config management function block.
+ * Class to provide the initialization, living confirmation and termination
+ * function of config management function block.
  *
  * @author NTT
  *
@@ -85,7 +87,7 @@ public class FcConfigManager extends ConfigManager {
    * Read the several config files and initialize the variables for getter
    * methods. <br>
    *
-   * @return boolean process result, true: success, false: fail
+   * @return boolean process result, true success, false fail
    */
   @Override
   public boolean start() {
@@ -109,10 +111,11 @@ public class FcConfigManager extends ConfigManager {
         return false;
       }
 
-      setCommonData(systemConf.getRest().getServer().getListeningAddress(),
-          systemConf.getRest().getServer().getListeningPort(),
+      setCommonData(systemConf.getController().getManagementIpAddress(),
+          systemConf.getRest().getServer().getListeningAddress(), systemConf.getRest().getServer().getListeningPort(),
           systemConf.getRest().getClient().getWaitConnectionTimeout(),
-          systemConf.getRest().getClient().getRequestTimeout(), systemConf.getRest().getJson().isIsPrettyPrinting(),
+          systemConf.getRest().getClient().getRequestTimeout(),
+          systemConf.getRest().getClient().getResponseBufferSize(), systemConf.getRest().getJson().isIsPrettyPrinting(),
           systemConf.getRest().getJson().isIsSerializeNulls(), systemConf.getSlice().getL2MaxSlicesNum(),
           systemConf.getSlice().getL3MaxSlicesNum(), systemConf.getSlice().getL2SlicesMagnificationNum(),
           systemConf.getSlice().getL3SlicesMagnificationNum(),
@@ -261,18 +264,18 @@ public class FcConfigManager extends ConfigManager {
       }
 
       checkAddress = checkHost(
-          dataConf.getSwClustersData().getSwClusterData().getSwCluster().getAggrigationStartAddress(),
+          dataConf.getSwClustersData().getSwClusterData().getSwCluster().getAggregationStartAddress(),
           IpAddressType.IPV4);
 
       if (checkAddress == null) {
-        logger.error("Aggrigation Start Address NG :"
-            + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getAggrigationStartAddress());
+        logger.error("Aggregation Start Address NG :"
+            + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getAggregationStartAddress());
         return false;
 
       } else {
-        logger.debug("Aggrigation Start Address OK.");
+        logger.debug("Aggregation Start Address OK.");
 
-        dataConf.getSwClustersData().getSwClusterData().getSwCluster().setAggrigationStartAddress(checkAddress);
+        dataConf.getSwClustersData().getSwClusterData().getSwCluster().setAggregationStartAddress(checkAddress);
       }
 
       for (Rr rr : dataConf.getSwClustersData().getSwClusterData().getRrs().getRr()) {
@@ -388,6 +391,15 @@ public class FcConfigManager extends ConfigManager {
    */
   public msf.fc.common.config.type.system.Traffic getSystemConfTraffic() {
     return systemConfTraffic;
+  }
+
+  /**
+   * Get the QoS remark menu list information of system config.
+   *
+   * @return QoS remark menu list information
+   */
+  public List<String> getQosRemarkMenuList() {
+    return systemConf.getQos().getRemarkMenu();
   }
 
 }

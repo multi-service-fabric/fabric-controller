@@ -23,6 +23,7 @@ import msf.mfcfc.common.data.SystemStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.async.SendRequestExecutor;
+import msf.mfcfc.core.operation.OperationManager;
 import msf.mfcfc.core.scenario.ErrorResponse.ErrorResponseBody;
 import msf.mfcfc.core.status.SystemStatusManager;
 import msf.mfcfc.rest.common.JsonUtil;
@@ -69,6 +70,8 @@ public abstract class AbstractScenarioBase {
         }
         taskList.add(requestSendRunner);
       }
+
+      OperationManager.getInstance().setLowerRequestNumber(operationId, taskList.size());
 
       int invokeAllTimeout = ConfigManager.getInstance().getInvokeAllTimout();
 

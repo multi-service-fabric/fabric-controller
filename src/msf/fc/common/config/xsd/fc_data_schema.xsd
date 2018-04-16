@@ -44,9 +44,9 @@
 			</xsd:element>
 			<xsd:element name="outchannelStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
 			</xsd:element>
-			<xsd:element name="aggrigationStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
+			<xsd:element name="aggregationStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
 			</xsd:element>
-			<xsd:element name="aggrigationAddressPrefix" type="tns:subnetmask" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="aggregationAddressPrefix" type="tns:subnetmask" minOccurs="1" maxOccurs="1"></xsd:element>
         </xsd:all>
     </xsd:complexType>
 

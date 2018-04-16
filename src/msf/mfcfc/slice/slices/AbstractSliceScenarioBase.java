@@ -25,7 +25,7 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceCreateResponseBody;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceCreateResponseBody;
 
 /**
- * Abstract class to implement common process of L2 / L3 slice-related
+ * Abstract class to implement the common process of L2 / L3 slice-related
  * processing in slice management function.
  *
  * @author NTT

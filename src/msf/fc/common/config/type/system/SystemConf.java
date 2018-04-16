@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlType;
 public class SystemConf {
 
   @XmlElement(required = true)
+  protected Controller controller;
+  @XmlElement(required = true)
   protected Rest rest;
   @XmlElement(required = true)
   protected Slice slice;
@@ -22,6 +24,16 @@ public class SystemConf {
   protected Failure failure;
   @XmlElement(required = true)
   protected Traffic traffic;
+  @XmlElement(required = true)
+  protected Qos qos;
+
+  public Controller getController() {
+    return controller;
+  }
+
+  public void setController(Controller value) {
+    this.controller = value;
+  }
 
   public Rest getRest() {
     return rest;
@@ -71,4 +83,11 @@ public class SystemConf {
     this.traffic = value;
   }
 
+  public Qos getQos() {
+    return qos;
+  }
+
+  public void setQos(Qos value) {
+    this.qos = value;
+  }
 }

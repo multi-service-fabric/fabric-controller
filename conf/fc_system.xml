@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <systemConf xmlns="http://fc.msf/common/config/type/system">
     <!-- System setting config -->
+    <controller>
+        <!-- Management IP address of controller -->
+        <managementIpAddress>0.0.0.0</managementIpAddress>
+    </controller>
     <rest>
         <server>
             <!-- REST listening interface address -->
@@ -15,6 +19,8 @@
             <!--  REST request timeout (second) -->
             <!-- Infinite wait time in case of requestTimeout = 0 -->
             <requestTimeout>600</requestTimeout>
+            <!-- Buffer size of received response data for REST request(MB) -->
+            <responseBufferSize>2</responseBufferSize>
         </client>
         <json>
             <!-- Whether the output JSON character string is formatted or not. -->
@@ -74,7 +80,7 @@
             <!-- Notification unit of failure: Slice unit -->
             <isSliceUnit>true</isSliceUnit>
             <!-- Number of failed internal links -->
-            <failureLinkNum>1</failureLinkNum>
+            <!--  <failureLinkNum>1</failureLinkNum> -->
         </noticeDestInfo>
         <!-- Number of notification retry -->
         <noticeRetryNum>5</noticeRetryNum>
@@ -101,5 +107,13 @@
         <!-- Interval of acquiring traffic information (second) -->
         <execCycle>3600</execCycle>
     </traffic>
+    <qos>
+        <!-- Remark menu -->
+        <remark_menu>af1</remark_menu>
+        <remark_menu>af2</remark_menu>
+        <remark_menu>af3</remark_menu>
+        <remark_menu>be</remark_menu>
+        <remark_menu>packet_color</remark_menu>
+    </qos>
 </systemConf>
 

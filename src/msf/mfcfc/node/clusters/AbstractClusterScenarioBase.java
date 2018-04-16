@@ -5,8 +5,8 @@ import msf.mfcfc.core.scenario.AbstractScenario;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement common process of SW cluster-related processing
- * in configuration management function.
+ * Abstract class to implement the common process of SW cluster-related
+ * processing in configuration management function.
  *
  * @author NTT
  *

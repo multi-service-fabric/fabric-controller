@@ -27,9 +27,7 @@ import msf.mfcfc.rest.common.AbstractRestHandler;
  *
  * @author NTT
  */
-
 @Path("/v1")
-
 public class FcProcessingRequestHandler extends AbstractRestHandler {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcProcessingRequestHandler.class);

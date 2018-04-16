@@ -24,7 +24,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for model information acquisition.
+ * Implementation class for device model information acquisition.
  *
  * @author NTT
  *

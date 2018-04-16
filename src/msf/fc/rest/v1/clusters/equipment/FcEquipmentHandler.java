@@ -30,7 +30,6 @@ import msf.mfcfc.rest.common.AbstractRestHandler;
  *
  */
 @Path("/v1/equipment-types")
-
 public class FcEquipmentHandler extends AbstractRestHandler {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcEquipmentHandler.class);

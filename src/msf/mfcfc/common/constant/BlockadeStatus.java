@@ -1,17 +1,17 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum BlockadeStatus {
 
-  
   NONE(0, "none"),
 
-  
-  BLOCKADE(1, "blockade");
+  BLOCKADE(1, "blockade"),
 
+  WARNING(-1, "warning"),
+
+  UNKNOWN(-2, "unknown");
 
   private int code;
-
 
   private String message;
 
@@ -20,17 +20,14 @@ public enum BlockadeStatus {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static BlockadeStatus getEnumFromCode(int code) {
     for (BlockadeStatus enumValue : values()) {
       if (enumValue.getCode() == code) {
@@ -41,7 +38,6 @@ public enum BlockadeStatus {
     return null;
   }
 
-  
   public static BlockadeStatus getEnumFromMessage(String message) {
     for (BlockadeStatus enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

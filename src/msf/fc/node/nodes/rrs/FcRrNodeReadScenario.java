@@ -56,7 +56,7 @@ public class FcRrNodeReadScenario extends FcAbstractRrNodeScenarioBase<RrNodeReq
 
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
 
       checkUserTypeOperator(request.getUserTypeEnum());

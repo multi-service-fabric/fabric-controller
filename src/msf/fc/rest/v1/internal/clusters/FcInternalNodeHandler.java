@@ -55,10 +55,6 @@ public class FcInternalNodeHandler extends AbstractRestHandler {
           SystemInterfaceType.INTERNAL);
 
       RestResponseBase restResponseBase = scenario.execute(request);
-
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
-
       return createResponse(restResponseBase);
 
     } finally {

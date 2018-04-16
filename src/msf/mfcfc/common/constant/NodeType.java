@@ -1,18 +1,15 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum NodeType {
 
-  
   LEAF(1, "leaf", "leafs"),
-  
+
   SPINE(2, "spine", "spines"),
-  
+
   RR(3, "rr", "rrs");
 
-
   private int code;
-
 
   private String singularMessage;
 
@@ -24,22 +21,18 @@ public enum NodeType {
     this.pluralMessage = pluralMessage;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getSingularMessage() {
     return singularMessage;
   }
 
-  
   public String getPluralMessage() {
     return pluralMessage;
   }
 
-  
   public static NodeType getEnumFromCode(Integer code) {
     if (code == null) {
       return null;
@@ -53,7 +46,6 @@ public enum NodeType {
     return null;
   }
 
-  
   public static NodeType getEnumFromSingularMessage(String message) {
     for (NodeType enumValue : values()) {
       if (enumValue.getSingularMessage().equals(message)) {
@@ -64,7 +56,6 @@ public enum NodeType {
     return null;
   }
 
-  
   public static NodeType getEnumFromPluralMessage(String message) {
     for (NodeType enumValue : values()) {
       if (enumValue.getPluralMessage().equals(message)) {

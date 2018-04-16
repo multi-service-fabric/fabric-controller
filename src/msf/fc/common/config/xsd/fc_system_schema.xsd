@@ -7,6 +7,8 @@
 
 	<xsd:complexType name="SystemConf">
 		<xsd:all>
+			<xsd:element name="controller" type="tns:Controller"
+				minOccurs="1" maxOccurs="1"></xsd:element>
 			<xsd:element name="rest" type="tns:Rest" minOccurs="1"
 				maxOccurs="1" />
 			<xsd:element name="slice" type="tns:Slice" minOccurs="1"
@@ -17,9 +19,14 @@
 				maxOccurs="1">
 			</xsd:element>
 			<xsd:element name="failure" type="tns:Failure" minOccurs="1"
-				maxOccurs="1"></xsd:element>
+				maxOccurs="1">
+			</xsd:element>
 			<xsd:element name="traffic" type="tns:Traffic" minOccurs="1"
-				maxOccurs="1"></xsd:element>
+				maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="qos" type="tns:Qos" minOccurs="1"
+				maxOccurs="1">
+			</xsd:element>
 		</xsd:all>
 	</xsd:complexType>
 
@@ -43,12 +50,14 @@
 		</xsd:all>
 	</xsd:complexType>
 
-	<xsd:complexType name="Client">
+	<xsd:complexType name="Client" abstract="false">
 		<xsd:all>
 			<xsd:element name="waitConnectionTimeout" type="tns:integer_of_0_or_more"
 				minOccurs="1" maxOccurs="1" />
 			<xsd:element name="requestTimeout" type="tns:integer_of_0_or_more"
 				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="responseBufferSize" type="tns:integer_of_1_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
 		</xsd:all>
 	</xsd:complexType>
 	<xsd:complexType name="Json">
@@ -97,7 +106,6 @@
 				minOccurs="1" maxOccurs="1" />
 		</xsd:all>
 	</xsd:complexType>
-
 
 	<xsd:simpleType name="sw_cluster_num">
 		<xsd:restriction base="xsd:integer">
@@ -223,6 +231,21 @@
 			<xsd:element name="isClusterUnit" type="xsd:boolean"
 				minOccurs="1" maxOccurs="1"></xsd:element>
 			<xsd:element name="isSliceUnit" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Qos">
+		<xsd:sequence>
+			<xsd:element name="remark_menu" type="xsd:string"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Controller">
+		<xsd:sequence>
+			<xsd:element name="managementIpAddress" type="xsd:string"
 				minOccurs="1" maxOccurs="1"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>

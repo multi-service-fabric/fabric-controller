@@ -17,64 +17,50 @@ import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.rest.common.RestRequestValidator;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteValueEntity;
 
-
 public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(L3CpUpdateRequestBody.class);
 
-  
   private static final Pattern staticRouteIdPattern = Pattern
       .compile("/static_routes/ipv[4|6]_([a-fA-F0-9\\.:]+)_[0-9]+_([a-fA-F0-9\\.:]+)$");
 
-  
   @SerializedName("op")
   private String op;
 
-  
   @SerializedName("path")
   private String path;
 
-  
   @SerializedName("value")
   private L3CpStaticRouteValueEntity value;
 
-  
   public String getOp() {
     return op;
   }
 
-  
   public void setOp(String op) {
     this.op = op;
   }
 
-  
   public String getPath() {
     return path;
   }
 
-  
   public void setPath(String path) {
     this.path = path;
   }
 
-  
   public L3CpStaticRouteValueEntity getValue() {
     return value;
   }
 
-  
   public void setValue(L3CpStaticRouteValueEntity value) {
     this.value = value;
   }
 
-  
   public PatchOperation getOpEnum() {
     return PatchOperation.getEnumFromMessage(op);
   }
 
-  
   public void setOpEnum(PatchOperation op) {
     this.op = op.getMessage();
   }
@@ -84,11 +70,9 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
     try {
       logger.methodStart();
 
-
       ParameterCheckUtil.checkNotNull(getOpEnum());
 
       ParameterCheckUtil.checkNotNullAndLength(path);
-
 
       switch (getOpEnum()) {
         case ADD:
@@ -116,7 +100,6 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
 
   private void validateRemoveOp() throws MsfException {
 
-
     Matcher matcher = staticRouteIdPattern.matcher(path);
     if (!matcher.matches()) {
       String logMsg = MessageFormat.format("path param is not match the pattern . path = {0}", path);
@@ -139,7 +122,6 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
 
   private void validateAddOp() throws MsfException {
 
-
     if (!path.matches("/static_routes$")) {
       String logMsg = MessageFormat.format("path param is not match the pattern . path = {0}", path);
       logger.error(logMsg);
@@ -153,14 +135,12 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
 
   private void validateValue() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(value.getStaticRoute());
 
     validateStaticRoute();
   }
 
   private void validateStaticRoute() throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(value.getStaticRoute().getAddrTypeEnum());
 
@@ -190,7 +170,6 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
     }
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

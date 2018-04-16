@@ -22,6 +22,7 @@ import msf.mfcfc.node.equipments.data.entity.EquipmentCapabilityEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentDhcpEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentIfDefinitionEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentPortEntity;
+import msf.mfcfc.node.equipments.data.entity.EquipmentQosEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSlotEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSnmpEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentTypeEntity;
@@ -29,13 +30,13 @@ import msf.mfcfc.node.equipments.data.entity.EquipmentVpnEntity;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement common process of model information-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of device model
+ * information-related processing in configuration management function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request classs that inherited the RestRequestBase class
+ *          Request classs that inherits the RestRequestBase class
  */
 public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
     extends AbstractEquipmentScenarioBase<T> {
@@ -75,14 +76,30 @@ public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
       equipmentType.setBreakoutIfNameSyntax(equipmentEcData.getBreakoutIfNameSyntax());
       equipmentType.setBreakoutIfNameSuffixList(equipmentEcData.getBreakoutIfNameSuffixList());
 
+      EquipmentCapabilityEntity capability = new EquipmentCapabilityEntity();
+      EquipmentVpnEntity vpn = new EquipmentVpnEntity();
       if (equipmentEcData.getCapabilities() != null) {
-        EquipmentCapabilityEntity capability = new EquipmentCapabilityEntity();
-        EquipmentVpnEntity vpn = new EquipmentVpnEntity();
         vpn.setL2(equipmentEcData.getCapabilities().getL2vpn());
         vpn.setL3(equipmentEcData.getCapabilities().getL3vpn());
-        capability.setVpn(vpn);
-        equipmentType.setCapability(capability);
+      } else {
+        vpn.setL2(false);
+        vpn.setL3(false);
       }
+      capability.setVpn(vpn);
+
+      EquipmentQosEntity qos = new EquipmentQosEntity();
+      qos.setRemark(equipmentEcData.getQos().getRemark().getEnable());
+      if (qos.getRemark()) {
+        qos.setRemarkCapabilityList(equipmentEcData.getQos().getRemark().getMenuList());
+        qos.setRemarkDefault(equipmentEcData.getQos().getRemark().getRemarkDefault());
+      }
+      qos.setShaping(equipmentEcData.getQos().getShaping().getEnable());
+      if (qos.getShaping()) {
+        qos.setEgressQueueCapabilityList(equipmentEcData.getQos().getEgress().getMenuList());
+        qos.setEgressQueueDefault(equipmentEcData.getQos().getEgress().getEgressDefault());
+      }
+      capability.setQos(qos);
+      equipmentType.setCapability(capability);
 
       EquipmentDhcpEntity dhcp = new EquipmentDhcpEntity();
       dhcp.setDhcpTemplate(equipmentEcData.getZtp().getDhcpTemplate());

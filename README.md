@@ -26,7 +26,7 @@ FC manages multiple switches as one cluster. FC newly defined "edge-point" as a 
 
 ## How to use
 - installation
-    - [installation manual](doc/fabric_controller_installation_manual.md)
+    - [Simplified installation procedure](doc/fabric_controller_auto_installation_manual.md)
 - build
     - [building manual](doc/fabric_controller_building_guide.md)
 - API guide
@@ -36,6 +36,9 @@ FC manages multiple switches as one cluster. FC newly defined "edge-point" as a 
     - [notification list](API/controller_api_notification.xlsx)
     - PDF list `/API/pdf`
     - API samples `/API/samples`
+
+- GUI tool
+    - [GUI user manual](doc/fabric_controller_gui_user_guide.md)
 
 
 ## Hardware

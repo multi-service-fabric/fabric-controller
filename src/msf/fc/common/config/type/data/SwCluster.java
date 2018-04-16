@@ -40,9 +40,9 @@ public class SwCluster {
   @XmlElement(required = true)
   protected String outchannelStartAddress;
   @XmlElement(required = true)
-  protected String aggrigationStartAddress;
+  protected String aggregationStartAddress;
   @XmlSchemaType(name = "integer")
-  protected int aggrigationAddressPrefix;
+  protected int aggregationAddressPrefix;
 
   public int getSwClusterId() {
     return swClusterId;
@@ -156,20 +156,20 @@ public class SwCluster {
     this.outchannelStartAddress = value;
   }
 
-  public String getAggrigationStartAddress() {
-    return aggrigationStartAddress;
+  public String getAggregationStartAddress() {
+    return aggregationStartAddress;
   }
 
-  public void setAggrigationStartAddress(String value) {
-    this.aggrigationStartAddress = value;
+  public void setAggregationStartAddress(String value) {
+    this.aggregationStartAddress = value;
   }
 
-  public int getAggrigationAddressPrefix() {
-    return aggrigationAddressPrefix;
+  public int getAggregationAddressPrefix() {
+    return aggregationAddressPrefix;
   }
 
-  public void setAggrigationAddressPrefix(int value) {
-    this.aggrigationAddressPrefix = value;
+  public void setAggregationAddressPrefix(int value) {
+    this.aggregationAddressPrefix = value;
   }
 
 }

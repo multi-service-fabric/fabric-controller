@@ -40,7 +40,6 @@ public class EsiUtil {
    *          Serial number
    * @return ESI value
    */
-
   public static String createEsi(int lowerSwClusterId, int higherSwClusterId, int serialNumber) {
     try {
       logger.methodStart(new String[] { "lowerSwClusterId", "higherSwClusterId", "serialNumber" },

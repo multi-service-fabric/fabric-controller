@@ -1,6 +1,8 @@
+
 package msf.fc.db.dao.clusters;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -16,13 +18,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcEdgePointDao.class);
 
-
-  
   public List<FcEdgePoint> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -33,7 +32,6 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
     }
   }
 
-  
   public FcEdgePoint readFromBiggestId(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -45,7 +43,6 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
     }
   }
 
-  
   public FcEdgePoint readByPhysicalIfId(SessionWrapper session, Integer ecNodeId, String physicalIfId)
       throws MsfException {
     try {
@@ -54,6 +51,9 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcEdgePoint fcEdgePoint = null;
       for (FcPhysicalIf fcPhysicalIf : fcNode.getPhysicalIfs()) {
@@ -70,7 +70,6 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
     }
   }
 
-  
   public FcEdgePoint readByLagIfId(SessionWrapper session, Integer ecNodeId, String lagIfId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "ecNodeId", "lagIfId" },
@@ -78,6 +77,9 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcEdgePoint fcEdgePoint = null;
       for (FcLagIf fcLagIf : fcNode.getLagIfs()) {
@@ -94,7 +96,6 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
     }
   }
 
-  
   public FcEdgePoint readByBreakoutIfId(SessionWrapper session, Integer ecNodeId, String breakoutIfId)
       throws MsfException {
     try {
@@ -103,6 +104,9 @@ public class FcEdgePointDao extends FcAbstractCommonDao<FcEdgePoint, Integer> {
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcEdgePoint fcEdgePoint = null;
       for (FcBreakoutIf fcBreakoutIf : fcNode.getBreakoutIfs()) {

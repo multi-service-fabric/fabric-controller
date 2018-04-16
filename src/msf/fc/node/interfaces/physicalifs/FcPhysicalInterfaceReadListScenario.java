@@ -33,14 +33,10 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement common process of physical interface-related
- * processing in configuration management function.
- *
+ * Implementation class for physical interface information list acquisition.
  *
  * @author NTT
  *
- * @param <T>
- *          REST request base class
  */
 public class FcPhysicalInterfaceReadListScenario extends FcAbstractPhysicalInterfaceScenarioBase<PhysicalIfRequest> {
 
@@ -76,7 +72,7 @@ public class FcPhysicalInterfaceReadListScenario extends FcAbstractPhysicalInter
 
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 

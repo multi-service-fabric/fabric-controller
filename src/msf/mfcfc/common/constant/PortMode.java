@@ -1,16 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum PortMode {
 
-  
   ACCESS(1, "access"),
-  
+
   TRUNK(2, "trunk");
 
-
   private int code;
-
 
   private String message;
 
@@ -19,17 +16,14 @@ public enum PortMode {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static PortMode getEnumFromCode(Integer code) {
     if (code == null) {
       return null;
@@ -43,7 +37,6 @@ public enum PortMode {
     return null;
   }
 
-  
   public static PortMode getEnumFromMessage(String message) {
     for (PortMode enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

@@ -17,6 +17,7 @@ import msf.fc.slice.slices.l2slice.FcL2SliceCreateScenario;
 import msf.fc.slice.slices.l2slice.FcL2SliceDeleteScenario;
 import msf.fc.slice.slices.l2slice.FcL2SliceReadListScenario;
 import msf.fc.slice.slices.l2slice.FcL2SliceReadScenario;
+import msf.fc.slice.slices.l2slice.FcL2SliceUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -36,7 +37,7 @@ public class FcL2SliceHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcL2SliceHandler.class);
 
   /**
-   * L2 slice generation.
+   * L2 slice addition.
    *
    * @param requestBody
    *          Request message body
@@ -66,7 +67,7 @@ public class FcL2SliceHandler extends AbstractRestHandler {
   }
 
   /**
-   * L2 slice change.
+   * L2 slice modification.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -85,7 +86,21 @@ public class FcL2SliceHandler extends AbstractRestHandler {
   public Response update(@PathParam("slice_id") String sliceId,
       @QueryParam("notification_address") String notificationAddress,
       @QueryParam("notification_port") String notificationPort, String requestBody) {
-    return Response.status(Response.Status.NOT_FOUND).build();
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      L2SliceRequest request = new L2SliceRequest(requestBody, notificationAddress, notificationPort, sliceId, null);
+
+      setCommonData(request);
+
+      FcL2SliceUpdateScenario scenario = new FcL2SliceUpdateScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   /**

@@ -20,7 +20,7 @@ public class CorsResponseFilter implements ContainerResponseFilter {
   private static final String CORS_ALLOW_ORIGIN_VALUE = "*";
 
   private static final String CORS_ALLOW_METHODS = "Access-Control-Allow-Methods";
-  private static final String CORS_ALLOW_METHODS_VALUE = "GET, POST, DELETE, PUT";
+  private static final String CORS_ALLOW_METHODS_VALUE = "GET, POST, DELETE, PUT, PATCH";
 
   private static final String CORS_ALLOW_HEADERS = "Access-Control-Allow-Headers";
   private static final String CORS_ALLOW_HEADERS_VALUE = "Content-Type";

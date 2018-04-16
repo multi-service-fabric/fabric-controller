@@ -19,6 +19,7 @@ import msf.fc.slice.cps.l3cp.FcL3CpDeleteScenario;
 import msf.fc.slice.cps.l3cp.FcL3CpReadListScenario;
 import msf.fc.slice.cps.l3cp.FcL3CpReadScenario;
 import msf.fc.slice.cps.l3cp.FcL3CpStaticRouteCreateDeleteScenario;
+import msf.fc.slice.cps.l3cp.FcL3CpUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -39,7 +40,7 @@ public class FcL3CpHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcL3CpHandler.class);
 
   /**
-   * L3CP generation/deletion(/change).
+   * L3CP addition/deletion(/modification).
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -69,8 +70,6 @@ public class FcL3CpHandler extends AbstractRestHandler {
       FcL3CpCreateDeleteScenario scenario = new FcL3CpCreateDeleteScenario(OperationType.NORMAL,
           SystemInterfaceType.EXTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
       return createResponse(restResponseBase);
 
     } finally {
@@ -79,7 +78,7 @@ public class FcL3CpHandler extends AbstractRestHandler {
   }
 
   /**
-   * L3CP generation.
+   * L3CP addition.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -108,8 +107,6 @@ public class FcL3CpHandler extends AbstractRestHandler {
 
       FcL3CpCreateScenario scenario = new FcL3CpCreateScenario(OperationType.NORMAL, SystemInterfaceType.EXTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
       return createResponse(restResponseBase);
 
     } finally {
@@ -118,7 +115,7 @@ public class FcL3CpHandler extends AbstractRestHandler {
   }
 
   /**
-   * L3CP change.
+   * L3CP modification.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -139,7 +136,20 @@ public class FcL3CpHandler extends AbstractRestHandler {
   public Response update(@PathParam("slice_id") String sliceId, @PathParam("cp_id") String cpId,
       @QueryParam("notification_address") String notificationAddress,
       @QueryParam("notification_port") String notificationPort, String requestBody) {
-    return Response.status(Response.Status.NOT_FOUND).build();
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      L3CpRequest request = new L3CpRequest(requestBody, notificationAddress, notificationPort, sliceId, cpId, null);
+
+      setCommonData(request);
+
+      FcL3CpUpdateScenario scenario = new FcL3CpUpdateScenario(OperationType.NORMAL, SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   /**
@@ -271,8 +281,6 @@ public class FcL3CpHandler extends AbstractRestHandler {
       FcL3CpStaticRouteCreateDeleteScenario scenario = new FcL3CpStaticRouteCreateDeleteScenario(OperationType.NORMAL,
           SystemInterfaceType.EXTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
       return createResponse(restResponseBase);
 
     } finally {

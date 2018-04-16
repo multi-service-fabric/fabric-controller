@@ -1,3 +1,4 @@
+
 package msf.mfcfc.failure.logicalif.data;
 
 import java.text.MessageFormat;
@@ -15,45 +16,36 @@ import msf.mfcfc.failure.logicalif.data.entity.LogicalIfStatusNodeEntity;
 import msf.mfcfc.failure.logicalif.data.entity.LogicalIfUpdateLogicalIfStatusOptionEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class LogicalIfOperationRequestBody implements RestRequestValidator {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(LogicalIfOperationRequestBody.class);
 
-  
   @SerializedName("action")
   private String action;
 
-  
   @SerializedName("update_logical_if_status_option")
   private LogicalIfUpdateLogicalIfStatusOptionEntity updateLogicalIfStatusOption;
 
-  
   public String getAction() {
     return action;
   }
 
-  
   public void setAction(String action) {
     this.action = action;
   }
 
-  
   public LogicalIfUpdateLogicalIfStatusOptionEntity getUpdateLogicalIfStatusOption() {
     return updateLogicalIfStatusOption;
   }
 
-  
   public void setUpdateLogicalIfStatusOption(LogicalIfUpdateLogicalIfStatusOptionEntity updateLogicalIfStatusOption) {
     this.updateLogicalIfStatusOption = updateLogicalIfStatusOption;
   }
 
-  
   public InternalOperationAction getActionEnum() {
     return InternalOperationAction.getEnumFromMessage(action);
   }
 
-  
   public void setActionEnum(InternalOperationAction action) {
     this.action = action.getMessage();
   }
@@ -66,8 +58,6 @@ public class LogicalIfOperationRequestBody implements RestRequestValidator {
       ParameterCheckUtil.checkNotNull(getActionEnum());
 
       switch (getActionEnum()) {
-        case GET_LOGICAL_IF_STATUS:
-          break;
         case UPDATE_LOGICAL_IF_STATUS:
 
           ParameterCheckUtil.checkNotNull(updateLogicalIfStatusOption);
@@ -83,8 +73,6 @@ public class LogicalIfOperationRequestBody implements RestRequestValidator {
   }
 
   private void validateUpdateLogicalIfStatusOption() throws MsfException {
-
-
 
     if (updateLogicalIfStatusOption.getNodeList() != null) {
       validateNodeList();
@@ -110,14 +98,12 @@ public class LogicalIfOperationRequestBody implements RestRequestValidator {
 
   private void validateNode(LogicalIfStatusNodeEntity tempNode) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(tempNode.getNodeId());
 
     ParameterCheckUtil.checkNotNull(tempNode.getFailureStatusEnum());
   }
 
   private void validateIf(LogicalIfStatusIfEntity tempIf) throws MsfException {
-
 
     ParameterCheckUtil.checkNotNullAndLength(tempIf.getNodeId());
 
@@ -128,7 +114,6 @@ public class LogicalIfOperationRequestBody implements RestRequestValidator {
     ParameterCheckUtil.checkNotNull(tempIf.getStatusEnum());
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

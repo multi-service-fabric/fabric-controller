@@ -1,16 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum RoleType {
 
-  
   MASTER(1, "master"),
-  
+
   SLAVE(2, "slave");
 
-
   private int code;
-
 
   private String message;
 
@@ -19,17 +16,14 @@ public enum RoleType {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static RoleType getEnumFromCode(Integer code) {
     if (code == null) {
       return null;
@@ -43,7 +37,6 @@ public enum RoleType {
     return null;
   }
 
-  
   public static RoleType getEnumFromMessage(String message) {
     for (RoleType enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

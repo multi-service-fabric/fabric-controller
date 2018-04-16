@@ -1,5 +1,5 @@
-package msf.mfcfc.common.data;
 
+package msf.mfcfc.common.data;
 
 public class EsiId {
 

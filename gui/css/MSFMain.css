@@ -1,0 +1,1451 @@
+@charset "utf-8";
+/* -------------------------*/
+/* デバッグ用               */
+/* -------------------------*/
+#test {
+    float: left;
+}
+
+/* -------------------------*/
+/* 全体概要                 */
+/* -------------------------*/
+html,body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fcfcfc;
+}
+
+/* グリッドレイアウト
+ *   1    2            3    4
+ *  1+----+------------+----+
+ *  2+----+------------+----+
+ *  3+----+------------+----+
+ *   |    |            |    |
+ *   |    |            |    |
+ *  4+----+------------+----+
+ *  5+----+------------+----+
+ */
+.my-grid {
+    display: -ms-grid;
+    display: grid;
+    -ms-grid-columns: 130px 1fr 310px;
+    grid-template-columns: 130px 1fr 310px;
+    -ms-grid-rows: 28px 32px 1fr 24px;
+    grid-template-rows: 28px 32px 1fr 75px;
+    background: #fcfcfc;
+    width: 100%;
+    height: 100%;
+}
+/* グリッド要素 */
+.my-grid-item {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    position: relative;
+    background-color: #fcfcfc;
+}
+/* ヘッダー領域 */
+header {
+    -ms-grid-column: 2;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    -ms-grid-column-span: 2;
+    grid-row-start: 1;
+    grid-row-end: 2;
+    -ms-grid-row: 1;
+}
+/* メニューバー領域 */
+navi {
+    -ms-grid-column: 2;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    -ms-grid-column-span: 2;
+    grid-row-start: 2;
+    grid-row-end: 3;
+    -ms-grid-row: 2;
+}
+/* 左ペイン：メニュー領域 */
+aside {
+    -ms-grid-column: 1;
+    grid-column-start: 1;
+    grid-column-end: 2;
+    -ms-grid-row: 1;
+    grid-row-start: 1;
+    grid-row-end: 5;
+    -ms-grid-row-span: 4;
+    margin-right: 4px;
+}
+/* 中央ペイン：図形描画領域 */
+main {
+    -ms-grid-column: 2;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    -ms-grid-column-span: 2;
+    -ms-grid-row: 3;
+    grid-row-start: 3;
+    grid-row-end: 4;
+}
+/* 右ペイン：情報欄領域 */
+article {
+    -ms-grid-column: 3;
+    grid-column-start: 3;
+    grid-column-end: 4;
+    -ms-grid-row: 2;
+    grid-row-start: 2;
+    grid-row-end: 5;
+    -ms-grid-row-span: 3;
+}
+/* フッター領域 */
+footer {
+    -ms-grid-column: 2;
+    grid-column-start: 2;
+    grid-column-end: 3;
+    -ms-grid-column-span: 1;
+    -ms-grid-row: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
+}
+
+/* 基底パネル */
+#menu,
+#presentationHeader,
+#networkView,
+#controllerView,
+#log,
+#articleContainer {
+    width: 100%;
+    height: 100%;
+    background-color: #fcfcfc;
+    position: absolute;
+    left: 0;
+    top: 0;
+    overflow: hidden;
+}
+#networkView,
+#controllerView,
+#articleContainer {
+    border-top: solid 1px lightgray;
+    border-bottom: solid 1px lightgray;
+}
+
+#multiClusterView,
+#figure,
+#nodeView {
+    width: 100%;
+    height: 100%;
+    background-color: #fcfcfc;
+    position: relative;
+    overflow: hidden;
+}
+
+#multiClusterCanvas,
+#nodeCanvas,
+#controllerCanvas {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 1980px;
+    height: 100%;
+    min-width: 1024px;
+    min-height: 1024px;
+}
+
+/* 左メニュー */
+#menu {
+    margin-left: 0;
+    margin-right: 5px;
+    float: left;
+}
+
+
+/* -------------------------*/
+/* メニューバー             */
+/* -------------------------*/
+#menubar,
+#dummyBar {
+    width: calc(100% - 300px);
+    height: 32px;
+    border-top: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+    border-left: solid 1px lightgray;
+}
+#naviSpacer,
+#naviSpacerBg {
+    display: block;
+    float: right;
+    width: 310px !important;
+    height: 32px;
+    background-color: #DCE6F2;
+    border-top: solid 1px lightgray;
+}
+.menubarItem {
+    /* prmenu.css で定義している内容. DOM追加直後にスタイルが適用されないのでCSSクラス指定する */
+    color: rgb(97, 141, 195);
+    text-transform: capitalize;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    font-family: sans-serif;
+    font-weight: 400;
+    background-color: rgb(240, 250, 255);
+}
+.menubarItem:hover {
+    background-color: rgb(255, 255, 255);
+}
+a.menuItem0 {
+    white-space: nowrap;
+    height: 32px;
+}
+span.menuItem0 {
+    display: inline-block;
+    margin-top: 8px;
+}
+
+/* メニューバー：選択不可 */
+div.prmenu_container ul li a.menuDisabled:hover {
+    background-color: rgb(220, 230, 242) !important;
+    cursor: default;
+}
+div.prmenu_container ul li a.menuDisabled span {
+    color: #c0c0c0 !important;
+}
+div.prmenu_container ul li ul.menuDisabled {
+    display: none !important;
+}
+
+/* メニューバー内のリソース数カウンタ */
+.clusterCount,
+.nodeCount,
+.sliceCount {
+    display: inline-block;
+    width: 21px;
+    height: 21px;
+    font-size: 8px;
+    text-align: center;
+    background-repeat: no-repeat;
+}
+.clusterCount {
+    background-image: url("../img/icoCluster.png");
+}
+.nodeCount {
+    background-image: url("../img/icoNode.png");
+}
+.sliceCount {
+    background-image: url("../img/icoSlice.png");
+}
+
+/* メニューバー内のCPリソース数カウンタ */
+.cpCountMenu {
+    float: right;
+    position: relative;
+}
+.cpCountDialog {
+    float: right;
+    position: relative;
+    margin-right: 16px;
+}
+.cpNumber {
+    position: absolute;
+    right: 0;
+    min-width: 16px;
+    height: 16px;
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid rgba(255,0,0,0.5);
+    border-radius: 9px;
+    font-size: 0.8em !important;
+    line-height: 16px;
+}
+
+
+/* -------------------------*/
+/* メニューバー・ダイアログ */
+/* -------------------------*/
+.menubarPanelTitle_container {
+    outline: 1px solid #dce6f2;
+    width: 100%;
+    margin: 0;
+    padding-top: 5px;
+    background-color: rgb(240, 250, 255);
+}
+.menubarPanelTitle {
+    margin-left: 5px;
+    margin-top: 8px;
+    font-size: 1.3em;
+    font-weight: bold;
+    vertical-align:middle;
+    line-height: 1.3em;
+    color: #618dc3;
+}
+.menubarPanelBody {
+    flex: 1; /* IE11用のおまじない「flex-grow: 1」ではダメ */
+    outline: 1px solid #dce6f2;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
+    margin: 0;
+}
+.menubar_container { /* <ul> */
+    width: 100%;
+    position: relative;
+    padding: 0;
+    margin: 0;
+}
+.menubar_container li {
+    display: block;
+    display: inline-block;
+    width: 100%;
+    height: 32px;
+    padding-top: 8px;
+    margin: 0;
+    text-align: left;
+    position: relative;
+    background-color: rgb(240, 250, 255);
+    border-bottom: 1px solid #cfcfcf;
+}
+.menubar_container li a {
+    display: block;
+    display: inline-block;
+    width: 100%;
+    padding: 0;
+    color: rgb(97, 141, 195);
+    margin-left: 5px;
+}
+
+.menubar_container li:hover {
+    background-color: rgb(230, 237, 245);
+}
+
+#menubarPanelMessage {
+    color: red;
+}
+
+/* -------------------------*/
+/* メイン                   */
+/* -------------------------*/
+#networkView,
+#controllerView {
+    float: left;
+    overflow: hidden;
+    border-right: solid 1px lightgray;
+    border-left: solid 1px lightgray;
+    border-top: none;
+}
+
+/* Detail部の設定 */
+#detail {
+    position: absolute;
+    top: 32px;
+    right: 0;
+    width: 300px;
+    height: calc(100% - 32px);
+    display: flex;
+    flex-direction: column;
+    float: left;
+    z-index: 99;
+    background-color: #fcfcfc;
+    border: solid 1px lightgray;
+}
+
+#log {
+    overflow: auto;
+    border-top: solid 1px lightgray;
+}
+
+/* -------------------------*/
+/* ヘッダー部               */
+/* -------------------------*/
+#loginInfo {
+    position: absolute;
+    top: -1px;
+    right: 15px;
+    display: block;
+}
+
+#logo {
+    margin-right: 5px;
+    height: 75px;
+    float: left;
+}
+
+#logout {
+    margin-top: 3px;
+    margin-left: 5px;
+    float: right;
+    height: 23px;
+    line-height: 23px;
+    cursor: pointer;
+}
+
+#accountIcon {
+    margin-top: 3px;
+    display: block;
+    float: right;
+    margin-right: 5px;
+    width: 25px;
+    height: 23px;
+    background-image:url("../img/account.svg");
+}
+
+#account {
+    margin-top: 6px;
+    margin-right: 10px;
+    float: right;
+}
+
+#loginUser {
+    float: right;
+    display: block;
+    height: 100%;
+}
+
+/* 詳細画面の開閉ボタン */
+#slideRight,
+#slideLeft {
+    display: block;
+    width: 24px;
+    height: 20px;
+    margin-top: 4px;
+    float: right;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+#slideRight {
+    text-align: left;
+}
+#slideLeft {
+    text-align: right;
+}
+#slideRight:active,
+#slideLeft:active {
+    margin-top: 5px;
+}
+
+.disableSlide {
+    color: #c0c0c0;
+    cursor: default !important;
+}
+.disableSlide:active {
+    margin-top: 5px !important;
+}
+
+/* -------------------------*/
+/* タブ                     */
+/* -------------------------*/
+.tabbox {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+}
+.tab {
+    display: -webkit-flex;
+    display: flex;
+    width: 140px;
+    height: 22px;
+    margin-top: 4px;
+    border-top: solid 1px lightgray;
+    border-left: solid 1px lightgray;
+    border-right: solid 1px lightgray;
+    border-bottom: none;
+    -webkit-border-top-left-radius: 6px;
+    -webkit-border-top-right-radius: 6px;
+    -moz-border-radius-topleft: 6px;
+    -moz-border-radius-topright: 6px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    background-color: #ffffff;
+    color: #a0a0a0;
+    padding: 1px 0 0 5px;
+    cursor: pointer;
+    -webkit-align-items: center;
+    align-items: center;
+    white-space: nowrap;
+}
+.tab:hover {
+    color: #618dc3;
+}
+.tab:active {
+    padding-top: 2px;
+}
+.tabSpacer {
+    width: 5px;
+}
+.tabOn {
+    border-top: solid 1px #618dc3;
+    border-left: solid 1px #618dc3;
+    border-right: solid 1px #618dc3;
+    background-color: #dce6f2;
+    color: #618dc3;
+    cursor: default;
+}
+
+#navi1,
+#navi2,
+#navi3 {
+    position:absolute;
+    top: 7px;
+    color: #a0a0a0;
+    z-index: 97;
+}
+#navi1 {
+    left: 5px;
+}
+#navi2 {
+    left: 40px;
+}
+#navi3 {
+    left: 120px;
+}
+
+/* -------------------------*/
+/* メニュー部               */
+/* -------------------------*/
+
+.menuTitle {
+    margin-top: 5px;
+    margin-bottom: 3px;
+    color: #618dc3;
+    cursor: pointer;
+}
+.menuTitle:before {
+    background-color: #618dc3; /* 上記と同じ色 */
+    content:"";
+    display:inline-block;
+    width: 11px;
+    height: 11px;
+    margin: 0 3px 0 0;
+}
+
+.showMenu .label,
+.showMenu label,
+.controlMenu .label,
+.controlMenu label {
+    display: table-cell;
+    width: 999px;
+    vertical-align: middle;
+    padding-left: 10px;
+    cursor: pointer;
+}
+
+.menuSubItemList {
+    margin: 0;
+    padding: 3px 0 3px 10px;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+}
+
+li {
+    margin: 2px 0;
+}
+
+.menuClearance,
+.menuAreaClearance {
+    height: 1px;
+}
+
+.menuItem + label {
+    border: solid 1px #618dc3;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    height: 31px;
+    background: white;
+    color: #618dc3;
+}
+.menuItem + label:active {
+    padding-top: 2px;
+    padding-bottom: 0;
+}
+
+.menuItem:checked + label, .menuSubItem:active, .menuSubItem:checked + label {
+    background: #dce6f2;
+}
+
+.menuItemAcc + label {
+    border: solid 1px #618dc3;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    height: 31px;
+    background: white;
+    color: #618dc3;
+}
+
+.menuItemAcc + label:active {
+    padding-top: 2px;
+    padding-bottom: 0;
+}
+
+.menuItemAcc:checked + label, .menuSubItem:active, .menuSubItem:checked + label {
+    background: #dce6f2;
+}
+
+.menuSubItem, .menuSubItem + label {
+    border: solid 1px #618dc3;
+    height: 23px;
+    line-height: 23px;
+    background: white;
+    color: #618dc3;
+}
+
+/* -------------------------*/
+/* Figure部                 */
+/* -------------------------*/
+
+/* SVGをはみ出させないおまじない */
+.width-100-percent {
+	width: 100%;
+	height: 100%;
+}
+
+#controllerStatus {
+    position: absolute;
+    height: 30px;
+    opacity: 0.75;
+    color: red;
+    background-color: white;
+    /* Figure部の最上部 */
+    z-index: 3;
+    top: 85px;
+    left: 20px;
+}
+
+#controllerStatusMsg {
+    float: left;
+    font-size: 1.20em;
+    line-height: 30px;
+}
+
+#controllerStatusIcon {
+    float: left;
+    height: 30px;
+    width: 30px;
+}
+
+.loader:before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+    margin-left: 5px;
+    border-radius: 50%;
+    border: 3px solid red;
+    border-top-color: pink;
+    animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+    to {transform: rotate(360deg);}
+}
+
+#borderFrame {
+    outline: 1px solid lightgrey;
+    height: 100%;
+}
+
+#clipFrame {
+    overflow: hidden;
+    position: relative;
+    height: 100%;
+}
+
+#dragFrame {
+    position: absolute;
+    height: 100%;
+}
+
+#infomationCanvas {
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 2;
+}
+
+#animationCanvas {
+    position: absolute;
+    background-color: transparent;
+    z-index: 1;
+}
+
+#mainCanvas {
+    z-index: 0;
+}
+
+/* ノード表示：IF番号ラベル */
+.ifLabel {
+    font-size: 9px;
+}
+
+/* ノード表示：IF色凡例 */
+.legendLabel {
+    font-size: 10px;
+}
+
+/* 十字キー */
+#crossKeyPanel {
+    visibility: hidden;
+    position: absolute;
+    left: 5px;
+    border: solid 1px #c0c0c0;
+    z-index: 10;
+    background-color: #fafaff;
+    opacity: 0.5;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 2px;
+}
+#crossKeyPanel td{
+    padding: 1px;
+    width: 16px;
+    height: 16px;
+    line-height: 0.9em;
+    text-align: center;
+    overflow: hidden;
+}
+.crossKeyBtn {
+    cursor: pointer;
+}
+#crossKeyTop:active,
+#crossKeyRight:active,
+#crossKeyCenter:active,
+#crossKeyLeft:active,
+#crossKeyBottom:active {
+    padding-top: 2px;
+    padding-bottom: 0;
+    color: #000080;
+}
+
+/* -------------------------*/
+/* Detail部                 */
+/* -------------------------*/
+#filterArea {
+    margin: 0 2px 5px;
+    visibility: hidden;
+}
+
+#detailArea {
+    flex: 1; /* IE11用のおまじない「flex-grow: 1」ではダメ */
+    overflow-y: auto;
+    overflow-x: auto;
+    padding-top: 5px;
+}
+
+div.filter {
+    height: 23px;
+    text-align: center;
+    margin: 0 2px 2px;
+    padding: 1px 5px 1px 5px;
+    border: solid 1px #618dc3;
+    background: white;
+    color: #618dc3;
+    line-height: 23px;
+    float: left;
+    cursor: pointer;
+}
+
+div.filter:active {
+    padding-top: 2px;
+    padding-bottom: 0;
+}
+
+/* MSF.MsfDetailクラスからアクセスされる */
+div.filterSelect {
+    background: #dce6f2;
+}
+
+div.detail {
+    height: 25px;
+    background: #D6F9F9;
+    text-align: center;
+    margin: auto;
+    width: 180px;
+    border: solid 1px black;
+    font-weight: bold;
+    line-height: 25px;
+}
+
+table.detail {
+    /* 隣り合うセルの線を結合 */
+    border-collapse: collapse;
+    /* 外側は黒色の実線2px */
+    border: 1px solid black;
+    margin: 5px 5px 10px 5px;
+    /* 10px は左右のマージン() */
+    width: calc(100% - 10px - 5px);
+}
+
+table.detail tr:nth-child(odd) {
+    background-color: #F4F5FB;
+}
+table.detail tr:nth-child(even) {
+    background-color: #FFFFFF;
+}
+table.detail tr:hover {
+    background-color: #DCE6F2;
+}
+
+td.detail {
+    /* 内側は黒色の実線1px */
+    border: 1px solid black;
+    text-align: center;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+th.detail {
+    /* 内側は黒色の実線1px */
+    border: 1px solid black;
+    background: #D9D6F9;
+}
+
+/* シェーピングレート量 */
+#detailTable6-1 td:nth-child(7),
+#detailTable6-1 td:nth-child(8) {
+    text-align: right;
+}
+#detailTable6-2 td:nth-child(14),
+#detailTable6-2 td:nth-child(15) {
+    text-align: right;
+}
+
+/* トラフィック量 */
+#detailTable8-1 td:nth-child(5),
+#detailTable8-1 td:nth-child(6) {
+    text-align: right;
+}
+#detailTable8-2 td:nth-child(3),
+#detailTable8-2 td:nth-child(4) {
+    text-align: right;
+}
+/* 障害 */
+#detailTable9-3 td:nth-child(3),
+#detailTable9-3 td:nth-child(4),
+#detailTable9-3 td:nth-child(5) {
+    white-space:nowrap;
+}
+/* コントローラ */
+#detailTable10 td:nth-child(2),
+#detailTable10 td:nth-child(3) {
+    text-align:right;
+}
+#detailTable10 td:nth-child(4) {
+    text-align:left;
+    white-space:nowrap;
+}
+.detailDisk1 {
+    display:inline-block;
+    min-width: 78px;
+    text-align: right;
+}
+.detailDisk2 {
+    display:inline-block;
+    min-width: 50px;
+    text-align: right;
+}
+.detailDisk3 {
+    display:inline-block;
+    padding-left: 5px;
+}
+
+/* -------------------------*/
+/* ログ出力部               */
+/* -------------------------*/
+
+#log * {
+    font-family: "Courier" , Helvetica , Arial;
+    font-size: 0.96em;
+}
+
+#logTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#logTable tr {
+    height: 16px;
+}
+
+.logFail * {
+    background-color: snow;
+}
+
+.logIcon {
+    width: 25px;
+    background-size: 13px 13px;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.logSuccess .logIcon {
+    background-image: url("../img/log_success.png");
+}
+
+.logFail .logIcon {
+    background-image: url("../img/log_fail.png");
+}
+
+.logTime {
+    width: 65px;
+}
+
+.logOperation {
+    width: 180px;
+}
+
+.logOperation:before {
+    content: "[";
+}
+
+.logOperation:after {
+    content: "]";
+}
+
+/* ---------------------------*/
+/* モーダルパネル関連(共通)   */
+/* ---------------------------*/
+#maskLayer {
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: black;
+    display: none;
+}
+
+.overlayPanel {
+    position: fixed;
+    opacity: 0;
+    background: none repeat scroll 0 0 #FFFFFF;
+    box-shadow: 2px 2px 3px 3px rgba(0, 0, 0, 0.5);
+    display: none;
+    padding: 40px 30px 20px 30px;
+    top: 80px;
+    width: 500px;
+    height: calc(100% - 220px);
+    min-height: 200px;
+    z-index: 999;
+}
+
+.panelMain {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.panelCloseButton {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: block;
+    width: 14px;
+    height: 14px;
+    background: url("../img/close.png");
+    z-index: 2;
+    cursor: pointer;
+}
+
+.panelTitle {
+    height: 24px;
+}
+
+.panelTitle h1 {
+    margin: 0;
+    font-size: 1.3em;
+    vertical-align:middle;
+    line-height: 1.3em;
+    color: #618dc3;
+}
+
+.panelTitle h1:before {
+    content: "";
+    display: inline-block;
+    height: 15px;
+    width: 15px;
+    background-color: #618dc3;
+    margin-right: 7px;
+}
+
+.overlayPanel h2 {
+    height: 16px;
+}
+
+.panelSection {
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+/* ------------------*/
+/* メッセージパネル  */
+/* ------------------*/
+#infomationPanel {
+    top: calc(50% - 50px);
+    width: auto;
+    min-width: 250px;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+}
+
+/* タイトル */
+#informationTitle {
+    width: calc(100% - 20px);
+    height: 40px;
+    line-height: 40px;
+    padding-left: 20px;
+    background-color: #dce6f2;
+    color: #618dc3;
+    margin-bottom: 20px;
+    font-weight: bold;
+    border-bottom: 2px solid #618dc3;
+}
+
+/* メッセージ */
+#informationMessage {
+    margin: 0 20px 15px 20px;
+}
+
+/* OKボタン */
+#informationClose {
+    float: right;
+    margin: 0 20px 15px 0;
+}
+
+/* -----------------*/
+/* REST発行パネル   */
+/* -----------------*/
+
+.panelBody {
+    flex: 1; /* IE11用のおまじない「flex-grow: 1」ではダメ */
+    outline: 1px solid #dce6f2;
+    overflow: auto;
+    padding: 5px;
+    margin-top: 12px;
+}
+
+.panelAlert {
+    margin-top: 10px;
+    padding: 10px;
+    color: white;
+    background-color: salmon;
+    border-radius: 10px;
+    font-size: 1.05em;
+    /* デフォルトでは非表示。警告ありの場合だけ、テキストを設定して表示する */
+    display: none;
+}
+
+.panelFooter {
+    display: block;
+    float: right;
+    margin-top: 10px;
+    width: 100%;
+    height: 30px;
+}
+
+.panel_div {
+    position: relative;
+    outline: none;
+    line-height: 28px;
+    margin-bottom: 5px;
+}
+
+/* 表示する入力項目 */
+.panel_details {
+    position: absolute;
+    left: 250px;
+    width: 200px;
+    display: inline-block;
+    text-align: left !important;
+}
+.panel_details[type="text"] {
+    background-color: ivory;
+}
+
+.panel_details[type="number"] {
+    background-color: ivory;
+}
+
+/* 非表示の入力項目 */
+.panel_details_none {
+    position: absolute;
+    left: 250px;
+    width: 200px;
+    font-size: 0.9em;
+    outline: none;
+    display: none;
+}
+
+.panel_readonly {
+    color: black;
+    background: whitesmoke !important;
+}
+
+.panel_select_label {
+    margin-left: 20px;
+}
+
+.panel_select_radio {
+    display: inline-block !important;
+}
+
+.panel_select_checkbox {
+    display: inline-block !important;
+    margin-left: 0 !important;
+    width: 16px;
+}
+
+.deployButton {
+    float: right;
+    height: 100%;
+}
+
+.panelCancelButton {
+    float: right;
+    margin-right: 15px;
+    height: 100%;
+}
+
+.deployButton:after,
+.panelCancelButton:after {
+    content: "";
+    display: block;
+    float: right;
+    background-size: cover;
+    width: 15px;
+    height: 15px;
+    margin-top: 3px;
+    line-height: 25px;
+    margin-left: 7px;
+}
+
+.deployButton:after {
+    background-image: url("../img/log_success.png");
+}
+
+.panelCancelButton:after {
+    background-image: url("../img/log_fail.png");
+}
+
+.deploy_id {
+    display: none;
+}
+
+/* 繰り返し要素の区切り線 */
+span.itemSep1 {
+    border-top: 1px dashed #a0a0a0;
+    display: inline-block;
+    width: 20px;
+    height: 3px;
+}
+span.itemSep2 {
+    border-top: 1px dashed #a0a0a0;
+    display: inline-block;
+    width: 170px;
+    height: 3px;
+}
+/* 項目の折りたたみボタン */
+span.showItem,
+span.hideItem {
+    display: inline-table;
+    width: 24px;
+    height: 16px;
+    cursor: pointer;
+}
+span.showItem {
+    text-align: right;
+}
+span.hideItem {
+    text-align: left;
+}
+span.showItem:active,
+span.hideItem:active {
+    font-size: 12px;
+}
+/* Node要素のカウンタ */
+.countNode_start {
+    counter-reset: cntNode;
+}
+.countNode {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+.countNode:after {
+    counter-increment: cntNode;
+    content: " (" counter(cntNode) ") ";
+}
+/* Ifリスト要素のカウンタ */
+.countIf_start {
+    counter-reset: cntIf;
+}
+.countIf {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+.countIf:after {
+    counter-increment: cntIf;
+    content: " (" counter(cntIf) ") ";
+}
+/* If_Idリスト要素のカウンタ */
+.countIfId_start {
+    counter-reset: cntIfId;
+}
+.countIfId {
+    color: #a0a0a0;
+    font-size: 12px;
+}
+.countIfId:after {
+    counter-increment: cntIfId;
+    content: " (" counter(cntIfId) ") ";
+}
+
+/* ---------------*/
+/* 処理中パネル   */
+/* ---------------*/
+.processing {
+    display: none;
+}
+
+.processingIcon,
+.processingMessage {
+    float: left;
+}
+
+.processingIcon {
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.processingMessage {
+    /* .processingIcon:beforeと合わせる感じ */
+    line-height: 30px;
+    font-size: 1.30em;
+    font-weight: bold;
+    color: grey;
+}
+
+.processingIcon:before {
+    content: "";
+    display: block;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    margin-top: 3px;
+    margin-left: 3px;
+    border-radius: 50%;
+    border: 5px solid grey;
+    border-top-color: lightgrey;
+    animation: rotate 1.5s linear infinite;
+}
+
+/* --------------------*/
+/* 機種情報選択パネル  */
+/* --------------------*/
+
+#modelInfoSelectPanel button {
+    height: 30px;
+    min-width: 120px;
+}
+
+#modelInfoSelectPanel {
+    min-height: 300px;
+}
+
+#vpnTypeList label,
+#portSpeedList label {
+    min-width: 35px;
+}
+
+#capabilitySelectSection,
+#modelSelectSection {
+    flex: 1; /* IE11用のおまじない「flex-grow: 1」ではダメ */
+    padding-left: 15px;
+    max-height: calc(100% - 24px);
+    margin-bottom: 0;
+}
+
+#capabilitySelectSection > *,
+#modelSelectSection > * {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+#capabilitySelectSection .portSpeedTitle {
+    width: 80px;
+}
+
+#capabilitySelectSection table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#capabilitySelectSection td {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+#portSpeedList {
+    flex-wrap: wrap;
+}
+
+#modelList {
+    padding-left: 15px;
+    overflow: auto;
+    max-height: calc(100% - 20px - 16px - 20px - 32px - 20px);
+}
+
+#modelList .model+label,
+#configModelList .model+label {
+    display: block;
+    height: 25px;
+    line-height: 25px;
+    border: solid 1px #618dc3;
+    border-bottom: none;
+    background-color: white;
+    color: #618dc3;
+    padding: 3px 10px 3px 10px;
+    /* 15pxは親コンテナ(modelList/configModelList)のpadding 10pxは謎 */
+    width: calc(100% - 10px - 15px);
+}
+
+#modelList .model:checked+label,
+#modelList .model:active,
+#configModelList .model:checked+label,
+#configModelList .model:active {
+    background: #dce6f2;
+}
+
+#modelList .model+label:last-of-type,
+#configModelList .model+label:last-of-type {
+    border-bottom: solid 1px #618dc3;
+}
+
+/* --------------------------*/
+/* スライスタイプ選択パネル  */
+/* --------------------------*/
+
+#sliceSelectPanel button {
+    height: 30px;
+    min-width: 120px;
+}
+
+#sliceSelectPanel {
+    min-height: 150px;
+}
+
+#sliceTypeSelectSection > * {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+#sliceTypeSelectSection .sliceTypeTitle {
+    width: 80px;
+}
+
+#sliceTypeSelectSection table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#sliceTypeSelectSection td {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+/* --------------------------*/
+/* ＣＰ生成オプションパネル  */
+/* --------------------------*/
+
+#cpCreateOptionPanel button {
+    height: 30px;
+    min-width: 120px;
+}
+
+#cpCreateOptionPanel {
+    min-height: 300px;
+}
+
+#cpOptionSection > * {
+    margin-top: 20px;
+    margin-bottom: 0;
+}
+
+#cpOptionSection .cpOptionTitle {
+    width: 120px;
+}
+
+#cpOptionSection table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#cpOptionSection td {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding-right: 10px;
+    vertical-align: middle;
+}
+
+#protocolList label {
+    min-width: 50px;
+}
+
+
+
+/* --------------------------*/
+/* test                      */
+/* --------------------------*/
+
+
+#accordion-panel dt {
+  cursor: pointer;
+  margin-bottom: 1px;
+}
+
+#accordion-panel dd .inner {
+    border: solid 1px #618dc3;
+    height: 33px;
+    background: white;
+    color: #618dc3;
+}
+
+#accordion-panel dd {
+  display: none;
+}
+
+.layer-1 dt {
+    border: solid 1px #618dc3;
+    height: 33px;
+    background: white;
+    color: #618dc3;
+}
+
+.layer-2 dt {
+    border: solid 1px #618dc3;
+    height: 33px;
+    background: white;
+    color: #618dc3;
+}
+

@@ -5,7 +5,7 @@ import msf.mfcfc.core.scenario.AbstractScenario;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement common process in the CP traffic information
+ * Abstract class to implement the common process in the CP traffic information
  * management function.
  *
  * @author NTT

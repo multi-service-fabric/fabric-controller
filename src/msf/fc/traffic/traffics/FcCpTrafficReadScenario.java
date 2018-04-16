@@ -156,6 +156,7 @@ public class FcCpTrafficReadScenario extends FcAbstractCpsTrafficScenarioBase<Cp
     }
 
     if (cpTraffic == null) {
+
       String logMsg = MessageFormat.format("target resource not found. parameters={0}, sliceId={1}, cpId={2}, ifId={3}",
           "CpTraffic", request.getSliceId(), request.getCpId(), ifId);
       throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);

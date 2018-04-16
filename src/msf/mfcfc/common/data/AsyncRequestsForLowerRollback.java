@@ -5,7 +5,6 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-
 public class AsyncRequestsForLowerRollback {
 
   private AsyncRequestsForLowerPK id;
@@ -111,7 +110,6 @@ public class AsyncRequestsForLowerRollback {
     this.asyncRequestsForLower = asyncRequestsForLower;
   }
 
-  
   @Override
   public String toString() {
     return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "asyncRequestsForLower" })

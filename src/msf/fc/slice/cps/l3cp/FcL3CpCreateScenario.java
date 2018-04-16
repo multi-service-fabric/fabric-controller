@@ -14,7 +14,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpCreateResponseBody;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * L3CP generation implementation class.
+ * L3CP addition implementation class.
  *
  * @author NTT
  *

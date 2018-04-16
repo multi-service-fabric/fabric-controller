@@ -11,6 +11,7 @@ import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.rest.ec.node.interfaces.data.InterfaceReadListEcResponseBody;
 import msf.fc.rest.ec.node.nodes.data.NodeReadListEcResponseBody;
 import msf.fc.rest.ec.node.nodes.data.entity.NodeEcEntity;
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.RestFormatOption;
@@ -64,7 +65,7 @@ public class FcSpineNodeReadListScenario extends FcAbstractSpineNodeScenarioBase
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (request.getFormat() != null) {
         ParameterCheckUtil.checkNotNull(request.getFormatEnum());

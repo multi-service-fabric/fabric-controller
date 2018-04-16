@@ -15,8 +15,8 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 import msf.mfcfc.slice.slices.l2slice.data.entity.L2SliceEntity;
 
 /**
- * Abstract class to implement common process of L2 slice-related processing in
- * slice management function.
+ * Abstract class to implement the common process of L2 slice-related processing
+ * in slice management function.
  *
  * @author NTT
  *

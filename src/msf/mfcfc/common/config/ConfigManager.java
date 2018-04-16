@@ -29,11 +29,14 @@ import msf.mfcfc.common.util.ParameterCheckUtil;
 public class ConfigManager implements FunctionBlockBase {
 
   protected static final String HIBERNATE_CONF_FILE_NAME = "hibernate.cfg.xml";
+
   protected static final MsfLogger logger = MsfLogger.getInstance(ConfigManager.class);
 
   protected String confDir = "../conf/";
 
   protected static ConfigManager instance = null;
+
+  protected String managementIpAddress;
 
   protected String restServerListeningAddress;
 
@@ -42,6 +45,8 @@ public class ConfigManager implements FunctionBlockBase {
   protected int restWaitConnectionTimeout;
 
   protected int restClientRequestTimeout;
+
+  protected int restClientResponseBufferSize;
 
   protected boolean restIsPrettyPrinting;
 
@@ -75,7 +80,9 @@ public class ConfigManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the instance of ConfigManager.
+   * Get the instance of ConfigManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return ConfigManager instance
    */
@@ -292,14 +299,16 @@ public class ConfigManager implements FunctionBlockBase {
 
   }
 
-  protected void setCommonData(String restServerListeningAddress, int restServerListeningPort,
-      int restWaitConnectionTimeout, int restClientRequestTimeout, boolean restIsPrettyPrinting,
-      boolean restIsSerializeNulls, int l2SlicesMaxNum, int l3SlicesMaxNum, int l2SlicesMagnificationNum,
-      int l3SlicesMagnificationNum, int asyncOperationDataRetentionPeriod, int maxAsyncRunnerThreadNum,
-      int invokeAllTimout, int waitOperationResultTimeout, int executingOperationCheckCycle, int lockRetryNum,
-      int lockTimeout, int noticeRetryNum) {
+  protected void setCommonData(String managementIpAddress, String restServerListeningAddress,
+      int restServerListeningPort, int restWaitConnectionTimeout, int restClientRequestTimeout,
+      int restClientResponseBufferSize, boolean restIsPrettyPrinting, boolean restIsSerializeNulls, int l2SlicesMaxNum,
+      int l3SlicesMaxNum, int l2SlicesMagnificationNum, int l3SlicesMagnificationNum,
+      int asyncOperationDataRetentionPeriod, int maxAsyncRunnerThreadNum, int invokeAllTimout,
+      int waitOperationResultTimeout, int executingOperationCheckCycle, int lockRetryNum, int lockTimeout,
+      int noticeRetryNum) {
     try {
       logger.methodStart();
+      this.managementIpAddress = managementIpAddress;
 
       this.restServerListeningAddress = restServerListeningAddress;
 
@@ -308,6 +317,8 @@ public class ConfigManager implements FunctionBlockBase {
       this.restWaitConnectionTimeout = restWaitConnectionTimeout;
 
       this.restClientRequestTimeout = restClientRequestTimeout;
+
+      this.restClientResponseBufferSize = restClientResponseBufferSize;
 
       this.restIsPrettyPrinting = restIsPrettyPrinting;
 
@@ -348,6 +359,18 @@ public class ConfigManager implements FunctionBlockBase {
 
       String checkAddress = null;
 
+      checkAddress = checkHost(managementIpAddress, IpAddressType.IPV4V6);
+
+      if (checkAddress == null) {
+        logger.error("Management Ip Address NG :" + managementIpAddress);
+        return false;
+
+      } else {
+        logger.debug("Management Ip Address OK.");
+
+        managementIpAddress = checkAddress;
+      }
+
       checkAddress = checkHost(restServerListeningAddress, IpAddressType.IPV4V6);
 
       if (checkAddress == null) {
@@ -366,6 +389,10 @@ public class ConfigManager implements FunctionBlockBase {
     }
   }
 
+  public String getManagementIpAddress() {
+    return managementIpAddress;
+  }
+
   public String getRestServerListeningAddress() {
     return restServerListeningAddress;
   }
@@ -380,6 +407,10 @@ public class ConfigManager implements FunctionBlockBase {
 
   public int getRestClientRequestTimeout() {
     return restClientRequestTimeout;
+  }
+
+  public int getRestClientResponseBufferSize() {
+    return restClientResponseBufferSize;
   }
 
   public boolean isPrettyPrinting() {

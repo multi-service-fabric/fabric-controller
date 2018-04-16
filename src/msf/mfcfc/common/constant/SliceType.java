@@ -1,15 +1,13 @@
+
 package msf.mfcfc.common.constant;
 
-
 public enum SliceType {
-  
+
   L2_SLICE(2, "l2vpn"),
-  
+
   L3_SLICE(3, "l3vpn");
 
-
   private int code;
-
 
   private String message;
 
@@ -18,17 +16,14 @@ public enum SliceType {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static SliceType getEnumFromCode(Integer code) {
     if (code == null) {
       return null;
@@ -42,7 +37,6 @@ public enum SliceType {
     return null;
   }
 
-  
   public static SliceType getEnumFromMessage(String message) {
     for (SliceType enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

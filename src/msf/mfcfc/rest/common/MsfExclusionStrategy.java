@@ -1,8 +1,8 @@
+
 package msf.mfcfc.rest.common;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
-
 
 public class MsfExclusionStrategy implements ExclusionStrategy {
 

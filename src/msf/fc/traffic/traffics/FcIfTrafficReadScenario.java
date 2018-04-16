@@ -59,14 +59,15 @@ public class FcIfTrafficReadScenario extends FcAbstractIfTrafficScenarioBase<IfT
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNull(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(request.getFabricType());
-      if (NodeType.LEAF != request.getFabricTypeEnum() && NodeType.SPINE != request.getFabricTypeEnum()) {
+      if ((!NodeType.LEAF.getPluralMessage().equals(request.getFabricType()))
+          && (!NodeType.SPINE.getPluralMessage().equals(request.getFabricType()))) {
         String logMsg = MessageFormat.format("parameter is undefined. parameter={0}, value={1}", "fabric_type",
             request.getFabricType());
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
-      ParameterCheckUtil.checkNotNull(request.getNodeId());
+      ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNotNull(request.getIfType());
       if (InterfaceType.PHYSICAL_IF != request.getIfTypeEnum() && InterfaceType.BREAKOUT_IF != request.getIfTypeEnum()
           && InterfaceType.LAG_IF != request.getIfTypeEnum()) {

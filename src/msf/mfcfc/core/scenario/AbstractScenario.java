@@ -157,6 +157,7 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
         logger.info("[ope_id={0}]:End executeImpl.", operationId);
 
         if (this.syncType == SynchronousType.SYNC) {
+
           if (response.isFailedRollback()) {
             changeBlockadeStatus(BlockadeStatus.BLOCKADE);
           }
@@ -164,18 +165,22 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
 
       } catch (MsfException ex) {
         logger.error("[ope_id={0}]:Scenario execute failed.", ex, operationId);
+
         response = new ErrorResponse(ex.getErrorCode(), systemIfType);
 
       } finally {
         if (operationId == null) {
+
           logger.debug("operationId is null. skip finalizeRestIf().");
 
         } else {
 
           if (this.isExecAsyncRunner == false && this.isRegistAsyncRecord) {
+
             try {
               this.deleteAsyncRecord();
             } catch (MsfException ex) {
+
               logger.warn("[ope_id={0}]:Delete async request faild.", ex, operationId);
             }
           }

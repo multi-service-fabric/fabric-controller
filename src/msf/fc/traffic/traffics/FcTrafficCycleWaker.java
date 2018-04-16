@@ -42,9 +42,11 @@ public class FcTrafficCycleWaker extends TimerTask {
     try {
       logger.methodStart();
       if (isFirst) {
+
         logger.debug("First time wakeup.");
         isFirst = false;
         while (true) {
+
           if (RestClient.checkHttpClientStatus()) {
             break;
           }
@@ -62,6 +64,7 @@ public class FcTrafficCycleWaker extends TimerTask {
       isRunningTime = new Date();
 
       if (fcTrafficNoticeThread.isRunning()) {
+
         logger.info("Cancellation of traffic information notice. Because FcTrafficNoticeThread Already running.");
         return;
       }

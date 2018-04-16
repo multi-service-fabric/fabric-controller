@@ -9,6 +9,9 @@ import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.db.dao.clusters.FcEdgePointDao;
 import msf.fc.node.interfaces.FcAbstractInterfaceScenarioBase;
+import msf.fc.rest.ec.node.interfaces.breakout.data.entity.BreakoutIfQosEcEntity;
+import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfQosEcEntity;
+import msf.fc.rest.ec.node.interfaces.physical.data.entity.PhysicalIfQosEcEntity;
 import msf.fc.rest.ec.node.nodes.data.entity.NodeEcEntity;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.L3ProtocolType;
@@ -19,18 +22,20 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointBaseIfEntity;
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointForOwnerEntity;
+import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointForOwnerQosEntity;
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointForUserEntity;
+import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointForUserQosEntity;
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointSupportProtocolForOwnerEntity;
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointSupportProtocolForUserEntity;
 
 /**
- * Abstract class to implement common process of Edge-Point interface-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of Edge-Point
+ * interface-related processing in configuration management function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request class that inherited the RestRequestBase class
+ *          Request class that inherits the RestRequestBase class
  */
 public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
     extends FcAbstractInterfaceScenarioBase<T> {
@@ -84,7 +89,7 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
   }
 
   protected EdgePointForOwnerEntity getEdgePointForOwner(FcEdgePoint fcEdgePoint, SessionWrapper sessionWrapper,
-      NodeEcEntity nodeEcEntity) throws MsfException {
+      NodeEcEntity nodeEcEntity, Object interfaceQosResponseBody) throws MsfException {
     try {
       logger.methodStart(new String[] { "fcEdgePoint", "sessionWrapper" },
           new Object[] { fcEdgePoint, sessionWrapper });
@@ -93,6 +98,7 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
       edgePointForOwner.setSupportProtocols(getSupportProtocolForOwner(fcEdgePoint, sessionWrapper, nodeEcEntity));
       edgePointForOwner.setBaseIf(getBaseIf(fcEdgePoint, sessionWrapper));
       edgePointForOwner.setTrafficThreshold(fcEdgePoint.getTrafficThreshold());
+      edgePointForOwner.setQos(getOwnerQos(interfaceQosResponseBody));
       return edgePointForOwner;
     } finally {
       logger.methodEnd();
@@ -100,12 +106,13 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
   }
 
   protected EdgePointForUserEntity getEdgePointForUser(FcEdgePoint fcEdgePoint, SessionWrapper sessionWrapper,
-      NodeEcEntity nodeEcEntity) throws MsfException {
+      NodeEcEntity nodeEcEntity, Object interfaceQosResponseBody) throws MsfException {
     try {
       logger.methodStart(new String[] { "edgePoint" }, new Object[] { fcEdgePoint });
       EdgePointForUserEntity edgePointForUser = new EdgePointForUserEntity();
       edgePointForUser.setEdgePointId(String.valueOf(fcEdgePoint.getEdgePointId()));
       edgePointForUser.setSupportProtocols(getSupportProtocolForUser(fcEdgePoint, sessionWrapper, nodeEcEntity));
+      edgePointForUser.setQos(getUserQos(interfaceQosResponseBody));
       return edgePointForUser;
     } finally {
       logger.methodEnd();
@@ -172,4 +179,67 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
       logger.methodEnd();
     }
   }
+
+  private EdgePointForOwnerQosEntity getOwnerQos(Object interfaceQosResponseBody) {
+    try {
+      logger.methodStart();
+      EdgePointForOwnerQosEntity qosEntity = new EdgePointForOwnerQosEntity();
+
+      if (interfaceQosResponseBody instanceof PhysicalIfQosEcEntity) {
+        PhysicalIfQosEcEntity physicalIfQosEcEntity = (PhysicalIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(physicalIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(physicalIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(physicalIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(physicalIfQosEcEntity.getEgressMenuList());
+      } else if (interfaceQosResponseBody instanceof LagIfQosEcEntity) {
+        LagIfQosEcEntity lagIfQosEcEntity = (LagIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(lagIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(lagIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(lagIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(lagIfQosEcEntity.getEgressMenuList());
+      } else {
+
+        BreakoutIfQosEcEntity breakoutIfQosEcEntity = (BreakoutIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(breakoutIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(breakoutIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(breakoutIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(breakoutIfQosEcEntity.getEgressMenuList());
+      }
+      return qosEntity;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private EdgePointForUserQosEntity getUserQos(Object interfaceQosResponseBody) {
+    try {
+      logger.methodStart();
+      EdgePointForUserQosEntity qosEntity = new EdgePointForUserQosEntity();
+
+      if (interfaceQosResponseBody instanceof PhysicalIfQosEcEntity) {
+        PhysicalIfQosEcEntity physicalIfQosEcEntity = (PhysicalIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(physicalIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(physicalIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(physicalIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(physicalIfQosEcEntity.getEgressMenuList());
+      } else if (interfaceQosResponseBody instanceof LagIfQosEcEntity) {
+        LagIfQosEcEntity lagIfQosEcEntity = (LagIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(lagIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(lagIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(lagIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(lagIfQosEcEntity.getEgressMenuList());
+      } else {
+
+        BreakoutIfQosEcEntity breakoutIfQosEcEntity = (BreakoutIfQosEcEntity) interfaceQosResponseBody;
+        qosEntity.setRemark(breakoutIfQosEcEntity.getRemark());
+        qosEntity.setRemarkCapabilityList(breakoutIfQosEcEntity.getRemarkMenuList());
+        qosEntity.setShaping(breakoutIfQosEcEntity.getShaping());
+        qosEntity.setEgressQueueCapabilityList(breakoutIfQosEcEntity.getEgressMenuList());
+      }
+      return qosEntity;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
 }

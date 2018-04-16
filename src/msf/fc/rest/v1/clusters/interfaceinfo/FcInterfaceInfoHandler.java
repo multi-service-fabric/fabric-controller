@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.interfaceinfo;
 
 import javax.ws.rs.Consumes;
@@ -17,7 +18,6 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.node.interfaces.data.InterfaceRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
-
 /**
  * Configuration management Interface information.
  *
@@ -29,7 +29,7 @@ public class FcInterfaceInfoHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcInterfaceInfoHandler.class);
 
   /**
-   * IF information list acquisition.
+   * Interface information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)

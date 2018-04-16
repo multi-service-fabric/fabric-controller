@@ -15,8 +15,8 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceRequest;
 import msf.mfcfc.slice.slices.l3slice.data.entity.L3SliceEntity;
 
 /**
- * Abstract class to implement common process of L3 slice-related processing in
- * slice management function.
+ * Abstract class to implement the common process of L3 slice-related processing
+ * in slice management function.
  *
  * @author NTT
  *

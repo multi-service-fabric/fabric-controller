@@ -1,6 +1,7 @@
 
 package msf.fc.slice.slices;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import msf.fc.common.config.FcConfigManager;
@@ -13,8 +14,8 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.slice.slices.AbstractSliceScenarioBase;
 
 /**
- * Abstract class to implement common process of L2/L3 slice-related processing
- * in slice management function.
+ * Abstract class to implement the common process of L2/L3 slice-related
+ * processing in slice management function.
  *
  * @author NTT
  *
@@ -48,6 +49,28 @@ public abstract class FcAbstractSliceScenarioBase<T extends RestRequestBase> ext
           throw new MsfException(ErrorCode.TRANSITION_STATUS_ERROR, errorMessage);
         }
       }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void checkRemarkMenuList(String remarkMenu) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "remarkMenu" }, new Object[] { remarkMenu });
+      List<String> remarkMenuList = FcConfigManager.getInstance().getQosRemarkMenuList();
+      if (remarkMenu == null) {
+        return;
+      }
+      for (String remarkMenuConf : remarkMenuList) {
+        if (remarkMenu.equals(remarkMenuConf)) {
+          logger.debug("remark menu matches config value.");
+          return;
+        }
+      }
+      String logMsg = MessageFormat.format("remark menu did not match config value, value = {0}", remarkMenu);
+      logger.error(logMsg);
+      throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+
     } finally {
       logger.methodEnd();
     }

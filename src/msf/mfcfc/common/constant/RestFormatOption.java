@@ -1,13 +1,11 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum RestFormatOption {
 
-  
   LIST("list"),
-  
-  DETAIL_LIST("detail-list");
 
+  DETAIL_LIST("detail-list");
 
   private String message;
 
@@ -15,12 +13,10 @@ public enum RestFormatOption {
     this.message = message;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static RestFormatOption getEnumFromMessage(String message) {
     for (RestFormatOption enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

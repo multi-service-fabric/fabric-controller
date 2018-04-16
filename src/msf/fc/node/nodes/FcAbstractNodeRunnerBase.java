@@ -54,7 +54,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement common process of node-related asynchronous
+ * Abstract class to implement the common process of node-related asynchronous
  * processing in configuration management function.
  *
  * @author NTT
@@ -312,7 +312,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
     }
   }
 
-  private FcAsyncRequest getTargetAsyncRequest(List<FcAsyncRequest> readListExecNodeInfo, FcNode fcNode)
+  protected FcAsyncRequest getTargetAsyncRequest(List<FcAsyncRequest> readListExecNodeInfo, FcNode fcNode)
       throws MsfException {
     try {
       logger.methodStart(new String[] { "readListExecNodeInfo", "createFcNode" },
@@ -320,18 +320,38 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
       FcAsyncRequest targetAsyncRequest = null;
       for (FcAsyncRequest fcAsyncRequest : readListExecNodeInfo) {
         Matcher nodeMattcher;
-        if (NodeType.getEnumFromCode(fcNode.getNodeType()).equals(NodeType.LEAF)) {
-          nodeMattcher = MfcFcRequestUri.LEAF_NODE_CREATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri());
-          if (nodeMattcher.matches()) {
-            targetAsyncRequest = fcAsyncRequest;
+        switch (fcAsyncRequest.getRequestMethodEnum()) {
+          case POST:
+            if (NodeType.getEnumFromCode(fcNode.getNodeType()).equals(NodeType.LEAF)) {
+              nodeMattcher = MfcFcRequestUri.LEAF_NODE_CREATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri());
+              if (nodeMattcher.matches()) {
+
+                targetAsyncRequest = fcAsyncRequest;
+              }
+            } else {
+              nodeMattcher = MfcFcRequestUri.SPINE_NODE_CREATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri());
+              if (nodeMattcher.matches()) {
+
+                targetAsyncRequest = fcAsyncRequest;
+              }
+            }
             break;
-          }
-        } else {
-          nodeMattcher = MfcFcRequestUri.SPINE_NODE_CREATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri());
-          if (nodeMattcher.matches()) {
-            targetAsyncRequest = fcAsyncRequest;
+
+          case PUT:
+            nodeMattcher = MfcFcRequestUri.LEAF_NODE_UPDATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri());
+            if (nodeMattcher.matches()) {
+
+              targetAsyncRequest = fcAsyncRequest;
+            }
             break;
-          }
+
+          default:
+
+            break;
+        }
+        if (targetAsyncRequest != null) {
+
+          break;
         }
       }
       if (targetAsyncRequest == null) {

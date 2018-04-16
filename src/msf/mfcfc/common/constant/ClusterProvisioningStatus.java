@@ -1,15 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum ClusterProvisioningStatus {
 
-  
   SETTING(1),
-  
-  COMPLETED(2),
-  
-  UNSETTING(3);
 
+  COMPLETED(2),
+
+  UNSETTING(3);
 
   private int code;
 
@@ -17,12 +15,10 @@ public enum ClusterProvisioningStatus {
     this.code = code;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public static ClusterProvisioningStatus getEnumFromCode(Integer code) {
     if (code == null) {
       return null;

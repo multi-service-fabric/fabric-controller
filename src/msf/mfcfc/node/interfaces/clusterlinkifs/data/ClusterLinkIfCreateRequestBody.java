@@ -14,129 +14,102 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.entity.ClusterLinkIfPhysica
 import msf.mfcfc.node.interfaces.clusterlinkifs.data.entity.ClusterLinkIfPhysicalLinkCreateEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class ClusterLinkIfCreateRequestBody implements RestRequestValidator {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(ClusterLinkIfCreateRequestBody.class);
 
-  
   @SerializedName("cluster_link_if_id")
   private String clusterLinkIfId;
 
-  
   @SerializedName("opposite_cluster_id")
   private String oppositeClusterId;
 
-  
   @SerializedName("physical_link")
   private ClusterLinkIfPhysicalLinkCreateEntity physicalLink;
 
-  
   @SerializedName("lag_link")
   private ClusterLinkIfPhysicalLagLinkCreateEntity lagLink;
 
-  
   @SerializedName("igp_cost")
   private Integer igpCost;
 
-  
   @SerializedName("port_status")
   private Boolean portStatus;
 
-  
   @SerializedName("ipv4_address")
   private String ipv4Address;
 
-  
   @SerializedName("traffic_threshold")
   private Double trafficThreshold;
 
-  
   public String getClusterLinkIfId() {
     return clusterLinkIfId;
   }
 
-  
   public void setClusterLinkIfId(String clusterLinkIfId) {
     this.clusterLinkIfId = clusterLinkIfId;
   }
 
-  
   public String getOppositeClusterId() {
     return oppositeClusterId;
   }
 
-  
   public void setOppositeClusterId(String oppositeClusterId) {
     this.oppositeClusterId = oppositeClusterId;
   }
 
-  
   public ClusterLinkIfPhysicalLinkCreateEntity getPhysicalLink() {
     return physicalLink;
   }
 
-  
   public void setPhysicalLink(ClusterLinkIfPhysicalLinkCreateEntity physicalLink) {
     this.physicalLink = physicalLink;
   }
 
-  
   public ClusterLinkIfPhysicalLagLinkCreateEntity getLagLink() {
     return lagLink;
   }
 
-  
   public void setLagLink(ClusterLinkIfPhysicalLagLinkCreateEntity lagLink) {
     this.lagLink = lagLink;
   }
 
-  
   public Integer getIgpCost() {
     return igpCost;
   }
 
-  
   public void setIgpCost(Integer igpCost) {
     this.igpCost = igpCost;
   }
 
-  
   public Boolean getPortStatus() {
     return portStatus;
   }
 
-  
   public void setPortStatus(Boolean portStatus) {
     this.portStatus = portStatus;
   }
 
-  
   public String getIpv4Address() {
     return ipv4Address;
   }
 
-  
   public void setIpv4Address(String ipv4Address) {
     this.ipv4Address = ipv4Address;
   }
 
-  
   public Double getTrafficThreshold() {
     return trafficThreshold;
   }
 
-  
   public void setTrafficThreshold(Double trafficThreshold) {
     this.trafficThreshold = trafficThreshold;
   }
 
-  
   public ClusterLinkIfPortStatus getPortStatusEnum() {
     return ClusterLinkIfPortStatus.getEnumFromMessage(portStatus);
   }
 
-  
   public void setPortStatusEnum(ClusterLinkIfPortStatus portStatus) {
     this.portStatus = portStatus.isBoolMessage();
   }
@@ -146,9 +119,7 @@ public class ClusterLinkIfCreateRequestBody implements RestRequestValidator {
     try {
       logger.methodStart();
 
-
-      ParameterCheckUtil.checkNotNullAndLength(oppositeClusterId);
-
+      ParameterCheckUtil.checkNumericId(oppositeClusterId, ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (physicalLink == null ^ lagLink == null) {
 
@@ -163,19 +134,15 @@ public class ClusterLinkIfCreateRequestBody implements RestRequestValidator {
             "error parameter is physical_link" + physicalLink + "or lag_link" + lagLink);
       }
 
-
       ParameterCheckUtil.checkNotNull(igpCost);
-
 
       if (portStatus != null) {
         ParameterCheckUtil.checkNotNull(getPortStatusEnum());
       }
 
-
       if (ipv4Address != null) {
         ipv4Address = ParameterCheckUtil.checkIpv4Address(ipv4Address);
       }
-
 
     } finally {
       logger.methodEnd();
@@ -183,7 +150,6 @@ public class ClusterLinkIfCreateRequestBody implements RestRequestValidator {
   }
 
   private void validatePhysicalLink() throws MsfException {
-
 
     ParameterCheckUtil.checkNumericId(physicalLink.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
@@ -227,7 +193,6 @@ public class ClusterLinkIfCreateRequestBody implements RestRequestValidator {
     ParameterCheckUtil.checkNotNullAndLength(lagLink.getOppositeLagIfId());
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

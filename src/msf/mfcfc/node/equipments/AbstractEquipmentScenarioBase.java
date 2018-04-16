@@ -5,7 +5,7 @@ import msf.mfcfc.core.scenario.AbstractScenario;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement common process of device model
+ * Abstract class to implement the common process of device model
  * information-related processing in configuration management function.
  *
  * @author NTT

@@ -14,6 +14,7 @@ import msf.fc.common.data.FcL3Slice;
 import msf.fc.common.data.FcNode;
 import msf.fc.db.FcDbManager;
 import msf.mfcfc.common.constant.EcRequestUri;
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.scenario.RestResponseBase;
@@ -23,7 +24,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpValueEntity;
 
 /**
- * Class to implement asynchronous processing in L3CP generation.
+ * Class to implement the asynchronous processing in L3CP addition.
  *
  * @author NTT
  *
@@ -37,14 +38,16 @@ public class FcL3CpCreateDeleteRunner extends FcAbstractL3CpRunnerBase {
   private Set<FcNode> nodeSetForExclusive = new HashSet<>();
   private List<String> createdCpIdList = new ArrayList<>();
 
+  private Set<String> vlanIdDuplicateCheckSet = new HashSet<>();
+
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L3CP control
    * @param requestBody
-   *          Request body for L3CP generation
+   *          Request body for L3CP addition
    */
   public FcL3CpCreateDeleteRunner(L3CpRequest request, List<L3CpCreateDeleteRequestBody> requestBody) {
     this.request = request;
@@ -67,6 +70,16 @@ public class FcL3CpCreateDeleteRunner extends FcAbstractL3CpRunnerBase {
           case ADD:
             FcNode nodeAdd = getNodeAndCheck(sessionWrapper, Integer.valueOf(body.getValue().getEdgePointId()));
             nodeSetForExclusive.add(nodeAdd);
+
+            String edgePointIdAndVlanId = body.getValue().getEdgePointId() + body.getValue().getVlanId();
+            if (vlanIdDuplicateCheckSet.contains(edgePointIdAndVlanId)) {
+
+              String logMsg = logger.error("specified same edge-pointID(ID:{0}) and same VLAN ID(ID:{1})",
+                  body.getValue().getEdgePointId(), body.getValue().getVlanId());
+              throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+            } else {
+              vlanIdDuplicateCheckSet.add(edgePointIdAndVlanId);
+            }
             break;
           case REMOVE:
             FcL3Cp l3Cp = getL3CpAndCheck(sessionWrapper, request.getSliceId(), getIdFromPath(body.getPath()));
@@ -109,7 +122,8 @@ public class FcL3CpCreateDeleteRunner extends FcAbstractL3CpRunnerBase {
             processCreateL3Cp(sessionWrapper, l3SliceAfterLock, nodeAfterLockAdd, cpId,
                 Integer.valueOf(body.getValue().getEdgePointId()), value.getVlanId(), value.getMtu(),
                 value.getIpv4Address(), value.getIpv6Address(), value.getIpv4Prefix(), value.getIpv6Prefix(),
-                value.getBgp(), value.getStaticRouteList(), value.getVrrp(), value.getTrafficThreshold());
+                value.getBgp(), value.getStaticRouteList(), value.getVrrp(), value.getTrafficThreshold(),
+                value.getQos());
             break;
           case REMOVE:
             FcL3Cp l3CpAfterLockRemove = getL3CpAndCheck(sessionWrapper, request.getSliceId(),

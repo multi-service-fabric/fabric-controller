@@ -3,6 +3,7 @@ package msf.fc.node.interfaces.clusterlinkifs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
@@ -14,7 +15,7 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfDeleteResponse
 import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfRequest;
 
 /**
- * Implementation class for intercluster link interface deletion.
+ * Implementation class for inter-cluster link interface deletion.
  *
  * @author NTT
  *
@@ -52,8 +53,8 @@ public class FcClusterLinkInterfaceDeleteScenario
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterLinkIfId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
+      ParameterCheckUtil.checkNumericId(request.getClusterLinkIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
       ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
 

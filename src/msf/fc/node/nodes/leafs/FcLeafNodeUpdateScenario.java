@@ -4,6 +4,8 @@ package msf.fc.node.nodes.leafs;
 import org.eclipse.jetty.http.HttpStatus;
 
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.HttpMethod;
+import msf.mfcfc.common.constant.LeafNodeUpdateAction;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
@@ -56,7 +58,7 @@ public class FcLeafNodeUpdateScenario extends FcAbstractLeafNodeScenarioBase<Lea
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
@@ -82,6 +84,12 @@ public class FcLeafNodeUpdateScenario extends FcAbstractLeafNodeScenarioBase<Lea
       RestResponseBase responseBase = null;
       SessionWrapper sessionWrapper = new SessionWrapper();
       try {
+        sessionWrapper.openSession();
+
+        if (LeafNodeUpdateAction.RECOVER_NODE.equals(requestBody.getActionEnum())) {
+
+          checkForExecNodeInfo(sessionWrapper, HttpMethod.PUT, null, null, null);
+        }
 
         FcLeafNodeUpdateRunner fcLeafNodeUpdateRunner = new FcLeafNodeUpdateRunner(request, requestBody);
         execAsyncRunner(fcLeafNodeUpdateRunner);

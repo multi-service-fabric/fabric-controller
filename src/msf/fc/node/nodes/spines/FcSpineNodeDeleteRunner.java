@@ -35,7 +35,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Spine node deletion.
+ * Class to implement the asynchronous processing in Spine node deletion.
  *
  * @author NTT
  *

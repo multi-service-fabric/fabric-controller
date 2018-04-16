@@ -17,6 +17,7 @@ import msf.fc.slice.slices.l3slice.FcL3SliceCreateScenario;
 import msf.fc.slice.slices.l3slice.FcL3SliceDeleteScenario;
 import msf.fc.slice.slices.l3slice.FcL3SliceReadListScenario;
 import msf.fc.slice.slices.l3slice.FcL3SliceReadScenario;
+import msf.fc.slice.slices.l3slice.FcL3SliceUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -36,7 +37,7 @@ public class FcL3SliceHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcL3SliceHandler.class);
 
   /**
-   * L3 slice generation.
+   * L3 slice addition.
    *
    * @param requestBody
    *          Request message body
@@ -66,7 +67,7 @@ public class FcL3SliceHandler extends AbstractRestHandler {
   }
 
   /**
-   * L3 slice generation.
+   * L3 slice modification.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -85,7 +86,21 @@ public class FcL3SliceHandler extends AbstractRestHandler {
   public Response update(@PathParam("slice_id") String sliceId,
       @QueryParam("notification_address") String notificationAddress,
       @QueryParam("notification_port") String notificationPort, String requestBody) {
-    return Response.status(Response.Status.NOT_FOUND).build();
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      L3SliceRequest request = new L3SliceRequest(requestBody, notificationAddress, notificationPort, sliceId, null);
+
+      setCommonData(request);
+
+      FcL3SliceUpdateScenario scenario = new FcL3SliceUpdateScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   /**

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://mfc.msf/common/config/type/data"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://mfc.msf/common/config/type/data">
+
+	<xsd:element name="dataConf" type="tns:DataConf" />
+
+	<xsd:complexType name="DataConf">
+		<xsd:all>
+			<xsd:element name="swClustersData" type="tns:SwClustersData" />
+		</xsd:all>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="SwClustersData">
+		<xsd:sequence>
+			<xsd:element name="maxSwClusterNum" type="tns:sw_cluster_num" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="clusterStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="swClusterData" type="tns:SwClusterData"
+				maxOccurs="unbounded" minOccurs="1" />
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="SwClusterData">
+		<xsd:all>
+			<xsd:element name="swCluster" type="tns:SwCluster" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="rrs" type="tns:Rrs" minOccurs="1" maxOccurs="1"/>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="SwCluster">
+		<xsd:all>
+			<xsd:element name="swClusterId" type="tns:sw_cluster_num" minOccurs="1" maxOccurs="1"/>
+			<xsd:element name="inchannelStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
+			</xsd:element>
+        </xsd:all>
+    </xsd:complexType>
+
+    <xsd:complexType name="Rrs">
+        <xsd:sequence>
+        	<xsd:element name="rr" type="tns:Rr" minOccurs="0"
+        		maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="Rr">
+        <xsd:all>
+            <xsd:element name="rrNodeId" type="tns:rr_num" minOccurs="1" maxOccurs="1"/>
+        </xsd:all>
+    </xsd:complexType>
+
+
+    <xsd:simpleType name="sw_cluster_num">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="100"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="node_num">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="1" />
+    		<xsd:maxInclusive value="1000" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="as_num">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="0"/>
+            <xsd:maxInclusive value="65535"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="subnetmask">
+        <xsd:restriction base="xsd:integer">
+            <xsd:minInclusive value="1"/>
+            <xsd:maxInclusive value="32"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="rr_num">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="1" />
+    		<xsd:maxInclusive value="65535" />
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+
+    <xsd:simpleType name="start_pos">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="1"></xsd:minInclusive>
+    		<xsd:maxInclusive value="1000"></xsd:maxInclusive>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+    <xsd:simpleType name="ospf_area_num">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="0"></xsd:minInclusive>
+    		<xsd:maxInclusive value="65535"></xsd:maxInclusive>
+    	</xsd:restriction>
+    </xsd:simpleType>
+
+</xsd:schema>
+

@@ -16,8 +16,10 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.config.ConfigManager;
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.operation.OperationManager;
+import msf.mfcfc.rest.common.AbstractRestHandler;
 import msf.mfcfc.rest.common.CorsRequestFilter;
 import msf.mfcfc.rest.common.CorsResponseFilter;
 import msf.mfcfc.rest.common.RestClient;
@@ -28,7 +30,6 @@ import msf.mfcfc.rest.common.RestClient;
  * @author NTT
  *
  */
-
 public class RestManager implements FunctionBlockBase {
 
   private static final RestManager instance = new RestManager();
@@ -44,7 +45,9 @@ public class RestManager implements FunctionBlockBase {
   private Server jettyServer;
 
   /**
-   * Get the instance of RestManager.
+   * Get the instance of RestManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return RestManager instance
    */
@@ -67,6 +70,7 @@ public class RestManager implements FunctionBlockBase {
       jettyServer.addBean(new MsfErrorHandler());
 
       int port = ConfigManager.getInstance().getRestServerListeningPort();
+
       jettyServer.addConnector(createConnector(jettyServer, port));
 
       jettyServer.start();
@@ -89,6 +93,7 @@ public class RestManager implements FunctionBlockBase {
       logger.methodStart();
 
       boolean jettyServerStatus = checkJettyServerStatus();
+
       boolean httpClientStatus = RestClient.checkHttpClientStatus();
 
       return jettyServerStatus && httpClientStatus;
@@ -102,6 +107,7 @@ public class RestManager implements FunctionBlockBase {
   public boolean stop() {
     try {
       logger.methodStart();
+
       OperationManager.getInstance().hasNoExecutingOperations(true);
 
       RestClient.stopHttpClient();
@@ -110,6 +116,7 @@ public class RestManager implements FunctionBlockBase {
 
       return true;
     } catch (Exception exp) {
+
       logger.error("Failed to stop rest manager.", exp);
       return false;
     } finally {
@@ -127,6 +134,7 @@ public class RestManager implements FunctionBlockBase {
       resourceConfig.property(ServerProperties.PROVIDER_PACKAGES, new ClientErrorExceptionMapper());
 
       resourceConfig.register(CorsRequestFilter.class);
+
       resourceConfig.register(CorsResponseFilter.class);
 
       ServletHolder servletHolder = new ServletHolder(new ServletContainer(resourceConfig));
@@ -146,7 +154,9 @@ public class RestManager implements FunctionBlockBase {
   private Connector createConnector(Server jettyServer, int port) {
     try {
       logger.methodStart(new String[] { "jettyServer", "port" }, new Object[] { jettyServer, port });
+
       HttpConfiguration httpConfiguration = new HttpConfiguration();
+
       httpConfiguration.setSecureScheme("http");
 
       ServerConnector serverConnector = new ServerConnector(jettyServer, new HttpConnectionFactory(httpConfiguration));
@@ -173,8 +183,10 @@ public class RestManager implements FunctionBlockBase {
         return false;
       } else {
         switch (jettyState) {
+
           case AbstractLifeCycle.STARTED:
             return true;
+
           default:
             logger.warn("Jetty state =" + jettyState);
             return false;
@@ -195,4 +207,29 @@ public class RestManager implements FunctionBlockBase {
     this.restResourcePackage = restResourcePackage;
   }
 
+  /**
+   * Set the time to retain the number of REST requests.
+   *
+   * @param recvRestRequestUnitTime
+   *          Time to retain the number of receiving REST requests [seconds]
+   * @param sendRestRequestUnitTime
+   *          Time to retain the number of sending REST requests [seconds]
+   */
+  public void setRestRequestTimeouts(int recvRestRequestUnitTime, int sendRestRequestUnitTime) {
+    RestClient.setSendTimeout(sendRestRequestUnitTime * 1000);
+    AbstractRestHandler.setRecvTimeout(recvRestRequestUnitTime * 1000);
+  }
+
+  /**
+   * Set the error code of timeout/control error that occurs in the REST sending
+   * process.
+   *
+   * @param controllTimeoutError
+   *          Timeout error
+   * @param connectionError
+   *          Control error
+   */
+  public void setErrorCodes(ErrorCode controllTimeoutError, ErrorCode connectionError) {
+    RestClient.setErrorCodes(controllTimeoutError, connectionError);
+  }
 }

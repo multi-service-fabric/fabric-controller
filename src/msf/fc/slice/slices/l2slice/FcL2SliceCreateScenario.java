@@ -23,7 +23,7 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceCreateRequestBody;
 import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 
 /**
- * Implementation class for L2 slice generation.
+ * Implementation class for L2 slice addition.
  *
  * @author NTT
  *
@@ -65,6 +65,8 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
         logger.methodStart();
 
         checkRrConfiguration();
+
+        checkRemarkMenuList(requestBody.getRemarkMenu());
 
         try {
           sessionWrapper.openSession();
@@ -205,4 +207,5 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
       logger.methodEnd();
     }
   }
+
 }

@@ -58,7 +58,7 @@
 
   <target description="make release file." depends="build" name="release">
     <tar destfile="release/msf-controller.tar">
-        <tarfileset file="./lib/${ant.project.name}.jar" prefix="lib" />
+      <tarfileset file="./lib/${ant.project.name}.jar" prefix="lib" />
       <tarfileset dir="./script" includes="**/*" prefix="bin" />
       <tarfileset dir="./conf" includes="**/*" prefix="conf" />
       <tarfileset dir="./sql" includes="**/*" prefix="sql" />

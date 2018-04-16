@@ -1,3 +1,4 @@
+
 package msf.mfcfc.node.nodes.leafs.data;
 
 import java.text.MessageFormat;
@@ -6,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
 
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.LeafNodeUpdateAction;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -14,58 +16,47 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeRecoverNodeOptionEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeTypeOptionEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class LeafNodeUpdateRequestBody implements RestRequestValidator {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(LeafNodeUpdateRequestBody.class);
-  
+
   @SerializedName("action")
   private String action;
 
-  
   @SerializedName("leaf_type_option")
   private LeafNodeTypeOptionEntity leafTypeOption;
 
-  
   @SerializedName("recover_node_option")
   private LeafNodeRecoverNodeOptionEntity recoverNodeOption;
 
-  
   public String getAction() {
     return action;
   }
 
-  
   public void setAction(String action) {
     this.action = action;
   }
 
-  
   public LeafNodeTypeOptionEntity getLeafTypeOption() {
     return leafTypeOption;
   }
 
-  
   public void setLeafTypeOption(LeafNodeTypeOptionEntity leafTypeOption) {
     this.leafTypeOption = leafTypeOption;
   }
 
-  
   public LeafNodeRecoverNodeOptionEntity getRecoverNodeOption() {
     return recoverNodeOption;
   }
 
-  
   public void setRecoverNodeOption(LeafNodeRecoverNodeOptionEntity recoverNodeOption) {
     this.recoverNodeOption = recoverNodeOption;
   }
 
-  
   public LeafNodeUpdateAction getActionEnum() {
     return LeafNodeUpdateAction.getEnumFromMessage(action);
   }
 
-  
   public void setActionEnum(LeafNodeUpdateAction action) {
     this.action = action.getMessage();
   }
@@ -84,6 +75,9 @@ public class LeafNodeUpdateRequestBody implements RestRequestValidator {
           validateLeafTypeOption();
           break;
         case RECOVER_NODE:
+
+          ParameterCheckUtil.checkNotNull(recoverNodeOption);
+          validateRecoverNodeOption();
           break;
         default:
 
@@ -96,11 +90,21 @@ public class LeafNodeUpdateRequestBody implements RestRequestValidator {
 
   private void validateLeafTypeOption() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(leafTypeOption.getLeafTypeEnum());
   }
 
-  
+  private void validateRecoverNodeOption() throws MsfException {
+
+    ParameterCheckUtil.checkNumericId(recoverNodeOption.getEquipmentTypeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
+
+    recoverNodeOption.setMacAddress(ParameterCheckUtil.checkMacAddress(recoverNodeOption.getMacAddress()));
+
+    ParameterCheckUtil.checkNotNullAndLength(recoverNodeOption.getUsername());
+
+    ParameterCheckUtil.checkNotNullAndLength(recoverNodeOption.getPassword());
+
+  }
+
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

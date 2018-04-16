@@ -27,7 +27,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteRequestBody;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 
 /**
- * Class to implement asynchronous processing in L3CP static route
+ * Class to implement the asynchronous processing in L3CP static route
  * addition/deletion.
  *
  * @author NTT
@@ -36,6 +36,7 @@ import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 public class FcL3CpStaticRouteCreateDeleteRunner extends FcAbstractL3CpRunnerBase {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcL3CpStaticRouteCreateDeleteRunner.class);
+
   private List<L3CpStaticRouteCreateDeleteRequestBody> requestBody;
   private List<String> createdStaticRouteIdList = new ArrayList<>();
 
@@ -43,7 +44,7 @@ public class FcL3CpStaticRouteCreateDeleteRunner extends FcAbstractL3CpRunnerBas
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L3CP control

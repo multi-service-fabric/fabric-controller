@@ -1,26 +1,21 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum ServiceStatus {
 
-  
   STOPPED(0, "stopped"),
 
-  
   INITIALIZING(10, "start-up in progress"),
 
-  
   SWITCHING(50, "system switching"),
 
-  
   FINALIZING(90, "shutdown in progress"),
 
-  
-  STARTED(100, "running");
+  STARTED(100, "running"),
 
+  UNKNOWN(-1, "unknown");
 
   private int code;
-
 
   private String message;
 
@@ -29,17 +24,14 @@ public enum ServiceStatus {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static ServiceStatus getEnumFromCode(int code) {
     for (ServiceStatus enumValue : values()) {
       if (enumValue.getCode() == code) {
@@ -50,7 +42,6 @@ public enum ServiceStatus {
     return null;
   }
 
-  
   public static ServiceStatus getEnumFromMessage(String message) {
     for (ServiceStatus enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

@@ -1,14 +1,12 @@
-package msf.mfcfc.core.scenario;
 
+package msf.mfcfc.core.scenario;
 
 public class RestResponseData {
 
   private RestRequestData request;
 
-
   private RestResponseBase response;
 
-  
   public RestResponseData(RestRequestData request, RestResponseBase response) {
     super();
     this.request = request;

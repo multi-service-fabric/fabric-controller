@@ -31,7 +31,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for model information list acquisition.
+ * Implementation class for device model information list acquisition.
  *
  * @author NTT
  *
@@ -40,10 +40,9 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
 
   private EquipmentRequest request;
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(FcEquipmentReadListScenario.class);
 
- /**
+  /**
    * Constructor.
    *
    * <p>
@@ -69,7 +68,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
 
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
-
 
       if (request.getFormat() != null) {
         ParameterCheckUtil.checkNotNull(request.getFormatEnum());
@@ -97,7 +95,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
 
         List<FcEquipment> equipments = fcEquipmentDao.readList(sessionWrapper);
 
-
         responseBase = responseEquipmentReadListData(equipments, request.getFormat());
 
       } catch (MsfException msfException) {
@@ -114,7 +111,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
 
   }
 
-  
   private RestResponseBase responseEquipmentReadListData(List<FcEquipment> equipments, String format)
       throws MsfException {
     try {
@@ -140,7 +136,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
     }
   }
 
-  
   private EquipmentReadListEcResponseBody sendEquipmentReadList() throws MsfException {
     try {
       logger.methodStart();
@@ -156,7 +151,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
       EquipmentReadListEcResponseBody equipmentReadListEcResponseBody = JsonUtil.fromJson(
           restResponseBase.getResponseBody(), EquipmentReadListEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
 
-
       checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
           equipmentReadListEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
 
@@ -166,7 +160,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
     }
   }
 
-  
   private List<EquipmentTypeEntity> getEquipmentTypes(List<FcEquipment> equipments,
       EquipmentReadListEcResponseBody body) throws MsfException {
     try {
@@ -186,12 +179,10 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
         }
         if (!isExist) {
 
-
           throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
         }
       }
       if (equipmentEcList.size() != equipmentTypes.size()) {
-
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
       }
@@ -201,7 +192,6 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
     }
   }
 
-  
   private List<String> getEquipmentTypeIds(List<FcEquipment> equipments) {
     try {
       logger.methodStart();

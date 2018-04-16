@@ -18,7 +18,7 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * Class to implement asynchronous processing in L3CP deletion.
+ * Class to implement the asynchronous processing in L3CP deletion.
  *
  * @author NTT
  *
@@ -29,7 +29,7 @@ public class FcL3CpDeleteRunner extends FcAbstractL3CpRunnerBase {
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L3CP control

@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.slices;
 
 import java.util.List;
@@ -12,13 +13,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcVlanIfDao extends FcAbstractCommonDao<FcVlanIf, FcVlanIfPK> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcVlanIfDao.class);
 
-
-  
   public List<FcVlanIf> readList(SessionWrapper session, Long nodeInfoId) throws MsfException {
     try {
       logger.methodStart();
@@ -29,7 +27,6 @@ public class FcVlanIfDao extends FcAbstractCommonDao<FcVlanIf, FcVlanIfPK> {
       logger.methodEnd();
     }
   }
-
 
   @Override
   public FcVlanIf read(SessionWrapper session, FcVlanIfPK pk) throws MsfException {

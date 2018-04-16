@@ -3,11 +3,9 @@ package msf.fc.node.interfaces.breakoutifs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
-import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.db.dao.clusters.FcBreakoutIfDao;
 import msf.fc.rest.ec.node.interfaces.breakout.data.BreakoutIfReadEcResponseBody;
-import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
@@ -20,8 +18,6 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.breakoutifs.data.BreakoutIfReadResponseBody;
 import msf.mfcfc.node.interfaces.breakoutifs.data.BreakoutIfRequest;
-import msf.mfcfc.rest.common.JsonUtil;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * Implementation class for breakout interface information acquisition.
@@ -61,7 +57,7 @@ public class FcBreakoutInterfaceReadScenario extends FcAbstractBreakoutInterface
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))
           && !NodeType.SPINE.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {
@@ -130,35 +126,11 @@ public class FcBreakoutInterfaceReadScenario extends FcAbstractBreakoutInterface
       logger.methodStart(new String[] { "fcBreakoutIf" }, new Object[] { fcBreakoutIf });
       BreakoutIfReadResponseBody body = new BreakoutIfReadResponseBody();
 
-      BreakoutIfReadEcResponseBody breakoutIfReadEcResponseBody = sendBreakoutInterfaceRead(fcBreakoutIf);
+      BreakoutIfReadEcResponseBody breakoutIfReadEcResponseBody = sendBreakoutInterfaceRead(fcBreakoutIf.getNode(),
+          request.getBreakoutIfId());
 
       body.setBreakoutIf(getBreakoutIfData(fcBreakoutIf, breakoutIfReadEcResponseBody.getBreakoutIf()));
       return createRestResponse(body, HttpStatus.OK_200);
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  private BreakoutIfReadEcResponseBody sendBreakoutInterfaceRead(FcBreakoutIf fcBreakoutIf) throws MsfException {
-    try {
-      logger.methodStart();
-
-      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
-          .getEcControlAddress();
-      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
-
-      RestResponseBase restResponseBase = RestClient.sendRequest(
-          EcRequestUri.BREAKOUT_IF_READ.getHttpMethod(), EcRequestUri.BREAKOUT_IF_READ
-              .getUri(String.valueOf(fcBreakoutIf.getNode().getEcNodeId()), request.getBreakoutIfId()),
-          null, ecControlIpAddress, ecControlPort);
-
-      BreakoutIfReadEcResponseBody breakoutIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
-          BreakoutIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-
-      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
-          breakoutIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
-
-      return breakoutIfReadEcResponseBody;
     } finally {
       logger.methodEnd();
     }

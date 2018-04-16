@@ -6,7 +6,7 @@
             <swCluster>
                 <!-- ID of SW cluster -->
                 <swClusterId>1</swClusterId>
-                <!-- Maximum number of Leaves in SW cluster-->
+                <!-- Maximum number of Leaves in SW cluster -->
                 <maxLeafNum>45</maxLeafNum>
                 <!-- Maximum number of Spines in SW cluster -->
                 <maxSpineNum>4</maxSpineNum>
@@ -33,9 +33,9 @@
                 <!-- Outchannel starting IP address of SW cluster -->
                 <outchannelStartAddress>1.1.1.1</outchannelStartAddress>
                 <!-- Aggregation starting IP address -->
-                <aggrigationStartAddress>1.1.1.1</aggrigationStartAddress>
+                <aggregationStartAddress>1.1.1.1</aggregationStartAddress>
                 <!-- Aggregation prefix -->
-                <aggrigationAddressPrefix>24</aggrigationAddressPrefix>
+                <aggregationAddressPrefix>24</aggregationAddressPrefix>
             </swCluster>
             <rrs>
                 <rr>

@@ -25,7 +25,7 @@ import msf.mfcfc.traffic.traffics.data.entity.CpTrafficEntity;
 import msf.mfcfc.traffic.traffics.data.entity.CpTrafficValueCpEntity;
 
 /**
- * Abstract class to implement common process of CP traffic information
+ * Abstract class to implement the common process of CP traffic information
  * acquisition processing in traffic management function.
  *
  * @author NTT

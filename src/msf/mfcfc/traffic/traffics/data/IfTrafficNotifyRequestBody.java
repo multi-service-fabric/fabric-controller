@@ -1,3 +1,4 @@
+
 package msf.mfcfc.traffic.traffics.data;
 
 import java.text.MessageFormat;
@@ -6,6 +7,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
 
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
@@ -17,50 +19,39 @@ import msf.mfcfc.traffic.traffics.data.entity.IfTrafficPhysicalUnitEntity;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficSliceEntity;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficSliceUnitEntity;
 
-
 public class IfTrafficNotifyRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(IfTrafficNotifyRequestBody.class);
 
-  
   @SerializedName("physical_unit")
   private IfTrafficPhysicalUnitEntity physicalUnit;
 
-  
   @SerializedName("cluster_unit")
   private IfTrafficClusterUnitEntity clusterUnit;
 
-  
   @SerializedName("slice_unit")
   private IfTrafficSliceUnitEntity sliceUnit;
 
-  
   public IfTrafficPhysicalUnitEntity getPhysicalUnit() {
     return physicalUnit;
   }
 
-  
   public void setPhysicalUnit(IfTrafficPhysicalUnitEntity physicalUnit) {
     this.physicalUnit = physicalUnit;
   }
 
-  
   public IfTrafficClusterUnitEntity getClusterUnit() {
     return clusterUnit;
   }
 
-  
   public void setClusterUnit(IfTrafficClusterUnitEntity clusterUnit) {
     this.clusterUnit = clusterUnit;
   }
 
-  
   public IfTrafficSliceUnitEntity getSliceUnit() {
     return sliceUnit;
   }
 
-  
   public void setSliceUnit(IfTrafficSliceUnitEntity sliceUnit) {
     this.sliceUnit = sliceUnit;
   }
@@ -69,9 +60,6 @@ public class IfTrafficNotifyRequestBody implements RestRequestValidator {
   public void validate() throws MsfException {
     try {
       logger.methodStart();
-
-
-
 
       if (physicalUnit != null) {
         validatePhysicalUnit();
@@ -89,20 +77,17 @@ public class IfTrafficNotifyRequestBody implements RestRequestValidator {
 
   private void validateSliceUnit() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(sliceUnit.getSliceList());
     validateSliceList();
   }
 
   private void validatePhysicalUnit() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(physicalUnit.getIfList());
     validateIfList();
   }
 
   private void validateClusterUnit() throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(clusterUnit.getClusterList());
     validateClusterList();
@@ -131,7 +116,6 @@ public class IfTrafficNotifyRequestBody implements RestRequestValidator {
 
   private void validateSlice(IfTrafficSliceEntity tempSlice) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(tempSlice.getSliceTypeEnum());
 
     ParameterCheckUtil.checkNotNullAndLength(tempSlice.getSliceId());
@@ -141,8 +125,7 @@ public class IfTrafficNotifyRequestBody implements RestRequestValidator {
 
   private void validateCluster(IfTrafficClusterEntity tempCluster) throws MsfException {
 
-
-    ParameterCheckUtil.checkNotNullAndLength(tempCluster.getClusterId());
+    ParameterCheckUtil.checkNumericId(tempCluster.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
     ParameterCheckUtil.checkNotNull(tempCluster.getClusterTypeEnum());
 
@@ -162,19 +145,17 @@ public class IfTrafficNotifyRequestBody implements RestRequestValidator {
 
   private void validateIf(IfTrafficNotifyEntity tempTraffic) throws MsfException {
 
-
-    ParameterCheckUtil.checkNotNullAndLength(tempTraffic.getClusterId());
+    ParameterCheckUtil.checkNumericId(tempTraffic.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
     ParameterCheckUtil.checkNotNullAndLength(tempTraffic.getFabricType());
 
-    ParameterCheckUtil.checkNotNullAndLength(tempTraffic.getNodeId());
+    ParameterCheckUtil.checkNumericId(tempTraffic.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
     ParameterCheckUtil.checkNotNull(tempTraffic.getIfTypeEnum());
 
     ParameterCheckUtil.checkNotNullAndLength(tempTraffic.getIfId());
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

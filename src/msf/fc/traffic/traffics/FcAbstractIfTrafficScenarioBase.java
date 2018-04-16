@@ -28,7 +28,7 @@ import msf.mfcfc.traffic.traffics.data.entity.IfTrafficEntity;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficValueNodeEntity;
 
 /**
- * Abstract class to implement common process of IF traffic information
+ * Abstract class to implement the common process of IF traffic information
  * acquisition processing in traffic management function.
  *
  * @author NTT

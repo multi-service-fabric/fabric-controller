@@ -42,6 +42,7 @@ public class ErrorResponse extends RestResponseBase {
       responseBody.setErrorCode(errCode.getCode());
       switch (systemIfType) {
         case INTERNAL:
+
           break;
         case EXTERNAL:
 
@@ -112,6 +113,7 @@ public class ErrorResponse extends RestResponseBase {
   }
 
   class ErrorResponseBody extends AbstractResponseBody {
+
     @SerializedName("target_clusters")
     protected List<TargetClusterEntity> requestTargetClusterList = null;
 

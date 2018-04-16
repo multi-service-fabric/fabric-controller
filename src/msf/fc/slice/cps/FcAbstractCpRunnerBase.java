@@ -33,8 +33,8 @@ import msf.mfcfc.rest.common.RestClient;
 import msf.mfcfc.slice.cps.AbstractCpRunnerBase;
 
 /**
- * Abstract class to implement common process of asynchronous runner processing
- * in CP management.
+ * Abstract class to implement the common process of asynchronous runner
+ * processing in CP management.
  *
  * @author NTT
  *

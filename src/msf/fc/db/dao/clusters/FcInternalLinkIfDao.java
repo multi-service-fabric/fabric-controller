@@ -20,13 +20,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, Integer> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcInternalLinkIfDao.class);
 
-
-  
   public List<FcInternalLinkIf> readList(SessionWrapper session, Integer nodeType, Integer nodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId" }, new Object[] { session, nodeType, nodeId });
@@ -41,19 +38,19 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
       List<FcInternalLinkIf> fcInternalLinkIfs = new ArrayList<>();
 
       for (FcPhysicalIf fcPhysicalIf : fcNode.getPhysicalIfs()) {
-        if (CollectionUtils.isNotEmpty(fcPhysicalIf.getInternalLinkIfs())) {
+        if (fcPhysicalIf != null && CollectionUtils.isNotEmpty(fcPhysicalIf.getInternalLinkIfs())) {
           fcInternalLinkIfs.addAll(fcPhysicalIf.getInternalLinkIfs());
         }
       }
 
       for (FcBreakoutIf fcBreakoutIf : fcNode.getBreakoutIfs()) {
-        if (CollectionUtils.isNotEmpty(fcBreakoutIf.getInternalLinkIfs())) {
+        if (fcBreakoutIf != null && CollectionUtils.isNotEmpty(fcBreakoutIf.getInternalLinkIfs())) {
           fcInternalLinkIfs.addAll(fcBreakoutIf.getInternalLinkIfs());
         }
       }
 
       for (FcLagIf fcLagIf : fcNode.getLagIfs()) {
-        if (CollectionUtils.isNotEmpty(fcLagIf.getInternalLinkIfs())) {
+        if (fcLagIf != null && CollectionUtils.isNotEmpty(fcLagIf.getInternalLinkIfs())) {
           fcInternalLinkIfs.addAll(fcLagIf.getInternalLinkIfs());
         }
       }
@@ -64,7 +61,6 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
     }
   }
 
-  
   public FcInternalLinkIf readFromBiggestId(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -77,7 +73,6 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
     }
   }
 
-  
   public FcInternalLinkIf readByPhysicalIfId(SessionWrapper session, Integer ecNodeId, String physicalIfId)
       throws MsfException {
     try {
@@ -86,6 +81,9 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcInternalLinkIf fcInternalLinkIf = null;
       for (FcPhysicalIf fcPhysicalIf : fcNode.getPhysicalIfs()) {
@@ -102,7 +100,6 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
     }
   }
 
-  
   public FcInternalLinkIf readByLagIfId(SessionWrapper session, Integer ecNodeId, String lagIfId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "ecNodeId", "lagIfId" },
@@ -110,6 +107,9 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcInternalLinkIf fcInternalLinkIf = null;
       for (FcLagIf fcLagIf : fcNode.getLagIfs()) {
@@ -126,7 +126,6 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
     }
   }
 
-  
   public FcInternalLinkIf readByBreakoutIfId(SessionWrapper session, Integer ecNodeId, String breakoutIfId)
       throws MsfException {
     try {
@@ -135,6 +134,9 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcInternalLinkIf fcInternalLinkIf = null;
       for (FcBreakoutIf fcBreakoutIf : fcNode.getBreakoutIfs()) {
@@ -150,7 +152,6 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
       logger.methodEnd();
     }
   }
-
 
   @Override
   public FcInternalLinkIf read(SessionWrapper session, Integer internalLinkIfId) throws MsfException {

@@ -3,6 +3,8 @@ package msf.fc.node.nodes.spines;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.HttpMethod;
 import msf.mfcfc.common.constant.NodeSubStatus;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -56,7 +58,7 @@ public class FcSpineNodeCreateScenario extends FcAbstractSpineNodeScenarioBase<S
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
       ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
 
@@ -85,7 +87,7 @@ public class FcSpineNodeCreateScenario extends FcAbstractSpineNodeScenarioBase<S
       try {
         sessionWrapper.openSession();
 
-        checkForExecNodeInfo(sessionWrapper, false, null, null, null);
+        checkForExecNodeInfo(sessionWrapper, HttpMethod.POST, null, null, null);
 
         if (requestBody.getProvisioning()) {
 

@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.clusters;
 
 import org.hibernate.Criteria;
@@ -7,7 +8,6 @@ import msf.fc.common.data.FcLeafNode;
 import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
-
 
 public class FcLeafNodeDao extends FcAbstractCommonDao<FcLeafNode, Long> {
 

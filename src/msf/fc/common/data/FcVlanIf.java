@@ -12,6 +12,8 @@ import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
+import msf.mfcfc.common.exception.MsfException;
+
 @Entity
 @Table(name = "vlan_ifs")
 @NamedQuery(name = "FcVlanIf.findAll", query = "SELECT f FROM FcVlanIf f")

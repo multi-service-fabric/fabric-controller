@@ -1,17 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum ControllerStatus {
 
-  
   WARNING(0, "warning"),
 
-  
   RUNNING(100, "running");
 
-
   private int code;
-
 
   private String message;
 
@@ -20,17 +16,14 @@ public enum ControllerStatus {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static ControllerStatus getEnumFromCode(int code) {
     for (ControllerStatus enumValue : values()) {
       if (enumValue.getCode() == code) {
@@ -41,7 +34,6 @@ public enum ControllerStatus {
     return null;
   }
 
-  
   public static ControllerStatus getEnumFromMessage(String message) {
     for (ControllerStatus enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

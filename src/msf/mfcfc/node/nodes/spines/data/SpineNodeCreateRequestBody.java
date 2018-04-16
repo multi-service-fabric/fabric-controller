@@ -26,187 +26,149 @@ import msf.mfcfc.node.nodes.spines.data.entity.SpineNodePhysicalIfCreateEntity;
 import msf.mfcfc.node.nodes.spines.data.entity.SpineNodePhysicalLinkEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class SpineNodeCreateRequestBody implements RestRequestValidator {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(SpineNodeCreateRequestBody.class);
-  
+
   @SerializedName("node_id")
   private String nodeId;
-  
+
   @SerializedName("equipment_type_id")
   private String equipmentTypeId;
 
-  
   @SerializedName("host_name")
   private String hostName;
 
-  
   @SerializedName("mac_address")
   private String macAddress;
 
-  
   @SerializedName("username")
   private String username;
 
-  
   @SerializedName("password")
   private String password;
 
-  
   @SerializedName("provisioning")
   private Boolean provisioning;
 
-  
   @SerializedName("snmp_community")
   private String snmpCommunity;
 
-  
   @SerializedName("ntp_server_address")
   private String ntpServerAddress;
 
-  
   @SerializedName("breakout")
   private SpineNodeBreakoutEntity breakout;
 
-  
   @SerializedName("internal_links")
   private SpineNodeInternalLinkEntity internalLinks;
 
-  
   @SerializedName("management_if_address")
   private String managementIfAddress;
 
-  
   @SerializedName("management_if_prefix")
   private Integer managementIfPrefix;
 
-  
   public String getNodeId() {
     return nodeId;
   }
 
-  
   public void setNodeId(String nodeId) {
     this.nodeId = nodeId;
   }
 
-  
   public String getEquipmentTypeId() {
     return equipmentTypeId;
   }
 
-  
   public void setEquipmentTypeId(String equipmentTypeId) {
     this.equipmentTypeId = equipmentTypeId;
   }
 
-  
   public String getHostName() {
     return hostName;
   }
 
-  
   public void setHostName(String hostName) {
     this.hostName = hostName;
   }
 
-  
   public String getMacAddress() {
     return macAddress;
   }
 
-  
   public void setMacAddress(String macAddress) {
     this.macAddress = macAddress;
   }
 
-  
   public String getUsername() {
     return username;
   }
 
-  
   public void setUsername(String username) {
     this.username = username;
   }
 
-  
   public String getPassword() {
     return password;
   }
 
-  
   public void setPassword(String password) {
     this.password = password;
   }
 
-  
   public Boolean getProvisioning() {
     return provisioning;
   }
 
-  
   public void setProvisioning(Boolean provisioning) {
     this.provisioning = provisioning;
   }
 
-  
   public String getSnmpCommunity() {
     return snmpCommunity;
   }
 
-  
   public void setSnmpCommunity(String snmpCommunity) {
     this.snmpCommunity = snmpCommunity;
   }
 
-  
   public String getNtpServerAddress() {
     return ntpServerAddress;
   }
 
-  
   public void setNtpServerAddress(String ntpServerAddress) {
     this.ntpServerAddress = ntpServerAddress;
   }
 
-  
   public SpineNodeBreakoutEntity getBreakout() {
     return breakout;
   }
 
-  
   public void setBreakout(SpineNodeBreakoutEntity breakout) {
     this.breakout = breakout;
   }
 
-  
   public SpineNodeInternalLinkEntity getInternalLinks() {
     return internalLinks;
   }
 
-  
   public void setInternalLinks(SpineNodeInternalLinkEntity internalLinks) {
     this.internalLinks = internalLinks;
   }
 
-  
   public String getManagementIfAddress() {
     return managementIfAddress;
   }
 
-  
   public void setManagementIfAddress(String managementIfAddress) {
     this.managementIfAddress = managementIfAddress;
   }
 
-  
   public Integer getManagementIfPrefix() {
     return managementIfPrefix;
   }
 
-  
   public void setManagementIfPrefix(Integer managementIfPrefix) {
     this.managementIfPrefix = managementIfPrefix;
   }
@@ -266,8 +228,7 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
 
     for (SpineNodeOppositeEntity tempOpposite : breakout.getOppositeList()) {
 
-
-      ParameterCheckUtil.checkNotNullAndLength(tempOpposite.getOppositeNodeId());
+      ParameterCheckUtil.checkNumericId(tempOpposite.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNullAndLength(tempOpposite.getBreakoutIfList());
 
@@ -304,12 +265,10 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
 
   private void validateBaseIf(SpineNodeBaseIfEntity baseIf) throws MsfException {
 
-
     ParameterCheckUtil.checkIdSpecifiedByUri(baseIf.getPhysicalIfId());
   }
 
   private void validateInternalLink() throws MsfException {
-
 
     if (internalLinks != null) {
 
@@ -331,9 +290,7 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
 
     for (SpineNodePhysicalLinkEntity tempPLink : internalLinks.getPhysicalLinkList()) {
 
-      ParameterCheckUtil.checkNotNullAndLength(tempPLink.getOppositeNodeId());
-
-
+      ParameterCheckUtil.checkNumericId(tempPLink.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNull(tempPLink.getInternalLinkIf());
 
@@ -344,9 +301,7 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
   private void validateLagLinkList() throws MsfException {
     for (SpineNodeLagLinkEntity tempLLink : internalLinks.getLagLinkList()) {
 
-      ParameterCheckUtil.checkNotNullAndLength(tempLLink.getOppositeNodeId());
-
-
+      ParameterCheckUtil.checkNumericId(tempLLink.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNullAndLength(tempLLink.getMemberIfList());
 
@@ -355,7 +310,6 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
   }
 
   private void validateInternalLinkIf(SpineNodeInternalLinkIfEntity internalLinkIf) throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(internalLinkIf.getLocal());
 
@@ -408,7 +362,6 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
 
   private void validatePhysicalIf(SpineNodePhysicalIfCreateEntity physicalIf) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(physicalIf.getPhysicalIfId());
 
     ParameterCheckUtil.checkNotNullAndLength(physicalIf.getPhysicalIfSpeed());
@@ -417,11 +370,9 @@ public class SpineNodeCreateRequestBody implements RestRequestValidator {
   private void validateBreakoutIf(SpineNodeInternalBreakoutIfEntity spineNodeInternalBreakoutIfEntity)
       throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(spineNodeInternalBreakoutIfEntity.getBreakoutIfId());
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

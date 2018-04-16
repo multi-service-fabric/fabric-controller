@@ -4,8 +4,14 @@ package msf.fc.node.interfaces.edgepoints;
 import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.config.FcConfigManager;
+import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcEdgePoint;
+import msf.fc.common.data.FcLagIf;
+import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.db.dao.clusters.FcEdgePointDao;
+import msf.fc.rest.ec.node.interfaces.breakout.data.BreakoutIfReadEcResponseBody;
+import msf.fc.rest.ec.node.interfaces.lag.data.LagIfReadEcResponseBody;
+import msf.fc.rest.ec.node.interfaces.physical.data.PhysicalIfReadEcResponseBody;
 import msf.fc.rest.ec.node.nodes.data.NodeReadEcResponseBody;
 import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
@@ -62,7 +68,7 @@ public class FcEdgePointReadScenario extends FcAbstractEdgePointScenarioBase<Edg
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getEdgePointId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
       if (request.getUserType() != null) {
         ParameterCheckUtil.checkNotNull(request.getUserTypeEnum());
@@ -110,13 +116,16 @@ public class FcEdgePointReadScenario extends FcAbstractEdgePointScenarioBase<Edg
       logger.methodStart();
 
       NodeReadEcResponseBody nodeReadEcResponseBody = sendNodeRead(fcEdgePoint);
+      Object interfaceQosResponseBody = sendInterfaceReadToQos(fcEdgePoint);
       if (RestUserTypeOption.OPERATOR.getMessage().equals(userType)) {
         EdgePointReadOwnerResponseBody body = new EdgePointReadOwnerResponseBody();
-        body.setEdgePoint(getEdgePointForOwner(fcEdgePoint, sessionWrapper, nodeReadEcResponseBody.getNode()));
+        body.setEdgePoint(getEdgePointForOwner(fcEdgePoint, sessionWrapper, nodeReadEcResponseBody.getNode(),
+            interfaceQosResponseBody));
         return createRestResponse(body, HttpStatus.OK_200);
       } else {
         EdgePointReadUserResponseBody body = new EdgePointReadUserResponseBody();
-        body.setEdgePoint(getEdgePointForUser(fcEdgePoint, sessionWrapper, nodeReadEcResponseBody.getNode()));
+        body.setEdgePoint(getEdgePointForUser(fcEdgePoint, sessionWrapper, nodeReadEcResponseBody.getNode(),
+            interfaceQosResponseBody));
         return createRestResponse(body, HttpStatus.OK_200);
       }
     } finally {
@@ -153,6 +162,31 @@ public class FcEdgePointReadScenario extends FcAbstractEdgePointScenarioBase<Edg
           nodeReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
 
       return nodeReadEcResponseBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private Object sendInterfaceReadToQos(FcEdgePoint fcEdgePoint) throws MsfException {
+    try {
+      logger.methodStart();
+
+      if (fcEdgePoint.getPhysicalIf() != null) {
+        FcPhysicalIf fcPhysicalIf = fcEdgePoint.getPhysicalIf();
+        PhysicalIfReadEcResponseBody sendPhysicalInterfaceRead = sendPhysicalInterfaceRead(fcPhysicalIf.getNode(),
+            fcPhysicalIf.getPhysicalIfId());
+        return sendPhysicalInterfaceRead.getPhysicalIf().getQos();
+      } else if (fcEdgePoint.getLagIf() != null) {
+        FcLagIf fcLagIf = fcEdgePoint.getLagIf();
+        LagIfReadEcResponseBody sendLagInterfaceRead = sendLagInterfaceRead(fcLagIf.getNode(),
+            String.valueOf(fcLagIf.getLagIfId()));
+        return sendLagInterfaceRead.getLagIf().getQos();
+      } else {
+        FcBreakoutIf fcBreakoutIf = fcEdgePoint.getBreakoutIf();
+        BreakoutIfReadEcResponseBody sendBreakoutInterfaceRead = sendBreakoutInterfaceRead(fcBreakoutIf.getNode(),
+            fcBreakoutIf.getBreakoutIfId());
+        return sendBreakoutInterfaceRead.getBreakoutIf().getQos();
+      }
     } finally {
       logger.methodEnd();
     }

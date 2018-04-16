@@ -16,9 +16,10 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpEntity;
+import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpQosEntity;
 
 /**
- * * Abstract class to implement common process of L2CP-related processing in
+ * Abstract class to implement the common process of L2CP-related processing in
  * slice management function.
  *
  * @author NTT
@@ -55,12 +56,14 @@ public abstract class FcAbstractL2CpScenarioBase<T extends RestRequestBase> exte
       l2CpEntity.setEdgePointId(String.valueOf(l2Cp.getEdgePoint().getEdgePointId()));
       l2CpEntity.setEsi(l2Cp.getEsi());
       l2CpEntity.setLacpSystemId(EsiUtil.getLacpSystemIdFromEsi(l2Cp.getEsi()));
+
       int myClusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
       if (l2Cp.getEsi() != null && EsiUtil.getLowerSwClusterId(l2Cp.getEsi()) == myClusterId
           && EsiUtil.getHigherSwClusterId(l2Cp.getEsi()) == myClusterId) {
         FcL2CpDao l2CpDao = new FcL2CpDao();
         List<FcL2Cp> pairL2CpList = l2CpDao.readListByEsi(sessionWrapper, l2Cp.getEsi());
         for (FcL2Cp pairL2Cp : pairL2CpList) {
+
           if (!pairL2Cp.getId().equals(l2Cp.getId())) {
             l2CpEntity.setPairCpId(pairL2Cp.getId().getCpId());
             break;
@@ -68,6 +71,21 @@ public abstract class FcAbstractL2CpScenarioBase<T extends RestRequestBase> exte
         }
       }
       l2CpEntity.setPortMode(vlanIfEcEntity.getPortMode());
+
+      L2CpQosEntity qos = new L2CpQosEntity();
+
+      qos.setEgressQueueCapabilityList(vlanIfEcEntity.getQos().getCapability().getEgressMenuList());
+      qos.setRemarkCapabilityList(vlanIfEcEntity.getQos().getCapability().getRemarkMenuList());
+      qos.setRemark(vlanIfEcEntity.getQos().getCapability().getRemark());
+      qos.setShaping(vlanIfEcEntity.getQos().getCapability().getShaping());
+
+      if (vlanIfEcEntity.getQos().getSetValue() != null) {
+        qos.setEgressQueueMenu(vlanIfEcEntity.getQos().getSetValue().getEgressMenu());
+        qos.setRemarkMenu(vlanIfEcEntity.getQos().getSetValue().getRemarkMenu());
+        qos.setIngressShapingRate(vlanIfEcEntity.getQos().getSetValue().getInflowShapingRate());
+        qos.setEgressShapingRate(vlanIfEcEntity.getQos().getSetValue().getOutflowShapingRate());
+      }
+      l2CpEntity.setQos(qos);
 
       return l2CpEntity;
     } finally {

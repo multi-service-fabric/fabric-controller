@@ -21,6 +21,7 @@ import msf.mfcfc.core.scenario.RestResponseData;
  *
  */
 public final class SendRequestExecutor {
+
   private static final MsfLogger logger = MsfLogger.getInstance(SendRequestExecutor.class);
 
   private static final ExecutorService EXEC_SERVICE = Executors.newWorkStealingPool();

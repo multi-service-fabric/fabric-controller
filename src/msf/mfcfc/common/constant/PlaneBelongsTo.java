@@ -1,16 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum PlaneBelongsTo {
 
-  
   A_PLANE(1, 1),
-  
+
   B_PLANE(2, 2);
 
-
   private int code;
-
 
   private int message;
 
@@ -19,17 +16,14 @@ public enum PlaneBelongsTo {
     this.message = message;
   }
 
-  
   public int getCode() {
     return code;
   }
 
-  
   public int getMessage() {
     return message;
   }
 
-  
   public static PlaneBelongsTo getEnumFromCode(Integer code) {
     if (code == null) {
       return null;
@@ -43,7 +37,6 @@ public enum PlaneBelongsTo {
     return null;
   }
 
-  
   public static PlaneBelongsTo getEnumFromMessage(Integer message) {
     if (message == null) {
       return null;

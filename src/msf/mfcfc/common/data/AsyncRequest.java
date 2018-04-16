@@ -1,3 +1,4 @@
+
 package msf.mfcfc.common.data;
 
 import java.sql.Timestamp;
@@ -7,7 +8,6 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import msf.mfcfc.common.constant.AsyncProcessStatus;
 import msf.mfcfc.common.constant.HttpMethod;
-
 
 public class AsyncRequest {
   private String operationId;
@@ -159,7 +159,6 @@ public class AsyncRequest {
     this.asyncRequestsForLowerList = asyncRequestsForLowerList;
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

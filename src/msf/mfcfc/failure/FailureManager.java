@@ -12,12 +12,15 @@ import msf.mfcfc.common.log.MsfLogger;
  *
  */
 public class FailureManager implements FunctionBlockBase {
+
   protected static final MsfLogger logger = MsfLogger.getInstance(FailureManager.class);
 
   protected static FailureManager instance = null;
 
   /**
-   * Return the instance of FailureManager.
+   * Get the instance of FailureManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return FailureManager instance
    */

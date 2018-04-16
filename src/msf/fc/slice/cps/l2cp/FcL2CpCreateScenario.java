@@ -14,7 +14,7 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpCreateResponseBody;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * L2CP generation implementation class.
+ * L2CP addition implementation class.
  *
  * @author NTT
  *

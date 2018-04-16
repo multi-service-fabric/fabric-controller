@@ -18,11 +18,12 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpBgpEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpEntity;
+import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpQosEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpVrrpEntity;
 
 /**
- * Abstract class to implement common process of L3CP-related processing in
+ * Abstract class to implement the common process of L3CP-related processing in
  * slice management function.
  *
  * @author NTT
@@ -101,6 +102,21 @@ public abstract class FcAbstractL3CpScenarioBase<T extends RestRequestBase> exte
       }
       l3CpEntity.setSupportProtocolList(supportProtocolList);
       l3CpEntity.setTrafficThreshold(l3Cp.getTrafficThreshold());
+
+      L3CpQosEntity qos = new L3CpQosEntity();
+
+      qos.setEgressQueueCapabilityList(vlanIfEcEntity.getQos().getCapability().getEgressMenuList());
+      qos.setRemarkCapabilityList(vlanIfEcEntity.getQos().getCapability().getRemarkMenuList());
+      qos.setRemark(vlanIfEcEntity.getQos().getCapability().getRemark());
+      qos.setShaping(vlanIfEcEntity.getQos().getCapability().getShaping());
+
+      if (vlanIfEcEntity.getQos().getSetValue() != null) {
+        qos.setEgressQueueMenu(vlanIfEcEntity.getQos().getSetValue().getEgressMenu());
+        qos.setRemarkMenu(vlanIfEcEntity.getQos().getSetValue().getRemarkMenu());
+        qos.setIngressShapingRate(vlanIfEcEntity.getQos().getSetValue().getInflowShapingRate());
+        qos.setEgressShapingRate(vlanIfEcEntity.getQos().getSetValue().getOutflowShapingRate());
+      }
+      l3CpEntity.setQos(qos);
 
       return l3CpEntity;
     } finally {

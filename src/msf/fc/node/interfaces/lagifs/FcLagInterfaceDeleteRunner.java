@@ -26,7 +26,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Lag interface deletion.
+ * Class to implement the asynchronous processing in Lag interface deletion.
  *
  * @author NTT
  *
@@ -35,9 +35,7 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
 
   private LagIfRequest request;
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagInterfaceDeleteRunner.class);
-
 
   private ErrorCode ecResponseStatus = null;
 
@@ -56,10 +54,8 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
         sessionWrapper.openSession();
         FcLagIfDao fcLagIfDao = new FcLagIfDao();
 
-
         FcLagIf fcLagIf = getLagInterface(sessionWrapper, fcLagIfDao, request.getFabricTypeEnum().getCode(),
             Integer.parseInt(request.getNodeId()), Integer.parseInt(request.getLagIfId()));
-
 
         logger.performance("start get leaf resources lock.");
         sessionWrapper.beginTransaction();
@@ -68,15 +64,11 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
         FcDbManager.getInstance().getLeafsLock(fcNodes, sessionWrapper);
         logger.performance("end get leaf resources lock.");
 
-
         checkStatus(sessionWrapper, fcLagIf);
-
 
         fcLagIfDao.delete(sessionWrapper, fcLagIf.getLagIfId());
 
-
         sendLagInterfaceDelete(fcLagIf);
-
 
         responseBase = responseLagInterfaceDeleteAsyncData();
 
@@ -101,7 +93,6 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  
   private FcLagIf getLagInterface(SessionWrapper sessionWrapper, FcLagIfDao fcLagIfDao, Integer nodeType,
       Integer nodeId, Integer lagIfId) throws MsfException {
     try {
@@ -117,7 +108,6 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  
   protected void checkStatus(SessionWrapper sessionWrapper, FcLagIf fcLagIf) throws MsfException {
     try {
       logger.methodStart(new String[] { "sessionWrapper", "fcLagIf" }, new Object[] { sessionWrapper, fcLagIf });
@@ -140,7 +130,6 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  
   private RestResponseBase sendLagInterfaceDelete(FcLagIf fcLagIf) throws MsfException {
     try {
       logger.methodStart();
@@ -152,7 +141,6 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
       RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.LAG_IF_DELETE.getHttpMethod(),
           EcRequestUri.LAG_IF_DELETE.getUri(String.valueOf(fcLagIf.getNode().getEcNodeId()), request.getLagIfId()),
           null, ecControlIpAddress, ecControlPort);
-
 
       if (restResponseBase.getHttpStatusCode() != HttpStatus.NO_CONTENT_204) {
         ErrorInternalResponseBody responseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
@@ -173,7 +161,6 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  
   private RestResponseBase responseLagInterfaceDeleteAsyncData() {
     try {
       logger.methodStart();

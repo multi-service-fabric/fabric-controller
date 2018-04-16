@@ -19,13 +19,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcNodeDao.class);
 
-
-  
   public List<FcNode> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -36,7 +33,6 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
     }
   }
 
-  
   public List<FcNode> readList(SessionWrapper session, Integer nodeType) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType" }, new Object[] { session, nodeType });
@@ -47,7 +43,6 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
     }
   }
 
-  
   public FcNode read(SessionWrapper session, Integer nodeType, Integer nodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId" }, new Object[] { session, nodeType, nodeId });
@@ -59,7 +54,6 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
     }
   }
 
-  
   public FcNode read(SessionWrapper session, Integer edgePointId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "edgePointId" }, new Object[] { session, edgePointId });
@@ -99,7 +93,6 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
     return readByCriteria(session, criteria);
   }
 
-  
   public FcNode readByEcNodeId(SessionWrapper session, Integer ecNodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "ecNodeId" }, new Object[] { session, ecNodeId });

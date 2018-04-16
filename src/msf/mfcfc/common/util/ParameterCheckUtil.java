@@ -504,15 +504,6 @@ public class ParameterCheckUtil {
     }
   }
 
-  /**
-   * For resource acquisition, create and return a message with value name and
-   * value linked.
-   *
-   * @param keys
-   *          Key value
-   * @param values
-   *          Values
-   */
   private static String makeValuesMessage(String[] keys, Object[] values) {
     StringBuilder builder = new StringBuilder();
     if ((keys != null) && (values != null) && (keys.length == values.length)) {
@@ -631,18 +622,71 @@ public class ParameterCheckUtil {
   }
 
   /**
-   * Method for checking the cluster ID to be specified (with multiple
-   * specifications) at the time of request.
+   * Method for checking the cluster IDs to be specified (multiple IDs can be
+   * specified) at the time of request using regular expressions.
    *
    * @param cluster
-   *          Cluster ID specified from the host system (with multiple
-   *          specifications connected with "+")
-   * @param clusterId
-   *          Cluster ID to check that is included in "cluster"
+   *          Cluster IDs specified from the upper layer system (multiple IDs
+   *          can be specified and connected with "+")
    * @throws MsfException
-   *           If parameter check is of NG
+   *           If the parameter check is NG
    */
-  public static void checkCluster(String cluster, int clusterId) throws MsfException {
+  public static void checkClusterIdPattern(String cluster) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "cluster" }, new Object[] { cluster });
+      List<String> clusters = Arrays.asList(cluster.split("\\+", 0));
+      for (String id : clusters) {
+        if (!clusterIdPattern.matcher(id).matches()) {
+          String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
+          logger.error(logMsg);
+          throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+        }
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Method for checking the FC controller of cluster IDs to be specified
+   * (multiple IDs can be specified) at the time of request.
+   *
+   * @param cluster
+   *          Cluster IDs specified from the upper layer system (multiple IDs
+   *          can be specified and connected with "+")
+   * @param clusterId
+   *          Cluster IDs to be checked whether it is included in "cluster"
+   * @throws MsfException
+   *           If the parameter check is NG
+   */
+  public static void checkClusterForFc(String cluster, int clusterId) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "cluster" }, new Object[] { cluster });
+      List<String> clusters = Arrays.asList(cluster.split("\\+", 0));
+
+      checkClusterIdPattern(cluster);
+
+      if (!clusters.contains(String.valueOf(clusterId))) {
+        String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, logMsg);
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Method for checking the cluster IDs to be specified (multiple IDs can be
+   * specified) at the time of request.
+   *
+   * @param cluster
+   *          Cluster IDs specified from the upper layer system (multiple IDs
+   *          can be specified and connected with "+")
+   * @throws MsfException
+   *           If the parameter check is NG
+   */
+  public static void checkCluster(String cluster) throws MsfException {
     try {
       logger.methodStart(new String[] { "cluster" }, new Object[] { cluster });
       List<String> clusters = Arrays.asList(cluster.split("\\+", 0));
@@ -655,11 +699,6 @@ public class ParameterCheckUtil {
         }
       }
 
-      if (!clusters.contains(String.valueOf(clusterId))) {
-        String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
-        logger.error(logMsg);
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, logMsg);
-      }
     } finally {
       logger.methodEnd();
     }
@@ -715,14 +754,16 @@ public class ParameterCheckUtil {
   }
 
   /**
-   * Check whether the specified parameter consists of "/"and[ ALPHA / DIGIT /
-   * "-" / "." / "_" / "~"](half-width alphanumericand "-", ".", "_" and "~").
-   * The characters specified as a path parameter of ATCH method apply to this.
+   * Check whether it consists of "ALPHA / DIGIT / "-" / "." / "_" / "~""
+   * (half-width alphanumeric characters and "-", ".", "_" and "~".)
+   * 
+   * Characters that are specified in the path parameter of the PATCH method
+   * corresponds to this.
    *
    * @param checkTargetPath
-   *          Character string to check
+   *          String to check
    * @param requiredId
-   *          If ID specification is mandatory
+   *          If the specified ID is essential
    * @throws MsfException
    *           If parameter check is of NG
    */

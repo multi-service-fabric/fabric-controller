@@ -3,6 +3,7 @@ package msf.fc.node.clusters;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.RestUserTypeOption;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -25,7 +26,7 @@ import msf.mfcfc.node.clusters.data.SwClusterRequest;
 public class FcClusterReadScenario extends FcAbstractClusterScenarioBase<SwClusterRequest> {
 
   private SwClusterRequest request;
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(FcClusterReadScenario.class);
 
   /**
@@ -54,7 +55,7 @@ public class FcClusterReadScenario extends FcAbstractClusterScenarioBase<SwClust
 
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (request.getUserType() != null) {
 
@@ -78,7 +79,6 @@ public class FcClusterReadScenario extends FcAbstractClusterScenarioBase<SwClust
       try {
         sessionWrapper.openSession();
 
-
         responseBase = responseClusterReadData(sessionWrapper, request.getUserType());
 
       } catch (MsfException msfException) {
@@ -94,7 +94,6 @@ public class FcClusterReadScenario extends FcAbstractClusterScenarioBase<SwClust
     }
   }
 
-  
   private RestResponseBase responseClusterReadData(SessionWrapper sessionWrapper, String userType) throws MsfException {
     try {
       logger.methodStart(new String[] { "userType" }, new Object[] { userType });

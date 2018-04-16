@@ -31,6 +31,7 @@ import msf.mfcfc.db.dao.slices.VrfIdDao;
  *
  */
 public class DbManager implements FunctionBlockBase {
+
   protected static final MsfLogger logger = MsfLogger.getInstance(DbManager.class);
 
   protected static DbManager instance = null;
@@ -40,7 +41,9 @@ public class DbManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the instance of {@link DbManager}.
+   * Get the instance of {@link DbManager}. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return {@link DbManager} instance
    */

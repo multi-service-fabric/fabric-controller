@@ -11,12 +11,6 @@ import msf.mfcfc.common.exception.MsfException;
  */
 public interface RestRequestValidator {
 
-  /**
-   * Method for checking request validation.
-   *
-   * @throws MsfException
-   *           Arises when a check error occurs
-   */
   public void validate() throws MsfException;
 
 }

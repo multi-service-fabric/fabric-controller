@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.slices;
 
 import org.hibernate.Criteria;
@@ -7,7 +8,6 @@ import msf.fc.common.data.FcSliceId;
 import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
-
 
 public class FcSliceIdDao extends FcAbstractCommonDao<FcSliceId, Integer> {
 

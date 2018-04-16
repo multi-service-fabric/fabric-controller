@@ -1,3 +1,4 @@
+
 package msf.mfcfc.core.scenario;
 
 import com.google.gson.annotations.SerializedName;
@@ -5,9 +6,13 @@ import com.google.gson.annotations.SerializedName;
 import msf.mfcfc.common.constant.ClusterRequestResult;
 import msf.mfcfc.common.constant.ErrorResponseDataConsistency;
 
-
+/**
+ * Cluster information for request target.
+ *
+ * @author NTT
+ *
+ */
 public class TargetClusterEntity {
-
 
   @SerializedName("cluster_id")
   private String clusterId;
@@ -15,19 +20,30 @@ public class TargetClusterEntity {
   @SerializedName("request_results")
   private String requestResults;
 
-
   @SerializedName("error_code")
   private String errorCode;
-
 
   @SerializedName("error_message")
   private String errorMessage;
 
-
   @SerializedName("data_consistency")
   private String dataConsistency;
 
-  
+  /**
+   * Constructor.
+   *
+   * @param clusterId
+   *          Cluster ID for process target
+   * @param requestResults
+   *          Request results
+   * @param errorCode
+   *          Value representing the details of error occurred in MFC/FC
+   *          (exception message)
+   * @param errorMessage
+   *          Cause of failure (exception message)
+   * @param dataConsistency
+   *          Data consistency status
+   */
   public TargetClusterEntity(String clusterId, String requestResults, String errorCode, String errorMessage,
       String dataConsistency) {
     super();

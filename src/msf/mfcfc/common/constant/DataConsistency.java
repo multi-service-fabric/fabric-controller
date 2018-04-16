@@ -1,21 +1,18 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum DataConsistency {
 
-  
   CONSISTENT(ErrorResponseDataConsistency.ROLLED_BACK, ErrorResponseDataConsistency.UPDATED),
-  
-  INCONSISTENT(ErrorResponseDataConsistency.NOT_CONSISTENT, ErrorResponseDataConsistency.NOT_CONSISTENT),
-  
-  UNKNOWN(ErrorResponseDataConsistency.UNKNOWN, ErrorResponseDataConsistency.UNKNOWN);
 
+  INCONSISTENT(ErrorResponseDataConsistency.NOT_CONSISTENT, ErrorResponseDataConsistency.NOT_CONSISTENT),
+
+  UNKNOWN(ErrorResponseDataConsistency.UNKNOWN, ErrorResponseDataConsistency.UNKNOWN);
 
   private ErrorResponseDataConsistency errorResponseDataConsistency;
 
   private ErrorResponseDataConsistency errorResponseDataConsistencyForRollback;
 
-  
   private DataConsistency(ErrorResponseDataConsistency errorResponseDataConsistency,
       ErrorResponseDataConsistency errorResponseDataConsistencyForRollback) {
     this.errorResponseDataConsistency = errorResponseDataConsistency;
@@ -23,17 +20,14 @@ public enum DataConsistency {
 
   }
 
-  
   public ErrorResponseDataConsistency getErrorResponseDataConsistency() {
     return errorResponseDataConsistency;
   }
 
-  
   public ErrorResponseDataConsistency getErrorResponseDataConsistencyForRollback() {
     return errorResponseDataConsistencyForRollback;
   }
 
-  
   public static DataConsistency getDataConsistencyFromErrorResponseDataConsistency(
       ErrorResponseDataConsistency errorResponseDataConsistency) {
     if (errorResponseDataConsistency == null) {
@@ -46,11 +40,9 @@ public enum DataConsistency {
       }
     }
 
-
     return null;
   }
 
-  
   public static DataConsistency getDataConsistencyFromErrorResponseDataConsistencyForRollback(
       ErrorResponseDataConsistency errorResponseDataConsistency) {
     if (errorResponseDataConsistency == null) {
@@ -62,7 +54,6 @@ public enum DataConsistency {
         return enumValue;
       }
     }
-
 
     return null;
   }

@@ -18,6 +18,7 @@ import msf.fc.slice.cps.l2cp.FcL2CpCreateScenario;
 import msf.fc.slice.cps.l2cp.FcL2CpDeleteScenario;
 import msf.fc.slice.cps.l2cp.FcL2CpReadListScenario;
 import msf.fc.slice.cps.l2cp.FcL2CpReadScenario;
+import msf.fc.slice.cps.l2cp.FcL2CpUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -38,7 +39,7 @@ public class FcL2CpHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcL2CpHandler.class);
 
   /**
-   * L2CP generation/deletion(/change).
+   * L2CP addition/deletion(/modification).
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -68,8 +69,6 @@ public class FcL2CpHandler extends AbstractRestHandler {
       FcL2CpCreateDeleteScenario scenario = new FcL2CpCreateDeleteScenario(OperationType.NORMAL,
           SystemInterfaceType.EXTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
       return createResponse(restResponseBase);
 
     } finally {
@@ -78,7 +77,7 @@ public class FcL2CpHandler extends AbstractRestHandler {
   }
 
   /**
-   * L2CP generation.
+   * L2CP addition.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -107,8 +106,6 @@ public class FcL2CpHandler extends AbstractRestHandler {
 
       FcL2CpCreateScenario scenario = new FcL2CpCreateScenario(OperationType.NORMAL, SystemInterfaceType.EXTERNAL);
       RestResponseBase restResponseBase = scenario.execute(request);
-      loggingResponseJsonBody(restResponseBase.getResponseBody());
-      loggingReturnedResponse(restResponseBase.getHttpStatusCode());
       return createResponse(restResponseBase);
 
     } finally {
@@ -117,7 +114,7 @@ public class FcL2CpHandler extends AbstractRestHandler {
   }
 
   /**
-   * L2CP change.
+   * L2CP modification.
    *
    * @param sliceId
    *          Slice ID (URI parameter)
@@ -138,7 +135,20 @@ public class FcL2CpHandler extends AbstractRestHandler {
   public Response update(@PathParam("slice_id") String sliceId, @PathParam("cp_id") String cpId,
       @QueryParam("notification_address") String notificationAddress,
       @QueryParam("notification_port") String notificationPort, String requestBody) {
-    return Response.status(Response.Status.NOT_FOUND).build();
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      L2CpRequest request = new L2CpRequest(requestBody, notificationAddress, notificationPort, sliceId, cpId, null);
+
+      setCommonData(request);
+
+      FcL2CpUpdateScenario scenario = new FcL2CpUpdateScenario(OperationType.NORMAL, SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   /**

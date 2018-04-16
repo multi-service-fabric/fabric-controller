@@ -11,6 +11,7 @@ import msf.fc.common.data.FcNode;
 import msf.fc.rest.ec.traffic.data.TrafficInfoCollectTrafficEcResponseBody;
 import msf.fc.rest.ec.traffic.data.entity.TrafficInfoTrafficValueEcEntity;
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.InterfaceType;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -60,14 +61,15 @@ public class FcIfTrafficReadListScenario extends FcAbstractIfTrafficScenarioBase
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNull(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(request.getFabricType());
-      if (NodeType.LEAF != request.getFabricTypeEnum() && NodeType.SPINE != request.getFabricTypeEnum()) {
+      if ((!NodeType.LEAF.getPluralMessage().equals(request.getFabricType()))
+          && (!NodeType.SPINE.getPluralMessage().equals(request.getFabricType()))) {
         String logMsg = MessageFormat.format("parameter is undefined. parameter={0}, value={1}", "fabric_type",
             request.getFabricType());
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
-      ParameterCheckUtil.checkNotNull(request.getNodeId());
+      ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       this.request = request;
 
@@ -121,8 +123,11 @@ public class FcIfTrafficReadListScenario extends FcAbstractIfTrafficScenarioBase
       }
 
       for (TrafficInfoTrafficValueEcEntity trafficInfo : responseBody.getSwitchTraffic().getTrafficValueList()) {
-        IfTrafficEntity ifTraffic = getIfTrafficEntity(nodeType.getPluralMessage(), nodeId, trafficInfo);
-        ifTrafficList.add(ifTraffic);
+
+        if (!InterfaceType.VLAN_IF.equals(InterfaceType.getEnumFromMessage(trafficInfo.getIfType()))) {
+          IfTrafficEntity ifTraffic = getIfTrafficEntity(nodeType.getPluralMessage(), nodeId, trafficInfo);
+          ifTrafficList.add(ifTraffic);
+        }
       }
       return ifTrafficList;
 

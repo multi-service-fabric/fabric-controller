@@ -78,7 +78,7 @@ public class FcTrafficNoticeThread extends Thread {
   private boolean isInternal = true;
 
   /**
-   * Return execution of traffic information notification.
+   * Return execution of traffic information notification
    *
    * @return whether or not execution of traffic information notification
    */
@@ -122,6 +122,7 @@ public class FcTrafficNoticeThread extends Thread {
       logger.methodStart();
       while (true) {
         try {
+
           trafficCommonData.checkForceStop();
 
           lock();
@@ -175,6 +176,7 @@ public class FcTrafficNoticeThread extends Thread {
         int clusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
 
         if (systemConfTraffic.getNoticeDestInfo().isEmpty()) {
+
           logger.info("Notification destination information is empty. execute skip.");
           return;
         }
@@ -186,11 +188,13 @@ public class FcTrafficNoticeThread extends Thread {
 
         TrafficInfoCollectAllTrafficEcResponseBody responseBody = sendTrafficReadList();
         if (!responseBody.getIsSuccess()) {
+
           logger.info("Failed get all traffic info from EC. is_success={0}", responseBody.getIsSuccess());
           return;
         }
 
         if (responseBody.getSwitchTrafficList() == null) {
+
           logger.info("switch_traffics is null.");
           return;
         }
@@ -210,9 +214,11 @@ public class FcTrafficNoticeThread extends Thread {
           NodeType fabric = fcNode.getNodeTypeEnum();
 
           if (switchTraffic.getTrafficValueList() == null) {
+
             logger.warn("Traffic values is null. ecNodeId={0}, nodeId={1}", ecNodeId, nodeId);
             continue;
           }
+
           createNoticeUnit(session, switchTraffic.getTrafficValueList(), ecNodeId, nodeId, clusterId, fabric, isSlice,
               physicalUnitList, clusterUnitList, sliceUnitList);
         }
@@ -221,8 +227,10 @@ public class FcTrafficNoticeThread extends Thread {
           RestRequestBase request = createRequest(destInfo, physicalUnitList, clusterUnitList, sliceUnitList);
 
           if (request == null) {
+
             continue;
           }
+
           notifyTrafficInfo(request, destInfo.getNoticeAddress(), destInfo.getNoticePort(),
               systemConfTraffic.getNoticeTimeout(), systemConfTraffic.getNoticeRetryNum());
         }
@@ -254,12 +262,14 @@ public class FcTrafficNoticeThread extends Thread {
       String ifId = trafficValue.getIfId();
 
       if (InterfaceType.VLAN_IF.getMessage().equals(ifType)) {
+
         getIfTrafficNotifyVlanIf(session, trafficValue, isSlice, ecNodeId, ifId, sliceUnitList);
         continue;
       }
 
       FcEdgePoint trafficEdgePoint = getEdgePoint(session, ifType, ecNodeId, ifId);
       if (trafficEdgePoint != null) {
+
         getIfTrafficNotifyEdgePoint(trafficEdgePoint, trafficValue, isSlice, clusterId, nodeId, fabricType,
             physicalUnitList, clusterUnitList, sliceUnitList);
         continue;
@@ -267,6 +277,7 @@ public class FcTrafficNoticeThread extends Thread {
 
       FcInternalLinkIf trafficInternalLinkIf = getInternalLinkIf(session, ifType, ecNodeId, ifId);
       if (trafficInternalLinkIf != null) {
+
         getIfTrafficNotifyInternalLinkIf(trafficInternalLinkIf, trafficValue, clusterId, nodeId, fabricType,
             physicalUnitList, clusterUnitList);
         continue;
@@ -274,6 +285,7 @@ public class FcTrafficNoticeThread extends Thread {
 
       FcClusterLinkIf trafficClusterLinkIf = getClusterLinkIf(session, ifType, nodeId, ifId);
       if (trafficClusterLinkIf != null) {
+
         getIfTrafficNotifyClusterLinkIf(trafficClusterLinkIf, trafficValue, clusterId, nodeId, fabricType,
             physicalUnitList, clusterUnitList);
         continue;
@@ -297,7 +309,9 @@ public class FcTrafficNoticeThread extends Thread {
     }
 
     sliceUnitList.clear();
+
     sliceUnitList.addAll(getSliceUnitGroup(l2SliceMap, SliceType.L2_SLICE));
+
     sliceUnitList.addAll(getSliceUnitGroup(l3SliceMap, SliceType.L3_SLICE));
   }
 
@@ -360,6 +374,7 @@ public class FcTrafficNoticeThread extends Thread {
         List<FcL2Cp> fcL2Cps = edgePoint.getL2Cps();
 
         if (fcL2Cps != null) {
+
           sliceUnitList.addAll(getIfTrafficSliceEntity(fcL2Cps));
         }
       }
@@ -507,6 +522,7 @@ public class FcTrafficNoticeThread extends Thread {
         if (!physicalUnitList.isEmpty()) {
           isNotice = true;
         }
+
         IfTrafficPhysicalUnitEntity physicalUnit = new IfTrafficPhysicalUnitEntity();
         physicalUnit.setIfList(physicalUnitList);
         request.setPhysicalUnit(physicalUnit);
@@ -524,6 +540,7 @@ public class FcTrafficNoticeThread extends Thread {
         if (!sliceUnitList.isEmpty()) {
           isNotice = true;
         }
+
         IfTrafficSliceUnitEntity sliceUnit = new IfTrafficSliceUnitEntity();
         sliceUnit.setSliceList(sliceUnitList);
         request.setSliceUnit(sliceUnit);
@@ -544,6 +561,7 @@ public class FcTrafficNoticeThread extends Thread {
   private boolean isOverThrethold(Double threshold, Double receiveRate, Double sendRate) {
 
     if (threshold == null) {
+
       return false;
     }
     if (threshold.compareTo(receiveRate) < 0) {
@@ -570,6 +588,7 @@ public class FcTrafficNoticeThread extends Thread {
           TrafficInfoCollectAllTrafficEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
 
       if (HttpStatus.OK_200 != restResponseBase.getHttpStatusCode()) {
+
         String errorMsg = MessageFormat.format("HttpStatusCode={0}, ErrorCode={1}",
             restResponseBase.getHttpStatusCode(), responseBody.getErrorCode());
         logger.error(errorMsg);
@@ -593,9 +612,11 @@ public class FcTrafficNoticeThread extends Thread {
               MfcFcRequestUri.TRAFFIC_NOTIFY.getUri(), request, ipAddress, port);
           break;
         } catch (MsfException msfException) {
+
           try {
             Thread.sleep(timeout);
           } catch (InterruptedException ie) {
+
           }
         }
       }
@@ -620,7 +641,9 @@ public class FcTrafficNoticeThread extends Thread {
    *          Start time
    */
   public static void setStartTime(Date startTime) {
+
     setLastStartTime(FcTrafficNoticeThread.startTime);
+
     FcTrafficNoticeThread.startTime = startTime;
   }
 

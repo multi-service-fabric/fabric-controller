@@ -15,60 +15,47 @@ import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.rest.common.RestRequestValidator;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpValueEntity;
 
-
 public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(L2CpCreateDeleteAsyncResponseBody.class);
 
-  
   @SerializedName("op")
   private String op;
 
-  
   @SerializedName("path")
   private String path;
 
-  
   @SerializedName("value")
   private L2CpValueEntity value;
 
-  
   public String getOp() {
     return op;
   }
 
-  
   public void setOp(String op) {
     this.op = op;
   }
 
-  
   public String getPath() {
     return path;
   }
 
-  
   public void setPath(String path) {
     this.path = path;
   }
 
-  
   public L2CpValueEntity getValue() {
     return value;
   }
 
-  
   public void setValue(L2CpValueEntity value) {
     this.value = value;
   }
 
-  
   public PatchOperation getOpEnum() {
     return PatchOperation.getEnumFromMessage(op);
   }
 
-  
   public void setOpEnum(PatchOperation op) {
     this.op = op.getMessage();
   }
@@ -81,7 +68,6 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
       ParameterCheckUtil.checkNotNull(getOpEnum());
 
       ParameterCheckUtil.checkNotNullAndLength(path);
-
 
       switch (getOpEnum()) {
         case ADD:
@@ -111,9 +97,7 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateReplace() throws MsfException {
 
-
     ParameterCheckUtil.checkPatchPath(path, true);
-
 
     ParameterCheckUtil.checkNotNull(value);
 
@@ -121,7 +105,6 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
   }
 
   private void validateReplaceValue() throws MsfException {
-
 
     if (value.getClusterId() != null) {
       String logMsg = "value.getClusterId() is not null.";
@@ -141,8 +124,6 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     }
 
-
-
     ParameterCheckUtil.checkNotNullAndLength(value.getEsi());
 
     ParameterCheckUtil.checkNotNullAndLength(value.getLacpSystemId());
@@ -156,7 +137,6 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateRemoveOp() throws MsfException {
 
-
     ParameterCheckUtil.checkPatchPath(path, true);
 
     if (value != null) {
@@ -169,7 +149,6 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateAddOp() throws MsfException {
 
-
     ParameterCheckUtil.checkPatchPath(path, false);
 
     ParameterCheckUtil.checkNotNull(value);
@@ -179,23 +158,17 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateAddValue() throws MsfException {
 
+    ParameterCheckUtil.checkNumericId(value.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
-    ParameterCheckUtil.checkNotNullAndLength(value.getClusterId());
-
-    ParameterCheckUtil.checkNotNullAndLength(value.getEdgePointId());
+    ParameterCheckUtil.checkNumericId(value.getEdgePointId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
     ParameterCheckUtil.checkNotNull(value.getVlanId());
     ParameterCheckUtil.checkNumberRange(value.getVlanId(), 1, 4096);
-
-
-
-
 
     ParameterCheckUtil.checkNotNull(value.getPortModeEnum());
 
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

@@ -814,8 +814,11 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
       }
 
       if (isOperationEnd) {
+
         AsyncRequest updateRecord = this.updateAsyncRequest(exeStatus, res);
+
         notifyOperationResult(createOperationNotifyBody(updateRecord));
+
         changeBlockadeStatus(BlockadeStatus.BLOCKADE);
       }
       return exeStatus;
@@ -854,8 +857,10 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
           logger.debug(errorMessage);
           throw new MsfException(ErrorCode.UNDEFINED_ERROR, errorMessage);
         }
+
         List<AsyncRequestsForLower> lowerList = asyncRequest.getAsyncRequestsForLowerList();
         if (lowerList != null && asyncRequest.getAsyncRequestsForLowerList().size() != 0) {
+
           if (!msfException.getErrorCode().getCode().startsWith("90")) {
             return true;
           } else {

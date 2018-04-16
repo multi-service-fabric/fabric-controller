@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.lagif;
 
 import javax.ws.rs.Consumes;
@@ -34,7 +35,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagIfHandler.class);
 
   /**
-   * LagIF generation.
+   * LagIF addition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -152,7 +153,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * LagIF information change.
+   * LagIF information modification.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)

@@ -5,12 +5,13 @@ import msf.fc.node.interfaces.FcAbstractInterfaceScenarioBase;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement common process of breakout interface-related processing in configuration management function.
+ * Abstract class to implement the common process of breakout interface-related
+ * processing in configuration management function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request class that inherited the RestRequestBase class
+ *          Request class that inherits the RestRequestBase class
  */
 public abstract class FcAbstractBreakoutInterfaceScenarioBase<T extends RestRequestBase>
     extends FcAbstractInterfaceScenarioBase<T> {

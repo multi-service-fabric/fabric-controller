@@ -25,8 +25,8 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeOppositeEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodePhysicalLinkEntity;
 
 /**
- * Abstract class to implement common process of node management (Leaf)-related
- * asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of node management
+ * (Leaf)-related asynchronous processing in configuration management function.
  *
  * @author NTT
  *

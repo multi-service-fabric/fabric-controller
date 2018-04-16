@@ -1,7 +1,7 @@
+
 package msf.mfcfc.common.data;
 
 import msf.mfcfc.common.constant.SliceType;
-
 
 public class CpIdPK {
 

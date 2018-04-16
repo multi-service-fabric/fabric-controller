@@ -20,7 +20,7 @@ import msf.mfcfc.node.interfaces.internalifs.data.InternalIfRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * Configuration management: Interface management (Internal link IF).
+ * Configuration management: Interface management (Intra-cluster link IF).
  *
  * @author NTT
  */
@@ -30,7 +30,7 @@ public class FcInternalIfHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcInternalIfHandler.class);
 
   /**
-   * IF information list acquisition.
+   * Intra-cluster link IF information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -67,7 +67,7 @@ public class FcInternalIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * Internal information acquisition.
+   * Intra-cluster link IF information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -76,7 +76,7 @@ public class FcInternalIfHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID
    * @param internalLinkIfId
-   *          Internal link IF ID
+   *          Intra-cluster link IF ID
    * @return response data
    */
   @GET

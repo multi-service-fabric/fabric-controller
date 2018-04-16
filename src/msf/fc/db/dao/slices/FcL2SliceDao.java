@@ -15,13 +15,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcL2SliceDao extends FcAbstractCommonDao<FcL2Slice, String> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcL2SliceDao.class);
 
-
-  
   public List<FcL2Slice> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart();
@@ -32,7 +29,6 @@ public class FcL2SliceDao extends FcAbstractCommonDao<FcL2Slice, String> {
     }
   }
 
-  
   public FcL2Slice readByVrfId(SessionWrapper session, int vrfId) throws MsfException {
     try {
       logger.methodStart();
@@ -43,7 +39,6 @@ public class FcL2SliceDao extends FcAbstractCommonDao<FcL2Slice, String> {
       logger.methodEnd();
     }
   }
-
 
   @Override
   public void create(SessionWrapper session, FcL2Slice entity) throws MsfException {

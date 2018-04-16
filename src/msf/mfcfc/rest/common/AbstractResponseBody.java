@@ -1,20 +1,17 @@
+
 package msf.mfcfc.rest.common;
 
 import com.google.gson.annotations.SerializedName;
 
 import msf.mfcfc.common.constant.ErrorResponseDataConsistency;
 
-
 public abstract class AbstractResponseBody {
-
 
   @SerializedName("error_code")
   protected String errorCode;
 
-
   @SerializedName("error_message")
   protected String errorMessage;
-
 
   @SerializedName("data_consistency")
   protected String dataConsistency;

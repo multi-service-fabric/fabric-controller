@@ -15,13 +15,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagIfDao.class);
 
-
-  
   public List<FcLagIf> readList(SessionWrapper session, Integer nodeType, Integer nodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId" }, new Object[] { session, nodeType, nodeId });
@@ -39,7 +36,6 @@ public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
     }
   }
 
-  
   public List<FcLagIf> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -50,7 +46,6 @@ public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
     }
   }
 
-  
   public FcLagIf read(SessionWrapper session, Integer nodeType, Integer nodeId, Integer lagIfId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId", "lagIfId" },
@@ -71,7 +66,6 @@ public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
       logger.methodEnd();
     }
   }
-
 
   @Override
   public FcLagIf read(SessionWrapper session, Integer lagIfId) throws MsfException {

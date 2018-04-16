@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.slices;
 
 import org.hibernate.Criteria;
@@ -9,9 +10,7 @@ import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcCpIdDao extends FcAbstractCommonDao<FcCpId, FcCpIdPK> {
-
 
   @Override
   public FcCpId read(SessionWrapper session, FcCpIdPK pk) throws MsfException {

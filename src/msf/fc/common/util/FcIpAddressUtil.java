@@ -23,7 +23,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   private static int nintrai;
 
   /**
-   * Calculate IP addresses of Leaf (n) and Spine (m) on the internal link.
+   * Calculate IP addresses of Leaf (n) and Spine (m) on the intra-cluster link.
    *
    * @param leafId
    *          Leaf ID
@@ -64,7 +64,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate IP address of Leaf and RR on the internal link.
+   * Calculate IP address of Leaf and RR on the intra-cluster link.
    *
    * @param rrId
    *          RR ID
@@ -106,7 +106,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return the number of internal link IP addresses.
+   * Return the number of intra-cluster link IP addresses.
    *
    * @return the number of internal IP addresses
    */
@@ -238,7 +238,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
       logger.methodStart();
       SwCluster swCluster = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster();
 
-      return swCluster.getAggrigationStartAddress();
+      return swCluster.getAggregationStartAddress();
     } finally {
       logger.methodEnd();
     }
@@ -254,7 +254,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
       logger.methodStart();
       SwCluster swCluster = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster();
 
-      return swCluster.getAggrigationAddressPrefix();
+      return swCluster.getAggregationAddressPrefix();
     } finally {
       logger.methodEnd();
     }

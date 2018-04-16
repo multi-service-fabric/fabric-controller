@@ -15,13 +15,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcBreakoutIfDao extends FcAbstractCommonDao<FcBreakoutIf, Long> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcBreakoutIfDao.class);
 
-
-  
   public List<FcBreakoutIf> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -32,7 +29,6 @@ public class FcBreakoutIfDao extends FcAbstractCommonDao<FcBreakoutIf, Long> {
     }
   }
 
-  
   public List<FcBreakoutIf> readList(SessionWrapper session, Integer nodeType, Integer nodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId" }, new Object[] { session, nodeType, nodeId });
@@ -49,7 +45,6 @@ public class FcBreakoutIfDao extends FcAbstractCommonDao<FcBreakoutIf, Long> {
     }
   }
 
-  
   public FcBreakoutIf read(SessionWrapper session, Integer nodeType, Integer nodeId, String breakoutIfId)
       throws MsfException {
     try {
@@ -71,8 +66,6 @@ public class FcBreakoutIfDao extends FcAbstractCommonDao<FcBreakoutIf, Long> {
       logger.methodEnd();
     }
   }
-
-
 
   @Override
   public FcBreakoutIf read(SessionWrapper session, Long pk) throws MsfException {

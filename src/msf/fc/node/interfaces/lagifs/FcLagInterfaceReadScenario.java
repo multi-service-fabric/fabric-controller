@@ -3,11 +3,9 @@ package msf.fc.node.interfaces.lagifs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
-import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcLagIf;
 import msf.fc.db.dao.clusters.FcLagIfDao;
 import msf.fc.rest.ec.node.interfaces.lag.data.LagIfReadEcResponseBody;
-import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
@@ -20,8 +18,6 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.lagifs.data.LagIfReadResponseBody;
 import msf.mfcfc.node.interfaces.lagifs.data.LagIfRequest;
-import msf.mfcfc.rest.common.JsonUtil;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * Implementation class for Lag interface information acquisition.
@@ -62,7 +58,7 @@ public class FcLagInterfaceReadScenario extends FcAbstractLagInterfaceScenarioBa
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNumericId(request.getLagIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
@@ -123,7 +119,7 @@ public class FcLagInterfaceReadScenario extends FcAbstractLagInterfaceScenarioBa
       logger.methodStart(new String[] { "fcLagIf" }, new Object[] { fcLagIf });
       LagIfReadResponseBody body = new LagIfReadResponseBody();
 
-      LagIfReadEcResponseBody lagIfReadEcResponseBody = sendLagInterfaceRead(fcLagIf);
+      LagIfReadEcResponseBody lagIfReadEcResponseBody = sendLagInterfaceRead(fcLagIf.getNode(), request.getLagIfId());
       body.setLagIf(getLagIfData(fcLagIf, lagIfReadEcResponseBody.getLagIf()));
       return createRestResponse(body, HttpStatus.OK_200);
     } finally {
@@ -131,28 +127,4 @@ public class FcLagInterfaceReadScenario extends FcAbstractLagInterfaceScenarioBa
     }
   }
 
-  private LagIfReadEcResponseBody sendLagInterfaceRead(FcLagIf fcLagIf) throws MsfException {
-    try {
-      logger.methodStart();
-
-      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
-          .getEcControlAddress();
-
-      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
-
-      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.LAG_IF_READ.getHttpMethod(),
-          EcRequestUri.LAG_IF_READ.getUri(String.valueOf(fcLagIf.getNode().getEcNodeId()), request.getLagIfId()), null,
-          ecControlIpAddress, ecControlPort);
-
-      LagIfReadEcResponseBody lagIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
-          LagIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-
-      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
-          lagIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
-
-      return lagIfReadEcResponseBody;
-    } finally {
-      logger.methodEnd();
-    }
-  }
 }

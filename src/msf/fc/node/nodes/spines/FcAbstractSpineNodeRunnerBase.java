@@ -23,8 +23,8 @@ import msf.mfcfc.node.nodes.spines.data.entity.SpineNodeOppositeEntity;
 import msf.mfcfc.node.nodes.spines.data.entity.SpineNodePhysicalLinkEntity;
 
 /**
- * Abstract class to implement common process of node management (Spine)-related
- * asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of node management
+ * (Spine)-related asynchronous processing in configuration management function.
  *
  * @author NTT
  *

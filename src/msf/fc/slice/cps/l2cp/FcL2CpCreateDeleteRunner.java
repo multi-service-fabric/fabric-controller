@@ -28,13 +28,14 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpCreateDeleteRequestBody;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Class to implement asynchronous processing in L2CP
- * generation/deletion(/change).
+ * Class to implement the asynchronous processing in L2CP
+ * addition/deletion(/modification).
  *
  * @author NTT
  *
  */
 public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
+
   private static final MsfLogger logger = MsfLogger.getInstance(FcL2CpCreateDeleteRunner.class);
 
   private List<L2CpCreateDeleteRequestBody> requestBody;
@@ -44,12 +45,12 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L2CP control
    * @param requestBody
-   *          Request body for L2CP generation/deletion(/change)
+   *          Request body for L2CP addition/deletion(/modification)
    */
   public FcL2CpCreateDeleteRunner(L2CpRequest request, List<L2CpCreateDeleteRequestBody> requestBody) {
     this.request = request;
@@ -113,7 +114,8 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
 
             processCreateL2Cp(sessionWrapper, l2SliceAfterLock, nodeAfterLockAdd, cpId,
                 Integer.valueOf(body.getValue().getEdgePointId()), body.getValue().getPortMode(),
-                body.getValue().getVlanId(), body.getValue().getPairCpId(), body.getValue().getEsi());
+                body.getValue().getVlanId(), body.getValue().getPairCpId(), body.getValue().getEsi(),
+                body.getValue().getQos());
             break;
           case REMOVE:
             FcL2Cp l2CpAfterLockRemove = getL2CpAndCheck(sessionWrapper, request.getSliceId(),
@@ -214,7 +216,7 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
           pairL2Cp.setEsi(esi);
 
           OperationCreateVlanIfEcEntity createVlanIfEntity = makeOperationCreateVlanIfEcEntity(sessionWrapper, pairL2Cp,
-              body.getValue().getPortMode(), body.getValue().getVlanId());
+              body.getValue().getPortMode(), body.getValue().getVlanId(), body.getValue().getQos());
           createVlanIfEntityList.add(createVlanIfEntity);
 
           l2CpDao.create(sessionWrapper, pairL2Cp);

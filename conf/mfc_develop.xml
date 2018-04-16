@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<developConf xmlns="http://mfc.msf/common/config/type/develop">
+    <system>
+        <asyncOperation>
+            <dataRetentionPeriod>1</dataRetentionPeriod>
+            <maxAsyncRunnerThreadNum>50</maxAsyncRunnerThreadNum>
+            <invokeAllTimout>60000</invokeAllTimout>
+            <waitOperationResultTimeout>60000</waitOperationResultTimeout>
+        </asyncOperation>
+        <executingOperationCheckCycle>1000</executingOperationCheckCycle>
+        <lock>
+            <lockRetryNum>5</lockRetryNum>
+            <lockTimeout>500</lockTimeout>
+        </lock>
+        <notice>
+            <noticeRetryNum>5</noticeRetryNum>
+        </notice>
+    </system>
+</developConf>
+

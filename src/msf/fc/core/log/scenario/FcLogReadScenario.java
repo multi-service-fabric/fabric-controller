@@ -2,11 +2,9 @@
 package msf.fc.core.log.scenario;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -27,14 +25,10 @@ import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.core.log.scenario.AbstractLogScenarioBase;
 import msf.mfcfc.core.log.scenario.data.LogReadRequest;
-import msf.mfcfc.core.log.scenario.data.LogReadResponseBody;
-import msf.mfcfc.core.log.scenario.data.entity.LogClusterLogsEntity;
-import msf.mfcfc.core.log.scenario.data.entity.LogConditionsEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogDataEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogEcLogEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogEmLogEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogFcLogEntity;
-import msf.mfcfc.core.log.scenario.data.entity.LogMergedDataEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogMergedLogEntity;
 import msf.mfcfc.core.log.scenario.data.entity.LogMsfLogEntity;
 import msf.mfcfc.core.scenario.RestResponseBase;
@@ -49,36 +43,7 @@ import msf.mfcfc.rest.common.RestClient;
  */
 public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
 
-  private LogReadRequest request;
-
   private static final MsfLogger logger = MsfLogger.getInstance(FcLogReadScenario.class);
-
-  private static final Comparator<LogDataEntity> COMPARATOR_LOGCONTROLLER = new Comparator<LogDataEntity>() {
-    @Override
-    public int compare(LogDataEntity o1, LogDataEntity o2) {
-      if (ControllerType.FC.getMessage().equals(o1.getController())) {
-        if (ControllerType.FC.getMessage().equals(o2.getController())) {
-          return 0;
-        } else {
-          return -1;
-        }
-      } else if (ControllerType.EC.getMessage().equals(o1.getController())) {
-        if (ControllerType.FC.getMessage().equals(o2.getController())) {
-          return 1;
-        } else if (ControllerType.EC.getMessage().equals(o2.getController())) {
-          return 0;
-        } else {
-          return -1;
-        }
-      } else {
-        if (ControllerType.EM.getMessage().equals(o2.getController())) {
-          return 0;
-        } else {
-          return 1;
-        }
-      }
-    }
-  };
 
   /**
    * Constructor.
@@ -115,10 +80,10 @@ public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
       if (request.getLogLevel() == null) {
         request.setLogLevel(LogLevel.ERROR.getMessage());
       }
-      if (request.getController() == null) {
-        request.setController(ControllerType.FC.getMessage() + "+" + ControllerType.EC.getMessage() + "+"
-            + ControllerType.EM.getMessage());
-      }
+
+      controllerTypeList = getControllerEnumList(request.getController()).stream()
+          .filter(controllerType -> !controllerType.equals(ControllerType.MFC)).collect(Collectors.toList());
+
       if (request.getCluster() == null) {
         request.setCluster(String.valueOf(clusterId));
       }
@@ -144,27 +109,25 @@ public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
         request.setMergeType(MergeType.SEPARATE.getMessage());
       }
       List<String> logLevels = getLogLevels(request.getLogLevel());
-      List<String> controllers = getControllers(request.getController());
 
       if (LogType.API_ACCESS.getMessage().equals(request.getLogType())) {
 
         fcLog = readLog(request.getLogType(), logLevels, startDate, endDate, request.getLimitNumber(), searchString,
             ControllerType.FC.getMessage());
       } else {
-        if (controllers.contains(ControllerType.EC.getMessage())
-            || controllers.contains(ControllerType.EM.getMessage())) {
+        if (controllerTypeList.contains(ControllerType.EC) || controllerTypeList.contains(ControllerType.EM)) {
           LogReadEcResponseBody logReadEcResponseBody = sendLogRead(startDate, endDate);
 
-          if (controllers.contains(ControllerType.EC.getMessage())) {
+          if (controllerTypeList.contains(ControllerType.EC)) {
             ecLog = getEcLogData(logReadEcResponseBody, logLevels, searchString);
           }
 
-          if (controllers.contains(ControllerType.EM.getMessage())) {
+          if (controllerTypeList.contains(ControllerType.EM)) {
             emLog = getEmLogData(logReadEcResponseBody, logLevels, searchString);
           }
         }
 
-        if (controllers.contains(ControllerType.FC.getMessage())) {
+        if (controllerTypeList.contains(ControllerType.FC)) {
           fcLog = readLog(request.getLogType(), logLevels, startDate, endDate, request.getLimitNumber(), searchString,
               ControllerType.FC.getMessage());
         }
@@ -216,7 +179,7 @@ public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
       }
 
       if (request.getCluster() != null) {
-        ParameterCheckUtil.checkCluster(request.getCluster(),
+        ParameterCheckUtil.checkClusterForFc(request.getCluster(),
             FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId());
       }
 
@@ -259,12 +222,13 @@ public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
           .getEcControlAddress();
 
       int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
-      String ecController = request.getController().replace("+mfc", "").replace("mfc+", "").replace("+fc", "")
-          .replace("fc+", "");
+      String ecController = getControllersStrings(controllerTypeList, ControllerType.FC);
       String targetUri = EcRequestUri.LOG_READ.getUri();
       Integer ecLimitNumber = request.getLimitNumber();
       if (ecLimitNumber == null) {
         ecLimitNumber = Integer.MAX_VALUE;
+      } else if (ecLimitNumber < 1) {
+        ecLimitNumber = 0;
       }
 
       targetUri = targetUri + "?controller=" + ecController + "&start_date=" + startDate + "&end_date=" + endDate
@@ -311,114 +275,4 @@ public class FcLogReadScenario extends AbstractLogScenarioBase<LogReadRequest> {
     return emLog;
   }
 
-  private LogMsfLogEntity getMsfLog(LogFcLogEntity fcLog, LogEcLogEntity ecLog, LogEmLogEntity emLog,
-      LogMergedLogEntity mergedLog, String cluster) {
-    try {
-      logger.methodStart();
-
-      LogMsfLogEntity msfLog = new LogMsfLogEntity();
-      LogConditionsEntity conditions = getConditions();
-      msfLog.setConditions(conditions);
-
-      LogClusterLogsEntity logClusterLogsEntity = new LogClusterLogsEntity();
-
-      if (MergeType.SEPARATE.getMessage().equals(request.getMergeType())) {
-        logClusterLogsEntity.setFcLog(fcLog);
-        logClusterLogsEntity.setEcLog(ecLog);
-        logClusterLogsEntity.setEmLog(emLog);
-        logClusterLogsEntity.setClusterId(cluster);
-        List<LogClusterLogsEntity> clusterLogs = new ArrayList<>();
-        clusterLogs.add(logClusterLogsEntity);
-        msfLog.setClusterLogList(clusterLogs);
-      }
-      msfLog.setMfcLogList(null);
-      msfLog.setMergedLog(mergedLog);
-
-      return msfLog;
-
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  private LogConditionsEntity getConditions() {
-    LogConditionsEntity conditions = new LogConditionsEntity();
-    conditions.setLogType(request.getLogType());
-    conditions.setLogLevelList(Arrays.asList(request.getLogLevel().split("\\+", 0)));
-    conditions.setControllerList(getControllers(request.getController()));
-    conditions.setClusterList(Arrays.asList(request.getCluster().split("\\+", 0)));
-    conditions.setStartDate(request.getStartDate());
-    conditions.setEndDate(request.getEndDate());
-    conditions.setLimitNumber(request.getLimitNumber());
-    conditions.setSearchString(request.getSearchString());
-    conditions.setMergeType(request.getMergeType());
-    return conditions;
-  }
-
-  private List<LogDataEntity> getSortData(LogFcLogEntity fcLog, LogEcLogEntity ecLog, LogEmLogEntity emLog) {
-    List<LogDataEntity> logList = new ArrayList<>();
-    if (fcLog != null) {
-      logList.addAll(fcLog.getLogDataList());
-    }
-    if (ecLog != null) {
-      logList.addAll(ecLog.getLogDataList());
-    }
-    if (emLog != null) {
-      logList.addAll(emLog.getLogDataList());
-    }
-
-    Comparator<LogDataEntity> dateComparator = Comparator.comparing(d -> d.getOccurredTime());
-
-    Comparator<LogDataEntity> controllerComparator = COMPARATOR_LOGCONTROLLER;
-    Collections.sort(logList, dateComparator.thenComparing(controllerComparator));
-    return logList;
-  }
-
-  private List<LogMergedDataEntity> getLogMergedData(List<LogDataEntity> logList, int clusterId) {
-    List<LogMergedDataEntity> mergedLogList = new ArrayList<>();
-    for (LogDataEntity log : logList) {
-      LogMergedDataEntity mergedData = new LogMergedDataEntity();
-      mergedData.setClusterId(String.valueOf(clusterId));
-      mergedData.setContoller(log.getController());
-      mergedData.setServerName(log.getServerName());
-      mergedData.setLogLevel(log.getLogLevel());
-      mergedData.setOccurredTime(log.getOccurredTime());
-      mergedData.setThreadId(log.getThreadId());
-      mergedData.setClassName(log.getClassName());
-      mergedData.setMethodName(log.getMethodName());
-      mergedData.setLineNumber(log.getLineNumber());
-      mergedData.setMessage(log.getMessage());
-      mergedLogList.add(mergedData);
-      if (request.getLimitNumber() != null) {
-        if (mergedLogList.size() >= request.getLimitNumber()) {
-          break;
-        }
-      }
-
-    }
-    return mergedLogList;
-  }
-
-  private List<String> getLogLevels(String loglevel) {
-
-    List<String> logLevels = Arrays.asList(loglevel.toUpperCase().replace("WARNING", "WARN").split("\\+", 0));
-    return logLevels;
-  }
-
-  private List<String> getControllers(String controller) {
-
-    List<String> controllers = Arrays.asList(controller.split("\\+", 0));
-    return controllers;
-  }
-
-  private RestResponseBase responseLogReadData(LogMsfLogEntity logMsfLogEntity) {
-    try {
-      logger.methodStart(new String[] { "msf_log" }, new Object[] { logMsfLogEntity });
-      LogReadResponseBody body = new LogReadResponseBody();
-      body.setMsfLog(logMsfLogEntity);
-      return createRestResponse(body, HttpStatus.OK_200);
-    } finally {
-      logger.methodEnd();
-    }
-  }
 }

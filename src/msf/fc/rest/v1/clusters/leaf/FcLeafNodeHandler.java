@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.leaf;
 
 import javax.ws.rs.Consumes;
@@ -23,7 +24,6 @@ import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.node.nodes.leafs.data.LeafNodeRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
-
 
 /**
  * Configuration management Node management (Leaf).
@@ -81,7 +81,7 @@ public class FcLeafNodeHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param format
-   *         Information type to acquire (optional parameter)
+   *          Information type to acquire (optional parameter)
    * @param userType
    *          User type
    * @return response data
@@ -144,7 +144,6 @@ public class FcLeafNodeHandler extends AbstractRestHandler {
     }
   }
 
-
   /**
    * Leaf deletion.
    *
@@ -184,9 +183,8 @@ public class FcLeafNodeHandler extends AbstractRestHandler {
     }
   }
 
-
   /**
-   * Leaf change.
+   * Leaf modification.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -197,7 +195,7 @@ public class FcLeafNodeHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PUT

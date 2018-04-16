@@ -1,10 +1,12 @@
+
 package msf.fc.node.nodes.spines;
 
 import msf.fc.node.nodes.FcAbstractNodeScenarioBase;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement common process of node management (Spine)-related processing in configuration management function.
+ * Abstract class to implement the common process of node management
+ * (Spine)-related processing in configuration management function.
  *
  * @author NTT
  *

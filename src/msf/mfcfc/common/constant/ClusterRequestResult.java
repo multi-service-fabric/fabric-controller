@@ -1,13 +1,11 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum ClusterRequestResult {
 
-  
   SUCCESS("success"),
-  
-  FAILED("failed");
 
+  FAILED("failed");
 
   private String message;
 
@@ -15,12 +13,10 @@ public enum ClusterRequestResult {
     this.message = message;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static ClusterRequestResult getEnumFromMessage(String message) {
     for (ClusterRequestResult enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

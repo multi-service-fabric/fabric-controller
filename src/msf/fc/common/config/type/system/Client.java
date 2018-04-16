@@ -14,6 +14,8 @@ public class Client {
   protected int waitConnectionTimeout;
   @XmlSchemaType(name = "integer")
   protected int requestTimeout;
+  @XmlSchemaType(name = "integer")
+  protected int responseBufferSize;
 
   public int getWaitConnectionTimeout() {
     return waitConnectionTimeout;
@@ -31,4 +33,11 @@ public class Client {
     this.requestTimeout = value;
   }
 
+  public int getResponseBufferSize() {
+    return responseBufferSize;
+  }
+
+  public void setResponseBufferSize(int value) {
+    this.responseBufferSize = value;
+  }
 }

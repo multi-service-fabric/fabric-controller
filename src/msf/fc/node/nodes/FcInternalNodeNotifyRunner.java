@@ -13,6 +13,7 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.data.FcAsyncRequest;
 import msf.fc.common.data.FcBreakoutIf;
+import msf.fc.common.data.FcEquipment;
 import msf.fc.common.data.FcInternalLinkIf;
 import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcNode;
@@ -46,6 +47,7 @@ import msf.mfcfc.node.nodes.data.entity.NodeOppositeNodeEntity;
 import msf.mfcfc.node.nodes.data.entity.NodeUnusedPhysicalEntity;
 import msf.mfcfc.node.nodes.leafs.data.LeafNodeCreateAsyncResponseBody;
 import msf.mfcfc.node.nodes.leafs.data.LeafNodeCreateRequestBody;
+import msf.mfcfc.node.nodes.leafs.data.LeafNodeUpdateRequestBody;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeInternalLinkEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeLagLinkEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodePhysicalLinkEntity;
@@ -56,8 +58,8 @@ import msf.mfcfc.node.nodes.spines.data.entity.SpineNodePhysicalLinkEntity;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Class to implement asynchronous processing in receiving startup completion
- * notification from EC node.
+ * Class to implement the asynchronous processing in receiving startup
+ * completion notification from EC node.
  *
  * @author NTT
  *
@@ -113,46 +115,26 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
             createFcNode = checkCreateNode(fcNodeList);
 
             sessionWrapper.beginTransaction();
-            switch (NodeBootStatus.getEnumFromMessage(requestBody.getStatus())) {
-              case FAILED:
-              case CANCEL:
 
-                getLockForNodeStatusFailure(sessionWrapper, createFcNode);
+            FcAsyncRequestsDao fcAsyncRequestsDao = new FcAsyncRequestsDao();
+            List<FcAsyncRequest> readListExecNodeInfo = fcAsyncRequestsDao.readListExecNodeInfo(sessionWrapper);
 
-                fcNodeDao.delete(sessionWrapper, createFcNode.getNodeInfoId());
+            FcAsyncRequest targetAsyncRequest = getTargetAsyncRequest(readListExecNodeInfo, createFcNode);
+            switch (targetAsyncRequest.getRequestMethodEnum()) {
+              case POST:
 
-                restResponse = new ErrorResponse(ErrorCode.EC_CONTROL_ERROR, SystemInterfaceType.EXTERNAL);
-
+                restResponse = nodeCreateCompleteProcess(sessionWrapper, fcNodeList, createFcNode);
                 break;
 
-              case SUCCESS:
+              case PUT:
 
-                TreeMap<Integer, FcNode> oppositeNodeMap = getLockForNodeStatusSuccess(sessionWrapper, createFcNode,
-                    fcNodeList);
-
-                FcPhysicalIfDao fcPhysicalIfDao = new FcPhysicalIfDao();
-                FcLagIfDao fcLagIfDao = new FcLagIfDao();
-                FcBreakoutIfDao fcBreakoutIfDao = new FcBreakoutIfDao();
-
-                TreeMap<Integer, Object> connectionIfMap = createNodeIfs(sessionWrapper, createFcNode, fcPhysicalIfDao,
-                    fcLagIfDao, fcBreakoutIfDao);
-
-                TreeMap<Integer, Object> connectionOppositeIfMap = createOppositeNodeIfs(sessionWrapper,
-                    oppositeNodeMap, fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao);
-
-                createInternalLinkIfs(sessionWrapper, connectionIfMap, connectionOppositeIfMap, createFcNode);
-
-                LeafNodeCreateAsyncResponseBody body = new LeafNodeCreateAsyncResponseBody();
-                body.setNodeId(String.valueOf(createFcNode.getNodeId()));
-                restResponse = createRestResponse(body, HttpStatus.CREATED_201);
-
+                restResponse = recoverNodeCompleteProcess(sessionWrapper, createFcNode, targetAsyncRequest);
                 break;
+
               default:
 
-                throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter = " + requestBody.getStatus());
+                throw new MsfException(ErrorCode.UNDEFINED_ERROR, "method = " + targetAsyncRequest.getRequestMethod());
             }
-
-            sessionWrapper.commit();
           } catch (MsfException msfException) {
             logger.error(msfException.getMessage(), msfException);
             sessionWrapper.rollback();
@@ -173,6 +155,116 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           return new RestResponseBase(HttpStatus.OK_200, (String) null);
         }
       }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RestResponseBase nodeCreateCompleteProcess(SessionWrapper sessionWrapper, List<FcNode> fcNodeList,
+      FcNode createFcNode) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "fcNodeList", "createFcNode" }, new Object[] { fcNodeList, createFcNode });
+      RestResponseBase restResponse = null;
+
+      switch (NodeBootStatus.getEnumFromMessage(requestBody.getStatus())) {
+        case FAILED:
+        case CANCEL:
+          FcNodeDao fcNodeDao = new FcNodeDao();
+
+          getLockForNodeStatusFailure(sessionWrapper, createFcNode);
+
+          fcNodeDao.delete(sessionWrapper, createFcNode.getNodeInfoId());
+
+          restResponse = new ErrorResponse(ErrorCode.EC_CONTROL_ERROR, SystemInterfaceType.EXTERNAL);
+
+          break;
+
+        case SUCCESS:
+
+          TreeMap<Integer, FcNode> oppositeNodeMap = getLockForNodeStatusSuccess(sessionWrapper, createFcNode,
+              fcNodeList);
+
+          FcPhysicalIfDao fcPhysicalIfDao = new FcPhysicalIfDao();
+          FcLagIfDao fcLagIfDao = new FcLagIfDao();
+          FcBreakoutIfDao fcBreakoutIfDao = new FcBreakoutIfDao();
+
+          TreeMap<Integer, Object> connectionIfMap = createNodeIfs(sessionWrapper, createFcNode, fcPhysicalIfDao,
+              fcLagIfDao, fcBreakoutIfDao);
+
+          TreeMap<Integer, Object> connectionOppositeIfMap = createOppositeNodeIfs(sessionWrapper, oppositeNodeMap,
+              fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao);
+
+          createInternalLinkIfs(sessionWrapper, connectionIfMap, connectionOppositeIfMap, createFcNode);
+
+          LeafNodeCreateAsyncResponseBody body = new LeafNodeCreateAsyncResponseBody();
+          body.setNodeId(String.valueOf(createFcNode.getNodeId()));
+          restResponse = createRestResponse(body, HttpStatus.CREATED_201);
+
+          break;
+        default:
+
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter = " + requestBody.getStatus());
+      }
+
+      sessionWrapper.commit();
+
+      return restResponse;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RestResponseBase recoverNodeCompleteProcess(SessionWrapper sessionWrapper, FcNode createFcNode,
+      FcAsyncRequest targetAsyncRequest) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "createFcNode", "targetAsyncRequest" },
+          new Object[] { createFcNode, targetAsyncRequest });
+      RestResponseBase restResponse = null;
+
+      switch (NodeBootStatus.getEnumFromMessage(requestBody.getStatus())) {
+        case FAILED:
+        case CANCEL:
+
+          restResponse = new ErrorResponse(ErrorCode.EC_CONTROL_ERROR, SystemInterfaceType.EXTERNAL);
+
+          break;
+
+        case SUCCESS:
+
+          LeafNodeUpdateRequestBody targetAsyncRequestBody = JsonUtil.fromJson(targetAsyncRequest.getRequestBody(),
+              LeafNodeUpdateRequestBody.class, ErrorCode.UNDEFINED_ERROR);
+
+          Integer requestEquipmentTypeId = Integer
+              .valueOf(targetAsyncRequestBody.getRecoverNodeOption().getEquipmentTypeId());
+
+          if (!createFcNode.getEquipment().getEquipmentTypeId().equals(requestEquipmentTypeId)) {
+
+            List<FcNode> nodes = new ArrayList<>();
+            nodes.add(createFcNode);
+
+            logger.performance("start get recover leaf resources lock.");
+            FcDbManager.getInstance().getLeafsLock(nodes, sessionWrapper);
+            logger.performance("end get recover leaf resources lock.");
+
+            FcEquipment fcEquipment = new FcEquipment();
+            fcEquipment.setEquipmentTypeId(requestEquipmentTypeId);
+
+            createFcNode.setEquipment(fcEquipment);
+            FcNodeDao fcNodeDao = new FcNodeDao();
+            fcNodeDao.update(sessionWrapper, createFcNode);
+
+            sessionWrapper.commit();
+          }
+
+          restResponse = new RestResponseBase(HttpStatus.OK_200, (String) null);
+
+          break;
+
+        default:
+
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter = " + requestBody.getStatus());
+      }
+      return restResponse;
     } finally {
       logger.methodEnd();
     }
@@ -353,8 +445,8 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
   private FcInternalLinkIf createInternalLinkIf(Integer nextInternalLinkIfId, Object value, Double trafficThreshold) {
     try {
-      logger.methodStart(new String[] { "nextInternalLinkIfId", "value" },
-          new Object[] { nextInternalLinkIfId, value });
+      logger.methodStart(new String[] { "nextInternalLinkIfId", "value", "trafficThreshold" },
+          new Object[] { nextInternalLinkIfId, value, trafficThreshold });
       FcInternalLinkIf fcInternalLinkIf = new FcInternalLinkIf();
       fcInternalLinkIf.setInternalLinkIfId(nextInternalLinkIfId);
       if (value instanceof FcPhysicalIf) {

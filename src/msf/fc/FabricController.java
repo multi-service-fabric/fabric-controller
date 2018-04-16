@@ -11,22 +11,21 @@ import java.lang.management.RuntimeMXBean;
 import java.util.concurrent.TimeUnit;
 
 import msf.fc.common.config.FcConfigManager;
+import msf.fc.core.status.FcSystemStatusManager;
 import msf.fc.db.FcDbManager;
 import msf.fc.failure.FcFailureManager;
 import msf.fc.node.FcNodeManager;
 import msf.fc.slice.FcSliceManager;
 import msf.fc.traffic.FcTrafficManager;
 import msf.mfcfc.AbstractMain;
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.ServiceStatus;
 import msf.mfcfc.common.data.SystemStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.CoreManager;
 import msf.mfcfc.core.operation.OperationManager;
-import msf.mfcfc.core.status.SystemStatusManager;
 import msf.mfcfc.rest.RestManager;
-import msf.mfcfc.rest.common.AbstractRestHandler;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * The startup/shutdown function block. Class to start and shut down the
@@ -52,7 +51,7 @@ public class FabricController extends AbstractMain {
    * Startup procedure of main process of FabricController.
    *
    * @param args
-   *          The first element of the array: path to config file directory
+   *          The first element of the array path to config file directory
    *          (optional)
    */
   public static void main(String[] args) {
@@ -239,6 +238,8 @@ public class FabricController extends AbstractMain {
       }
 
       logger.info("CoreManager start.");
+
+      FcSystemStatusManager.getInstance();
       this.core = CoreManager.getInstance();
       OperationManager.getInstance().setClusterIdForOperationId(
           FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId());
@@ -278,10 +279,11 @@ public class FabricController extends AbstractMain {
       this.rest = RestManager.getInstance();
 
       rest.setRestResourcePackage(RestManager.REST_RESOURCE_PACKAGE_FC);
-      RestClient
-          .setSendTimeout(FcConfigManager.getInstance().getSystemConfStatus().getRecvRestRequestUnitTime() * 1000);
-      AbstractRestHandler
-          .setRecvTimeout(FcConfigManager.getInstance().getSystemConfStatus().getRecvRestRequestUnitTime() * 1000);
+
+      rest.setRestRequestTimeouts(FcConfigManager.getInstance().getSystemConfStatus().getRecvRestRequestUnitTime(),
+          FcConfigManager.getInstance().getSystemConfStatus().getSendRestRequestUnitTime());
+
+      rest.setErrorCodes(ErrorCode.EC_CONTROL_ERROR, ErrorCode.EC_CONNECTION_ERROR);
       logger.info("RestManager start.");
       if (!this.rest.start()) {
         logger.error("RestManager start processing failed.");
@@ -292,7 +294,7 @@ public class FabricController extends AbstractMain {
         SystemStatus changeSystemStatus = new SystemStatus();
         changeSystemStatus.setServiceStatusEnum(ServiceStatus.STARTED);
 
-        SystemStatusManager.getInstance().changeSystemStatus(changeSystemStatus);
+        FcSystemStatusManager.getInstance().changeSystemStatus(changeSystemStatus);
 
       } catch (MsfException ex) {
         logger.error("Couldn't change Service Status.", ex);

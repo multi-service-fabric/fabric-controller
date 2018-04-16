@@ -17,60 +17,47 @@ import msf.mfcfc.rest.common.RestRequestValidator;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpValueEntity;
 
-
 public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(L3CpCreateDeleteAsyncResponseBody.class);
 
-  
   @SerializedName("op")
   private String op;
 
-  
   @SerializedName("path")
   private String path;
 
-  
   @SerializedName("value")
   private L3CpValueEntity value;
 
-  
   public String getOp() {
     return op;
   }
 
-  
   public void setOp(String op) {
     this.op = op;
   }
 
-  
   public String getPath() {
     return path;
   }
 
-  
   public void setPath(String path) {
     this.path = path;
   }
 
-  
   public L3CpValueEntity getValue() {
     return value;
   }
 
-  
   public void setValue(L3CpValueEntity value) {
     this.value = value;
   }
 
-  
   public PatchOperation getOpEnum() {
     return PatchOperation.getEnumFromMessage(op);
   }
 
-  
   public void setOpEnum(PatchOperation op) {
     this.op = op.getMessage();
   }
@@ -83,7 +70,6 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
       ParameterCheckUtil.checkNotNull(getOpEnum());
 
       ParameterCheckUtil.checkNotNullAndLength(path);
-
 
       switch (getOpEnum()) {
         case ADD:
@@ -111,7 +97,6 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateRemoveOp() throws MsfException {
 
-
     ParameterCheckUtil.checkPatchPath(path, true);
 
     if (value != null) {
@@ -123,7 +108,6 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateAddOp() throws MsfException {
 
-
     ParameterCheckUtil.checkPatchPath(path, false);
 
     ParameterCheckUtil.checkNotNull(value);
@@ -133,16 +117,14 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
 
   private void validateAddValue() throws MsfException {
 
+    ParameterCheckUtil.checkNumericId(value.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
-    ParameterCheckUtil.checkNotNullAndLength(value.getClusterId());
-
-    ParameterCheckUtil.checkNotNullAndLength(value.getEdgePointId());
+    ParameterCheckUtil.checkNumericId(value.getEdgePointId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
     ParameterCheckUtil.checkNotNull(value.getVlanId());
     ParameterCheckUtil.checkNumberRange(value.getVlanId(), 0, 4096);
 
     ParameterCheckUtil.checkNotNull(value.getMtu());
-
 
     if (value.getIpv4Address() != null) {
       value.setIpv4Address(ParameterCheckUtil.checkIpv4Address(value.getIpv4Address()));
@@ -186,11 +168,9 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
       validateVrrp();
     }
 
-
   }
 
   private void validateBgp() throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(value.getBgp().getRoleEnum());
 
@@ -219,7 +199,6 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
   }
 
   private void validateStaticRoute(L3CpStaticRouteEntity staticRoute) throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(staticRoute.getAddrTypeEnum());
 
@@ -254,7 +233,6 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
     }
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

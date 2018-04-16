@@ -63,7 +63,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Spine node addition.
+ * Class to implement the asynchronous processing in Spine node addition.
  *
  * @author NTT
  *

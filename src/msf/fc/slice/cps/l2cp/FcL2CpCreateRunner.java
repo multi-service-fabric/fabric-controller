@@ -18,7 +18,7 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpCreateRequestBody;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Class to implement asynchronous processing in L2CP generation.
+ * Class to implement the asynchronous processing in L2CP addition.
  *
  * @author NTT
  *
@@ -31,12 +31,12 @@ public class FcL2CpCreateRunner extends FcAbstractL2CpRunnerBase {
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L2CP control
    * @param requestBody
-   *          Request body for L2CP generation
+   *          Request body for L2CP addition
    */
   public FcL2CpCreateRunner(L2CpRequest request, L2CpCreateRequestBody requestBody) {
     this.request = request;
@@ -72,7 +72,7 @@ public class FcL2CpCreateRunner extends FcAbstractL2CpRunnerBase {
       String cpId = getCpIdAndCheck(sessionWrapper, request.getSliceId(), requestBody.getCpId(), null);
 
       processCreateL2Cp(sessionWrapper, l2SliceAfterLock, nodeAfterLock, cpId, edgePointId, requestBody.getPortMode(),
-          requestBody.getVlanId(), requestBody.getPairCpId(), null);
+          requestBody.getVlanId(), requestBody.getPairCpId(), null, requestBody.getQos());
 
       String requestJson = makeCreateUpdateL2VlanIfData(createVlanIfEntityList, updateVlanIfEntityList,
           l2Slice.getVrfId());

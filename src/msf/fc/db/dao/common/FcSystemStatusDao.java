@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.common;
 
 import org.hibernate.Criteria;
@@ -7,7 +8,6 @@ import msf.fc.common.data.FcSystemStatus;
 import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
-
 
 public class FcSystemStatusDao extends FcAbstractCommonDao<FcSystemStatus, Integer> {
 

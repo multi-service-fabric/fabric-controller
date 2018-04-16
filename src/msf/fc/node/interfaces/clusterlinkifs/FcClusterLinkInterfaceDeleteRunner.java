@@ -30,8 +30,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in intercluster link interface
- * deletion.
+ * Class to implement the asynchronous processing in inter-cluster link
+ * interface deletion.
  *
  * @author NTT
  *

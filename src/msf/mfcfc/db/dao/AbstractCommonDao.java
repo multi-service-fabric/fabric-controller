@@ -1,3 +1,4 @@
+
 package msf.mfcfc.db.dao;
 
 import java.util.ArrayList;
@@ -13,13 +14,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public abstract class AbstractCommonDao<E, K> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(AbstractCommonDao.class);
 
-
-  
   public void create(SessionWrapper session, E entity) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "entity" }, new Object[] { session, entity });
@@ -32,10 +30,8 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-  
   public abstract E read(SessionWrapper session, K primaryKey) throws MsfException;
 
-  
   public void update(SessionWrapper session, E entity) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "entity" }, new Object[] { session, entity });
@@ -48,7 +44,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-  
   public void delete(SessionWrapper session, K primaryKey) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "primaryKey" }, new Object[] { session, primaryKey });
@@ -64,8 +59,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-
-  
   public E readByCriteria(SessionWrapper session, Criteria criteria) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "criteria" }, new Object[] { session, criteria });
@@ -80,7 +73,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-  
   public List<E> readListByCriteria(SessionWrapper session, Criteria criteria) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "criteria" }, new Object[] { session, criteria });
@@ -95,7 +87,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-  
   public void deleteByCriteria(SessionWrapper session, Criteria criteria) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "criteria" }, new Object[] { session, criteria });
@@ -111,8 +102,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-
-  
   protected void updateByQuery(SessionWrapper session, Query query) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "query" }, new Object[] { session, query });
@@ -125,7 +114,6 @@ public abstract class AbstractCommonDao<E, K> {
     }
   }
 
-  
   protected void deleteByQuery(SessionWrapper session, Query query) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "query" }, new Object[] { session, query });

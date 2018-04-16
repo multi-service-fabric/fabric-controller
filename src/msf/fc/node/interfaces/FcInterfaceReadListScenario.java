@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.eclipse.jetty.http.HttpStatus;
 
-import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcInternalLinkIf;
 import msf.fc.common.data.FcLagIf;
@@ -19,7 +18,6 @@ import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.db.dao.clusters.FcPhysicalIfDao;
 import msf.fc.rest.ec.node.interfaces.data.InterfaceReadListEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.data.entity.InterfacesEcEntity;
-import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
@@ -34,8 +32,6 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.data.InterfaceInfoReadDetailListResponseBody;
 import msf.mfcfc.node.interfaces.data.InterfaceInfoReadListResponseBody;
 import msf.mfcfc.node.interfaces.data.InterfaceRequest;
-import msf.mfcfc.rest.common.JsonUtil;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * Implementation class for interface information list acquisition.
@@ -77,7 +73,7 @@ public class FcInterfaceReadListScenario extends FcAbstractInterfaceScenarioBase
 
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
 
@@ -179,7 +175,7 @@ public class FcInterfaceReadListScenario extends FcAbstractInterfaceScenarioBase
         body.setPhysicalIfIdList(getPhysicalIfIdList(fcPhysicalIfs));
         body.setInternalLinkIfIdList(getInternalIfIdList(fcInternalLinkIfs));
         body.setLagIfIdList(getLagIfIdList(fcLagIfs));
-        body.setBreakoutlIfIdList(getBreakoutIfIdList(fcBreakoutIfs));
+        body.setBreakoutIfIdList(getBreakoutIfIdList(fcBreakoutIfs));
         return createRestResponse(body, HttpStatus.OK_200);
       }
     } finally {
@@ -187,27 +183,4 @@ public class FcInterfaceReadListScenario extends FcAbstractInterfaceScenarioBase
     }
   }
 
-  private InterfaceReadListEcResponseBody sendInterfaceReadList(Integer ecNodeId) throws MsfException {
-    try {
-      logger.methodStart();
-
-      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
-          .getEcControlAddress();
-
-      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
-
-      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.IF_READ_LIST.getHttpMethod(),
-          EcRequestUri.IF_READ_LIST.getUri(String.valueOf(ecNodeId)), null, ecControlIpAddress, ecControlPort);
-
-      InterfaceReadListEcResponseBody interfaceReadListEcResponseBody = JsonUtil.fromJson(
-          restResponseBase.getResponseBody(), InterfaceReadListEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-
-      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
-          interfaceReadListEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
-
-      return interfaceReadListEcResponseBody;
-    } finally {
-      logger.methodEnd();
-    }
-  }
 }

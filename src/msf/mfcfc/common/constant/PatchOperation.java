@@ -1,21 +1,19 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum PatchOperation {
 
-  
   ADD("add"),
-  
-  REMOVE("remove"),
-  
-  REPLACE("replace"),
-  
-  MOVE("move"),
-  
-  COPY("copy"),
-  
-  TEST("test");
 
+  REMOVE("remove"),
+
+  REPLACE("replace"),
+
+  MOVE("move"),
+
+  COPY("copy"),
+
+  TEST("test");
 
   private String message;
 
@@ -23,12 +21,10 @@ public enum PatchOperation {
     this.message = message;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static PatchOperation getEnumFromMessage(String message) {
     for (PatchOperation enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

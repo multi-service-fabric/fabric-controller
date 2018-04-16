@@ -71,6 +71,8 @@ public class FcL2SliceReadListScenario extends FcAbstractL2SliceScenarioBase<L2S
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
+      checkFormatOption(request.getFormat());
+
       this.request = request;
     } finally {
       logger.methodEnd();

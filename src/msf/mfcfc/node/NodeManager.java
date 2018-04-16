@@ -22,7 +22,9 @@ public class NodeManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the instance of NodeManager.
+   * Get the instance of NodeManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return NodeManager instance
    */

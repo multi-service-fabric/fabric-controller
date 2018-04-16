@@ -7,6 +7,7 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.config.type.data.Rr;
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.RestFormatOption;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -57,16 +58,13 @@ public class FcRrNodeReadListScenario extends FcAbstractRrNodeScenarioBase<RrNod
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       if (request.getFormat() != null) {
         ParameterCheckUtil.checkNotNull(request.getFormatEnum());
       }
 
-
       checkUserTypeOperator(request.getUserTypeEnum());
-
 
       this.request = request;
     } finally {
@@ -82,7 +80,6 @@ public class FcRrNodeReadListScenario extends FcAbstractRrNodeScenarioBase<RrNod
 
       List<Rr> rrs = fcConfigManager.getDataConfSwClusterData().getRrs().getRr();
 
-
       RestResponseBase responseBase = responseFcRrNodeReadListData(rrs, request.getFormat());
 
       return responseBase;
@@ -90,7 +87,6 @@ public class FcRrNodeReadListScenario extends FcAbstractRrNodeScenarioBase<RrNod
       logger.methodEnd();
     }
   }
-
 
   private RestResponseBase responseFcRrNodeReadListData(List<Rr> rrs, String format) {
     try {

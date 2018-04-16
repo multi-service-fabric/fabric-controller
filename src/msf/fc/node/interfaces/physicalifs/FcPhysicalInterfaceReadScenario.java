@@ -65,7 +65,7 @@ public class FcPhysicalInterfaceReadScenario extends FcAbstractPhysicalInterface
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkIdSpecifiedByUri(request.getIfId());
@@ -111,7 +111,7 @@ public class FcPhysicalInterfaceReadScenario extends FcAbstractPhysicalInterface
       logger.methodStart(new String[] { "physicalIf" }, new Object[] { physicalIf });
 
       FcNode node = physicalIf.getNode();
-      PhysicalIfReadEcResponseBody physicalIfReadEcResponseBody = sendPhysicalInterfaceRead(node);
+      PhysicalIfReadEcResponseBody physicalIfReadEcResponseBody = sendPhysicalInterfaceRead(node, request.getIfId());
       BreakoutIfReadListEcResponseBody breakoutIfReadListEcResponseBody = new BreakoutIfReadListEcResponseBody();
       if (CollectionUtils.isNotEmpty(physicalIfReadEcResponseBody.getPhysicalIf().getBreakoutIfList())) {
         breakoutIfReadListEcResponseBody = sendBreakoutIfReadList(node);
@@ -121,31 +121,6 @@ public class FcPhysicalInterfaceReadScenario extends FcAbstractPhysicalInterface
       body.setPhysicalIf(getPhysicalIfData(physicalIf, physicalIfReadEcResponseBody.getPhysicalIf(),
           breakoutIfReadListEcResponseBody.getBreakoutIfList()));
       return createRestResponse(body, HttpStatus.OK_200);
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  private PhysicalIfReadEcResponseBody sendPhysicalInterfaceRead(FcNode node) throws MsfException {
-    try {
-      logger.methodStart();
-
-      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
-          .getEcControlAddress();
-
-      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
-
-      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.PHYSICAL_IF_READ.getHttpMethod(),
-          EcRequestUri.PHYSICAL_IF_READ.getUri(String.valueOf(node.getEcNodeId()), request.getIfId()), null,
-          ecControlIpAddress, ecControlPort);
-
-      PhysicalIfReadEcResponseBody physicalIfReadEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
-          PhysicalIfReadEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-
-      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200,
-          physicalIfReadEcResponseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
-
-      return physicalIfReadEcResponseBody;
     } finally {
       logger.methodEnd();
     }

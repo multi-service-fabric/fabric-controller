@@ -1,9 +1,9 @@
+
 package msf.mfcfc.core.scenario;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import msf.mfcfc.common.constant.HttpMethod;
-
 
 public class RestRequestData {
 
@@ -11,31 +11,22 @@ public class RestRequestData {
 
   private String ipAddress;
 
-
   private int port;
-
 
   private HttpMethod httpMethod;
 
-
   private String targetUri;
-
 
   private RestRequestBase request;
 
-
   private int expectHttpStatusCode;
-
-
 
   private String lowerOperationId;
 
-  
   public RestRequestData() {
 
   }
 
-  
   public RestRequestData(int clusterId, String ipAddress, int port, HttpMethod httpMethod, String targetUri,
       RestRequestBase request, int expectHttpStatusCode) {
     super();
@@ -112,7 +103,6 @@ public class RestRequestData {
     this.lowerOperationId = lowerOperationId;
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

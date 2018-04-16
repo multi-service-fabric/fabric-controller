@@ -1,7 +1,7 @@
 ## Controller API(notification) index
 
 **Version 1.0**
-**Copyright(c) 2017 Nippon Telegraph and Telephone Corporation**
+**Copyright(c) 2018 Nippon Telegraph and Telephone Corporation**
 
 |group|notification|interface name|Identification ID|Method|URI|URI example|
 |:----|:----|:----|:----|:----|:----|:----|

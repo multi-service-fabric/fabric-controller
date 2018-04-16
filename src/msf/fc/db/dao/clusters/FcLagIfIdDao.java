@@ -12,13 +12,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcLagIfIdDao extends FcAbstractCommonDao<FcLagIfId, Integer> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagIfIdDao.class);
 
-
-  
   public List<FcLagIfId> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });

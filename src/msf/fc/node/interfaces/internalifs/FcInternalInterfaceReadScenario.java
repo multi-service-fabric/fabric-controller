@@ -22,7 +22,8 @@ import msf.mfcfc.node.interfaces.internalifs.data.InternalIfReadResponseBody;
 import msf.mfcfc.node.interfaces.internalifs.data.InternalIfRequest;
 
 /**
- * Implementation class for internal link interface information acquisition.
+ * Implementation class for intra-cluster link interface information
+ * acquisition.
  *
  * @author NTT
  *
@@ -61,7 +62,7 @@ public class FcInternalInterfaceReadScenario extends FcAbstractInternalInterface
 
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
 

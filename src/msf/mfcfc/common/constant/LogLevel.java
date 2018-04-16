@@ -1,17 +1,13 @@
-package msf.mfcfc.common.constant;
 
+package msf.mfcfc.common.constant;
 
 public enum LogLevel {
 
-  
   ERROR("error"),
 
-  
   WARNING("warning"),
 
-  
   INFO("info");
-
 
   private String message;
 
@@ -19,12 +15,10 @@ public enum LogLevel {
     this.message = message;
   }
 
-  
   public String getMessage() {
     return message;
   }
 
-  
   public static LogLevel getEnumFromMessage(String message) {
     for (LogLevel enumValue : values()) {
       if (enumValue.getMessage().equals(message)) {

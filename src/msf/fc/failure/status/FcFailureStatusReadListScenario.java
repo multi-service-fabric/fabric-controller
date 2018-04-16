@@ -41,6 +41,7 @@ import msf.mfcfc.failure.status.data.entity.FailureStatusClusterUnitEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusIfFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusNodeFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusPhysicalUnitEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 
 /**
  * Implementation class for failure information list acquisition.
@@ -137,15 +138,22 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
 
           updateIfInfoEcAllMap(fcNode, clusterId, ifListResponse.getIfs(), vlanIfListResponse.getVlanIfList(),
               ifInfoEcMap, ifInfoEcAllMap, ifs);
+
+          if (!NodeStatus.IN_SERVICE.getMessage().equals(node.getNodeState())) {
+            updateAllIfStateToDown(node.getNodeId(), ifInfoEcMap);
+            updateAllIfStateToDown(node.getNodeId(), ifInfoEcAllMap);
+          }
         }
 
         List<FailureStatusNodeFailureEntity> nodes = getNodesStatus(fcNodeMap, ecListResponse.getNodeList(), clusterId);
 
-        Map<ClusterType, Map<String, FailureStatus>> clusterFailureMap = getClusterNotifyInfo(session, ifInfoEcMap,
+        FailureStatusSliceUnitEntity sliceEntity = createSliceNotifyInfo(session, ifInfoEcMap, ifInfoEcAllMap);
+
+        Map<ClusterType, Map<String, FailureStatus>> clusterFailureMap = createClusterNotifyInfo(session, ifInfoEcMap,
             ifInfoEcAllMap);
         List<FailureStatusClusterFailureEntity> clusters = getClusterFailureEntityList(clusterFailureMap, clusterId);
 
-        RestResponseBase responseBase = responseTrafficInfoData(nodes, ifs, clusters);
+        RestResponseBase responseBase = createFailureReadListResponse(nodes, ifs, clusters, sliceEntity);
         return responseBase;
 
       } catch (MsfException msfException) {
@@ -205,8 +213,9 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
     }
   }
 
-  private RestResponseBase responseTrafficInfoData(List<FailureStatusNodeFailureEntity> nodes,
-      List<FailureStatusIfFailureEntity> ifs, List<FailureStatusClusterFailureEntity> clusters) {
+  private RestResponseBase createFailureReadListResponse(List<FailureStatusNodeFailureEntity> nodes,
+      List<FailureStatusIfFailureEntity> ifs, List<FailureStatusClusterFailureEntity> clusters,
+      FailureStatusSliceUnitEntity sliceEntity) {
     FailureStatusReadListResponseBody body = new FailureStatusReadListResponseBody();
 
     if (!nodes.isEmpty() || !ifs.isEmpty()) {
@@ -225,6 +234,8 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
       clusterUnit.setClusterList(clusters);
       body.setClusterUnit(clusterUnit);
     }
+
+    body.setSliceUnit(sliceEntity);
 
     return createRestResponse(body, HttpStatus.OK_200);
   }
@@ -265,4 +276,5 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
     node.setNodeId(nodeId.toString());
     return node;
   }
+
 }

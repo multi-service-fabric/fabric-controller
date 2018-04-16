@@ -18,7 +18,7 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Class to implement asynchronous processing in L2CP deletion.
+ * Class to implement the asynchronous processing in L2CP deletion.
  *
  * @author NTT
  *
@@ -29,7 +29,7 @@ public class FcL2CpDeleteRunner extends FcAbstractL2CpRunnerBase {
 
   /**
    * Constructor. <br>
-   * Take over the necessary information from scenario side
+   * Take over the necessary information from scenario
    *
    * @param request
    *          Request for L2CP control

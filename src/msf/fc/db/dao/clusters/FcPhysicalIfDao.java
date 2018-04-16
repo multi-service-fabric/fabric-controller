@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.clusters;
 
 import java.util.ArrayList;
@@ -14,13 +15,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcPhysicalIfDao extends FcAbstractCommonDao<FcPhysicalIf, Long> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcPhysicalIfDao.class);
 
-
-  
   public List<FcPhysicalIf> readList(SessionWrapper session, Integer nodeType, Integer nodeId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeType", "nodeId" }, new Object[] { session, nodeType, nodeId });
@@ -38,7 +36,6 @@ public class FcPhysicalIfDao extends FcAbstractCommonDao<FcPhysicalIf, Long> {
     }
   }
 
-  
   public FcPhysicalIf read(SessionWrapper session, Integer nodeType, Integer nodeId, String physicalIfId)
       throws MsfException {
     try {

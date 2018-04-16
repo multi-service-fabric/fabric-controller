@@ -1,3 +1,4 @@
+
 package msf.mfcfc.rest.common;
 
 import java.util.regex.Pattern;
@@ -6,14 +7,12 @@ import msf.mfcfc.common.constant.EcEmControlStatus;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.log.MsfLogger;
 
-
 public class EcControlStatusUtil {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(EcControlStatusUtil.class);
-  
+
   private static Pattern errorPattern = Pattern.compile("^90[0-9]{4}$");
 
-  
   public static EcEmControlStatus getStatusFromEcErrorCode(String ecErrorCode) {
     try {
       logger.methodStart(new String[] { "ecErrorCode" }, new Object[] { ecErrorCode });
@@ -31,7 +30,6 @@ public class EcControlStatusUtil {
     }
   }
 
-  
   public static ErrorCode checkEcEmControlErrorCode(String ecErrorCode) {
     try {
       logger.methodStart(new String[] { "ecErrorCode" }, new Object[] { ecErrorCode });
@@ -49,7 +47,6 @@ public class EcControlStatusUtil {
     }
   }
 
-  
   public static EcEmControlStatus getStatusFromFcErrorCode(ErrorCode errorCode) {
     try {
       logger.methodStart(new String[] { "errorCode" }, new Object[] { errorCode });

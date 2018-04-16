@@ -10,13 +10,13 @@ import msf.mfcfc.core.status.scenario.AbstractStatusScenarioBase;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement common process of system status-related
+ * Abstract class to implement the common process of system status-related
  * processing in system basic function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request class that inherited the RestRequestBase class
+ *          Request class that inherits the RestRequestBase class
  */
 public abstract class FcAbstractStatusScenarioBase<T extends RestRequestBase> extends AbstractStatusScenarioBase<T> {
 

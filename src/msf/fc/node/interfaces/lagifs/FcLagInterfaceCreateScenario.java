@@ -18,7 +18,7 @@ import msf.mfcfc.node.interfaces.lagifs.data.LagIfRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for Lag interface generation.
+ * Implementation class for Lag interface addition.
  *
  * @author NTT
  *
@@ -57,7 +57,7 @@ public class FcLagInterfaceCreateScenario extends FcAbstractLagInterfaceScenario
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, "fabricType = " + request.getFabricType());
       }

@@ -2,13 +2,9 @@
 package msf.fc.core.status.scenario;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.config.type.system.NoticeDestInfoStatus;
-import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
@@ -20,7 +16,6 @@ import msf.mfcfc.core.status.scenario.data.SystemStatusNotifyRequest;
 import msf.mfcfc.core.status.scenario.data.SystemStatusNotifyRequestBody;
 import msf.mfcfc.core.status.scenario.data.entity.SystemStatusControllerNotifyEntity;
 import msf.mfcfc.rest.common.JsonUtil;
-import msf.mfcfc.rest.common.RestClient;
 
 /**
  * Class to provide the system status update function.
@@ -74,11 +69,12 @@ public class FcInternalSystemStatusNotifyScenario extends FcAbstractStatusScenar
       logger.methodStart();
 
       int clusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
-      SystemStatusNotifyRequestBody requestBody = new SystemStatusNotifyRequestBody();
       SystemStatusControllerNotifyEntity controller = new SystemStatusControllerNotifyEntity();
       controller.setClusterId(String.valueOf(clusterId));
       controller.setControllerType(ecRequestBody.getController().getControllerType());
       controller.setEvent(ecRequestBody.getController().getEvent());
+
+      SystemStatusNotifyRequestBody requestBody = new SystemStatusNotifyRequestBody();
       requestBody.setController(controller);
       String bodyStr = JsonUtil.toJson(requestBody);
 
@@ -97,44 +93,10 @@ public class FcInternalSystemStatusNotifyScenario extends FcAbstractStatusScenar
 
       for (NoticeDestInfoStatus noticeDestInfo : noticeDestInfoList) {
         sendStatusNotify(noticeDestInfo.getNoticeAddress(), noticeDestInfo.getNoticePort(), noticeRetryNum,
-            noticeTimeout);
+            noticeTimeout, request);
       }
 
       return responsStatusNotifyData();
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  private void sendStatusNotify(String ipAddress, int port, int noticeRetryNum, int noticeTimeout) {
-    for (int retryNum = 0; retryNum < noticeRetryNum; retryNum++) {
-      if (sendStatus(ipAddress, port, noticeTimeout) != null) {
-        break;
-      }
-    }
-  }
-
-  private RestResponseBase sendStatus(String ipAddress, int port, int noticeTimeout) {
-    RestResponseBase restResponseBase = new RestResponseBase();
-    try {
-      String targetUri = MfcFcRequestUri.STATUS_NOTIFY.getUri();
-      restResponseBase = RestClient.sendRequest(MfcFcRequestUri.STATUS_NOTIFY.getHttpMethod(), targetUri, request,
-          ipAddress, port);
-    } catch (MsfException msf) {
-      try {
-        restResponseBase = null;
-        TimeUnit.MILLISECONDS.sleep(noticeTimeout);
-      } catch (InterruptedException ie) {
-
-      }
-    }
-    return restResponseBase;
-  }
-
-  private RestResponseBase responsStatusNotifyData() {
-    try {
-      logger.methodStart();
-      return new RestResponseBase(HttpStatus.OK_200, (String) null);
     } finally {
       logger.methodEnd();
     }

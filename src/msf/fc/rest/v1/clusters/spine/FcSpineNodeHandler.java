@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.spine;
 
 import javax.ws.rs.Consumes;
@@ -28,9 +29,8 @@ import msf.mfcfc.rest.common.AbstractRestHandler;
  * @author NTT
  */
 @Path("/v1/clusters")
-
 public class FcSpineNodeHandler extends AbstractRestHandler {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(FcSpineNodeHandler.class);
 
   /**
@@ -73,7 +73,6 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
     }
   }
 
-  
   /**
    * Spine information list acquisition.
    *
@@ -110,7 +109,6 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
 
   }
 
-  
   /**
    * Spine information acquisition.
    *
@@ -147,7 +145,6 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
 
   }
 
-  
   /**
    * Spine deletion.
    *

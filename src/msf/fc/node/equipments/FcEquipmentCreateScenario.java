@@ -14,8 +14,12 @@ import msf.fc.node.FcNodeManager;
 import msf.fc.rest.ec.node.equipment.data.EquipmentCreateEcRequestBody;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentCapabilitiesEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentEgressEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfNameRulesaEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentQosEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentRemarkEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentShapingEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentZtpEcEntity;
 import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
@@ -38,7 +42,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for model information registration.
+ * Implementation class for device model information registration.
  *
  * @author NTT
  *
@@ -47,7 +51,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
 
   private EquipmentCreateRequestBody requestBody;
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(FcEquipmentCreateScenario.class);
 
   /**
@@ -78,12 +81,10 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-
       EquipmentCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           EquipmentCreateRequestBody.class);
       requestBody.validate();
       logger.debug("requestBody=" + request.getRequestBody());
-
 
       this.requestBody = requestBody;
 
@@ -107,15 +108,11 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
           sessionWrapper.beginTransaction();
           FcEquipmentDao fcEquipmentDao = new FcEquipmentDao();
 
-
           FcEquipment fcEquipment = setEquipmentData(sessionWrapper, fcEquipmentDao);
-
 
           fcEquipmentDao.create(sessionWrapper, fcEquipment);
 
-
           sendEquipmentCreate(fcEquipment);
-
 
           responseBase = responseEquipmentCreateData(fcEquipment);
 
@@ -135,7 +132,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     }
   }
 
-  
   private void checkForDuplicate(SessionWrapper sessionWrapper, FcEquipmentDao equipmentDao) throws MsfException {
     try {
       logger.methodStart();
@@ -152,7 +148,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     }
   }
 
-  
   protected FcEquipment setEquipmentData(SessionWrapper sessionWrapper, FcEquipmentDao fcEquipmentDao)
       throws MsfException {
     try {
@@ -174,7 +169,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     }
   }
 
-  
   protected void sendEquipmentCreate(FcEquipment fcEquipment) throws MsfException {
     try {
       logger.methodStart(new String[] { "equipment" }, new Object[] { fcEquipment });
@@ -191,10 +185,8 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
 
       int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
 
-
       RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.EQUIPMENT_CREATE.getHttpMethod(),
           EcRequestUri.EQUIPMENT_CREATE.getUri(), restRequest, ecControlIpAddress, ecControlPort);
-
 
       String errorCode = null;
       if (StringUtils.isNotEmpty(restResponseBase.getResponseBody())) {
@@ -203,7 +195,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
         errorCode = equipmentCreateEcResponseBody.getErrorCode();
       }
 
-
       checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.CREATED_201, errorCode,
           ErrorCode.EC_CONTROL_ERROR);
     } finally {
@@ -211,7 +202,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     }
   }
 
-  
   private EquipmentEcEntity setEquimpmentCreateEcData(FcEquipment fcEquipment) {
     try {
       logger.methodStart();
@@ -246,6 +236,29 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
       capabilities.setEvpn(equipmentType.getCapability().getVpn().getL2());
       equipmentEc.setCapabilities(capabilities);
 
+      EquipmentShapingEcEntity shaping = new EquipmentShapingEcEntity();
+      shaping.setEnable(equipmentType.getCapability().getQos().getShaping());
+
+      EquipmentRemarkEcEntity remark = new EquipmentRemarkEcEntity();
+      remark.setEnable(equipmentType.getCapability().getQos().getRemark());
+      if (remark.getEnable()) {
+        remark.setMenuList(equipmentType.getCapability().getQos().getRemarkCapabilityList());
+        remark.setRemarkDefault(equipmentType.getCapability().getQos().getRemarkDefault());
+      }
+
+      EquipmentEgressEcEntity egress = null;
+      if (shaping.getEnable()) {
+        egress = new EquipmentEgressEcEntity();
+        egress.setMenuList(equipmentType.getCapability().getQos().getEgressQueueCapabilityList());
+        egress.setEgressDefault(equipmentType.getCapability().getQos().getEgressQueueDefault());
+      }
+
+      EquipmentQosEcEntity qos = new EquipmentQosEcEntity();
+      qos.setShaping(shaping);
+      qos.setRemark(remark);
+      qos.setEgress(egress);
+      equipmentEc.setQos(qos);
+
       List<EquipmentIfNameRulesaEcEntity> ifNameRules = new ArrayList<>();
       for (EquipmentPortEntity equipmentPort : equipmentType.getIfDefinitions().getPortList()) {
         EquipmentIfNameRulesaEcEntity ifNameRule = new EquipmentIfNameRulesaEcEntity();
@@ -271,7 +284,6 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     }
   }
 
-  
   private RestResponseBase responseEquipmentCreateData(FcEquipment fcEquipment) {
     try {
       logger.methodStart(new String[] { "fcEquipment" }, new Object[] { fcEquipment });

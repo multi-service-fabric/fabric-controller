@@ -11,12 +11,14 @@ import org.eclipse.jetty.http.HttpStatus;
 
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcBreakoutIf;
+import msf.fc.common.data.FcEquipment;
 import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcLeafNode;
 import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.common.util.FcIpAddressUtil;
 import msf.fc.db.FcDbManager;
+import msf.fc.db.dao.clusters.FcEquipmentDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.node.FcNodeManager;
 import msf.fc.rest.ec.node.nodes.operation.data.NodeCreateDeleteEcRequestBody;
@@ -25,6 +27,9 @@ import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeRangeEcEntity;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeUpdateEcEntity;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeUpdateNodeEcEntity;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeVirtualLinkEcEntity;
+import msf.fc.rest.ec.node.recovernode.data.RecoverNodeCreateEcRequestBody;
+import msf.fc.rest.ec.node.recovernode.data.entity.RecoverEquipmentEcEntity;
+import msf.fc.rest.ec.node.recovernode.data.entity.RecoverNodeEcEntity;
 import msf.mfcfc.common.constant.EcNodeOperationAction;
 import msf.mfcfc.common.constant.EcNodeOperationUpdateAction;
 import msf.mfcfc.common.constant.EcRequestUri;
@@ -45,7 +50,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Leaf node update.
+ * Class to implement the asynchronous processing in Leaf node update.
  *
  * @author NTT
  *
@@ -97,90 +102,28 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
             List<FcNode> fcNodeList = fcNodeDao.readList(sessionWrapper);
             FcNode updateNode = getUpdateNode(fcNodeList, NodeType.LEAF, Integer.valueOf(request.getNodeId()));
 
-            List<FcNode> borderLeafNodeList = getOtherBorderLeafNodeList(fcNodeList, updateNode.getNodeId());
             List<FcNode> leafNodes = new ArrayList<>();
             leafNodes.add(updateNode);
-            leafNodes.addAll(borderLeafNodeList);
 
             sessionWrapper.beginTransaction();
 
-            logger.performance("start get leaf and b-leaf resources lock.");
-            FcDbManager.getInstance().getLeafsLock(leafNodes, sessionWrapper);
-            logger.performance("end get leaf and b-leaf resources lock.");
+            switch (requestBody.getActionEnum()) {
+              case CHG_LEAF_TYPE:
 
-            checkNodeAfterLock(updateNode, requestBody, borderLeafNodeList);
+                responseBase = changeLeafTypeProcess(sessionWrapper, fcNodeList, updateNode, leafNodes);
+                break;
 
-            NodeUpdateEcEntity nodeUpdateEcEntity = new NodeUpdateEcEntity();
-            NodeUpdateNodeEcEntity nodeUpdateNodeEcEntity = new NodeUpdateNodeEcEntity();
+              case RECOVER_NODE:
 
-            nodeUpdateNodeEcEntity.setNodeId(String.valueOf(updateNode.getEcNodeId()));
-            int ospfArea = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getOspfArea();
-            nodeUpdateNodeEcEntity.setClusterArea(String.valueOf(ospfArea));
+                responseBase = recoverNodeProcess(sessionWrapper, fcNodeList, updateNode, leafNodes);
+                break;
 
-            boolean isChgBorderLeaf = requestBody.getLeafTypeOption().getLeafTypeEnum().equals(LeafType.BORDER_LEAF);
-            if (isChgBorderLeaf) {
+              default:
 
-              if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
-                nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.CHG_B_LEAF.getMessage());
-              } else {
-                nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.ADD_OSPF_ROUTE.getMessage());
-              }
-
-              nodeUpdateNodeEcEntity.setNodeType(InternalNodeType.LEAF.getMessage());
-
-              NodeRangeEcEntity range = new NodeRangeEcEntity();
-              range.setAddress(FcIpAddressUtil.getXagri());
-              range.setPrefix(FcIpAddressUtil.getPintrai());
-              nodeUpdateNodeEcEntity.setRange(range);
-            } else {
-
-              if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
-                nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.CHG_LEAF.getMessage());
-              } else {
-                nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.DELETE_OSPF_ROUTE.getMessage());
-              }
-
-              nodeUpdateNodeEcEntity.setNodeType(InternalNodeType.B_LEAF.getMessage());
+                throw new MsfException(ErrorCode.UNDEFINED_ERROR,
+                    "leaf node update action = " + requestBody.getAction());
             }
 
-            if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
-
-              for (FcNode fcNode : borderLeafNodeList) {
-
-                NodePairNodeEcEntity nodePairNodeEcEntity = new NodePairNodeEcEntity();
-                nodePairNodeEcEntity.setNodeId(String.valueOf(fcNode.getEcNodeId()));
-                nodePairNodeEcEntity.setNodeType(InternalNodeType.B_LEAF.getMessage());
-                nodePairNodeEcEntity.setClusterArea(String.valueOf(ospfArea));
-                if (isChgBorderLeaf) {
-
-                  NodeVirtualLinkEcEntity nodeOppositeVirtualLinkEcEntity = new NodeVirtualLinkEcEntity();
-                  nodeOppositeVirtualLinkEcEntity.setNodeId(String.valueOf(updateNode.getEcNodeId()));
-                  nodePairNodeEcEntity.setVirtualLink(nodeOppositeVirtualLinkEcEntity);
-
-                  NodeVirtualLinkEcEntity nodeVirtualLinkEcEntity = new NodeVirtualLinkEcEntity();
-                  nodeVirtualLinkEcEntity.setNodeId(String.valueOf(fcNode.getEcNodeId()));
-                  nodeUpdateNodeEcEntity.setVirtualLink(nodeVirtualLinkEcEntity);
-                }
-                nodeUpdateEcEntity.setPairNode(nodePairNodeEcEntity);
-              }
-            }
-            nodeUpdateEcEntity.setNode(nodeUpdateNodeEcEntity);
-
-            FcLeafNode leafNode = updateNode.getLeafNode();
-            if (isChgBorderLeaf) {
-              leafNode.setLeafType(LeafType.BORDER_LEAF.getCode());
-            } else {
-              leafNode.setLeafType(LeafType.IP_VPN_LEAF.getCode());
-            }
-            updateNode.setLeafNode(leafNode);
-
-            fcNodeDao.update(sessionWrapper, updateNode);
-
-            sendLeafNodeUpdate(nodeUpdateEcEntity);
-
-            responseBase = responseLeafNodeUpdateData();
-
-            sessionWrapper.commit();
           } catch (MsfException msfException) {
             logger.error(msfException.getMessage(), msfException);
             sessionWrapper.rollback();
@@ -196,6 +139,129 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
       logger.methodEnd();
     }
 
+  }
+
+  private RestResponseBase changeLeafTypeProcess(SessionWrapper sessionWrapper, List<FcNode> fcNodeList,
+      FcNode updateNode, List<FcNode> leafNodes) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "fcNodeList", "updateNode", "leafNodes" },
+          new Object[] { fcNodeList, updateNode, leafNodes });
+
+      List<FcNode> borderLeafNodeList = getOtherBorderLeafNodeList(fcNodeList, updateNode.getNodeId());
+
+      leafNodes.addAll(borderLeafNodeList);
+
+      logger.performance("start get leaf resources lock.");
+      FcDbManager.getInstance().getLeafsLock(leafNodes, sessionWrapper);
+      logger.performance("end get leaf resources lock.");
+
+      checkNodeAfterLock(updateNode, requestBody, borderLeafNodeList);
+
+      NodeUpdateEcEntity nodeUpdateEcEntity = new NodeUpdateEcEntity();
+      NodeUpdateNodeEcEntity nodeUpdateNodeEcEntity = new NodeUpdateNodeEcEntity();
+
+      nodeUpdateNodeEcEntity.setNodeId(String.valueOf(updateNode.getEcNodeId()));
+      int ospfArea = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getOspfArea();
+      nodeUpdateNodeEcEntity.setClusterArea(String.valueOf(ospfArea));
+
+      boolean isChgBorderLeaf = requestBody.getLeafTypeOption().getLeafTypeEnum().equals(LeafType.BORDER_LEAF);
+      if (isChgBorderLeaf) {
+
+        if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
+          nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.CHG_B_LEAF.getMessage());
+        } else {
+          nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.ADD_OSPF_ROUTE.getMessage());
+        }
+
+        nodeUpdateNodeEcEntity.setNodeType(InternalNodeType.LEAF.getMessage());
+
+        NodeRangeEcEntity range = new NodeRangeEcEntity();
+        range.setAddress(FcIpAddressUtil.getXagri());
+        range.setPrefix(FcIpAddressUtil.getPintrai());
+        nodeUpdateNodeEcEntity.setRange(range);
+      } else {
+
+        if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
+          nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.CHG_LEAF.getMessage());
+        } else {
+          nodeUpdateEcEntity.setAction(EcNodeOperationUpdateAction.DELETE_OSPF_ROUTE.getMessage());
+        }
+
+        nodeUpdateNodeEcEntity.setNodeType(InternalNodeType.B_LEAF.getMessage());
+      }
+
+      if (CollectionUtils.isNotEmpty(borderLeafNodeList)) {
+
+        for (FcNode fcNode : borderLeafNodeList) {
+
+          NodePairNodeEcEntity nodePairNodeEcEntity = new NodePairNodeEcEntity();
+          nodePairNodeEcEntity.setNodeId(String.valueOf(fcNode.getEcNodeId()));
+          nodePairNodeEcEntity.setNodeType(InternalNodeType.B_LEAF.getMessage());
+          nodePairNodeEcEntity.setClusterArea(String.valueOf(ospfArea));
+          if (isChgBorderLeaf) {
+
+            NodeVirtualLinkEcEntity nodeOppositeVirtualLinkEcEntity = new NodeVirtualLinkEcEntity();
+            nodeOppositeVirtualLinkEcEntity.setNodeId(String.valueOf(updateNode.getEcNodeId()));
+            nodePairNodeEcEntity.setVirtualLink(nodeOppositeVirtualLinkEcEntity);
+
+            NodeVirtualLinkEcEntity nodeVirtualLinkEcEntity = new NodeVirtualLinkEcEntity();
+            nodeVirtualLinkEcEntity.setNodeId(String.valueOf(fcNode.getEcNodeId()));
+            nodeUpdateNodeEcEntity.setVirtualLink(nodeVirtualLinkEcEntity);
+          }
+          nodeUpdateEcEntity.setPairNode(nodePairNodeEcEntity);
+        }
+      }
+      nodeUpdateEcEntity.setNode(nodeUpdateNodeEcEntity);
+
+      FcLeafNode leafNode = updateNode.getLeafNode();
+      if (isChgBorderLeaf) {
+        leafNode.setLeafType(LeafType.BORDER_LEAF.getCode());
+      } else {
+        leafNode.setLeafType(LeafType.IP_VPN_LEAF.getCode());
+      }
+      updateNode.setLeafNode(leafNode);
+
+      FcNodeDao fcNodeDao = new FcNodeDao();
+      fcNodeDao.update(sessionWrapper, updateNode);
+
+      sendLeafNodeUpdate(nodeUpdateEcEntity);
+
+      RestResponseBase responseBase = responseLeafNodeUpdateData();
+
+      sessionWrapper.commit();
+
+      return responseBase;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RestResponseBase recoverNodeProcess(SessionWrapper sessionWrapper, List<FcNode> fcNodeList, FcNode updateNode,
+      List<FcNode> leafNodes) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "fcNodeList", "updateNode", "leafNodes" },
+          new Object[] { fcNodeList, updateNode, leafNodes });
+
+      logger.performance("start get leaf resources lock.");
+      FcDbManager.getInstance().getLeafsLock(leafNodes, sessionWrapper);
+      logger.performance("end get leaf resources lock.");
+
+      checkRecoverNodeAfterLock(sessionWrapper, requestBody);
+
+      RecoverNodeCreateEcRequestBody recoverNodeCreateEcRequestBody = createRecoverNodeData(updateNode, requestBody);
+
+      sendLeafRecoverNode(updateNode, recoverNodeCreateEcRequestBody);
+
+      sessionWrapper.rollback();
+
+      RestResponseBase responseBase = responseLeafNodeUpdateData();
+
+      setOperationEndFlag(false);
+
+      return responseBase;
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   private FcNode getUpdateNode(List<FcNode> fcNodeList, NodeType nodeType, Integer nodeId) throws MsfException {
@@ -309,6 +375,93 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
       }
 
       checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200, errorCode,
+          ErrorCode.EC_CONTROL_ERROR);
+
+      return restResponseBase;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private void checkRecoverNodeAfterLock(SessionWrapper sessionWrapper, LeafNodeUpdateRequestBody requestBody)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "sessionWrapper", "requestBody" },
+          new Object[] { sessionWrapper, requestBody });
+
+      getEquipmentForRecoverNode(sessionWrapper,
+          Integer.valueOf(requestBody.getRecoverNodeOption().getEquipmentTypeId()));
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private FcEquipment getEquipmentForRecoverNode(SessionWrapper sessionWrapper, Integer equipmentTypeId)
+      throws MsfException {
+    try {
+      logger.methodStart();
+      FcEquipmentDao fcEquipmentDao = new FcEquipmentDao();
+      FcEquipment fcEquipment = fcEquipmentDao.read(sessionWrapper, equipmentTypeId);
+      if (fcEquipment == null) {
+
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+            "target resource not found. parameters = fcEquipment");
+      }
+      return fcEquipment;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RecoverNodeCreateEcRequestBody createRecoverNodeData(FcNode updateNode, LeafNodeUpdateRequestBody requestBody)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "updateNode", "requestBody" }, new Object[] { updateNode, requestBody });
+      RecoverNodeCreateEcRequestBody recoverNodeCreateEcRequestBody = new RecoverNodeCreateEcRequestBody();
+      RecoverEquipmentEcEntity equipment = new RecoverEquipmentEcEntity();
+      equipment.setEquipmentTypeId(requestBody.getRecoverNodeOption().getEquipmentTypeId());
+      recoverNodeCreateEcRequestBody.setEquipment(equipment);
+
+      RecoverNodeEcEntity node = new RecoverNodeEcEntity();
+      boolean isBorderLeaf = LeafType.getEnumFromCode(updateNode.getLeafNode().getLeafType())
+          .equals(LeafType.BORDER_LEAF);
+      node.setNodeType(isBorderLeaf ? InternalNodeType.B_LEAF.getMessage() : InternalNodeType.LEAF.getMessage());
+      node.setUsername(requestBody.getRecoverNodeOption().getUsername());
+      node.setPassword(requestBody.getRecoverNodeOption().getPassword());
+      node.setMacAddr(requestBody.getRecoverNodeOption().getMacAddress());
+      recoverNodeCreateEcRequestBody.setNode(node);
+      return recoverNodeCreateEcRequestBody;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RestResponseBase sendLeafRecoverNode(FcNode updateNode,
+      RecoverNodeCreateEcRequestBody recoverNodeCreateEcRequestBody) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "updateNode", "recoverNodeCreateEcRequestBody" },
+          new Object[] { updateNode, recoverNodeCreateEcRequestBody });
+
+      RestRequestBase restRequest = new RestRequestBase();
+
+      restRequest.setRequestBody(JsonUtil.toJson(recoverNodeCreateEcRequestBody));
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.SERVICE_RECOVERY_CREATE.getHttpMethod(),
+          EcRequestUri.SERVICE_RECOVERY_CREATE.getUri(String.valueOf(updateNode.getEcNodeId())), restRequest,
+          ecControlIpAddress, ecControlPort);
+
+      String errorCode = null;
+      if (StringUtils.isNotEmpty(restResponseBase.getResponseBody())) {
+        ErrorInternalResponseBody recoverNodeEcResponceBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+            ErrorInternalResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+        errorCode = recoverNodeEcResponceBody.getErrorCode();
+      }
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.ACCEPTED_202, errorCode,
           ErrorCode.EC_CONTROL_ERROR);
 
       return restResponseBase;

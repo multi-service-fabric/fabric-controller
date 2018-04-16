@@ -28,11 +28,14 @@ import msf.fc.rest.ec.core.operation.data.entity.OperationBaseIfEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationBgpEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationCreateL3VlanIfOptionEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationDeleteL3VlanIfOptionEcEntity;
+import msf.fc.rest.ec.core.operation.data.entity.OperationQosEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationStaticRouteEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationTrackingIfEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationVlanIfCreateEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationVlanIfEcEntity;
 import msf.fc.rest.ec.core.operation.data.entity.OperationVrrpEcEntity;
+import msf.fc.rest.ec.node.interfaces.vlan.data.VlanIfReadListEcResponseBody;
+import msf.fc.rest.ec.node.interfaces.vlan.data.entity.VlanIfEcEntity;
 import msf.fc.slice.cps.FcAbstractCpRunnerBase;
 import msf.mfcfc.common.constant.EcCommonOperationAction;
 import msf.mfcfc.common.constant.ErrorCode;
@@ -46,11 +49,12 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpBgpEntity;
+import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpQosCreateEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpVrrpEntity;
 
 /**
- * Abstract class to implement common process of L3CP-related asynchronous
+ * Abstract class to implement the common process of L3CP-related asynchronous
  * runner processing in slice management function.
  *
  * @author NTT
@@ -69,7 +73,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
   protected OperationVlanIfCreateEcEntity makeOperationCreateVlanIfEcEntity(SessionWrapper sessionWrapper, int vrfId,
       FcL3Cp l3Cp, int vlanId, int mtu, String ipv4Address, String ipv6Address, Integer ipv4Prefix, Integer ipv6Prefix,
       L3CpBgpEntity bgpEntity, List<L3CpStaticRouteEntity> staticRouteEntityList, L3CpVrrpEntity vrrpEntity,
-      List<OperationTrackingIfEcEntity> trackingIfList) throws MsfException {
+      List<OperationTrackingIfEcEntity> trackingIfList, L3CpQosCreateEntity qosEntity) throws MsfException {
     try {
       logger.methodStart();
       FcNodeDao nodeDao = new FcNodeDao();
@@ -85,7 +89,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
       entity.setIpv6Address(ipv6Address);
       entity.setIpv6Prefix(ipv6Prefix);
       entity.setMtu(mtu);
-
+      entity.setQos(makeOperationQosEcEntity(l3Cp, qosEntity));
       entity.setVlanId(vlanId);
       entity.setVlanIfId(String.valueOf(l3Cp.getVlanIf().getId().getVlanIfId()));
       entity.setRouteDistinguisher(makeRouteDistinguisher(vrfId,
@@ -196,6 +200,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
       logger.methodStart();
       FcL3SliceDao l3SliceDao = new FcL3SliceDao();
       FcL3Slice l3Slice = l3SliceDao.read(sessionWrapper, sliceId);
+
       checkSlicePresence(l3Slice, sliceId);
       return l3Slice;
     } finally {
@@ -206,9 +211,11 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
   protected void processCreateL3Cp(SessionWrapper sessionWrapper, FcL3Slice l3Slice, FcNode node, String cpId,
       int edgePointId, int vlanId, int mtu, String ipv4Address, String ipv6Address, Integer ipv4Prefix,
       Integer ipv6Prefix, L3CpBgpEntity bgpEntity, List<L3CpStaticRouteEntity> staticRouteEntityList,
-      L3CpVrrpEntity vrrpEntity, Double trafficThreshold) throws MsfException {
+      L3CpVrrpEntity vrrpEntity, Double trafficThreshold, L3CpQosCreateEntity qosEntity) throws MsfException {
     try {
       logger.methodStart();
+
+      checkVlanIdSameCheck(sessionWrapper, l3Slice, node, edgePointId, vlanId);
 
       checkL3NwConstraints(staticRouteEntityList);
 
@@ -223,7 +230,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
 
       OperationVlanIfCreateEcEntity createVlanIfEntity = makeOperationCreateVlanIfEcEntity(sessionWrapper,
           l3Slice.getVrfId(), newL3Cp, vlanId, mtu, ipv4Address, ipv6Address, ipv4Prefix, ipv6Prefix, bgpEntity,
-          staticRouteEntityList, vrrpEntity, trackingIfList);
+          staticRouteEntityList, vrrpEntity, trackingIfList, qosEntity);
       createVlanIfEntityList.add(createVlanIfEntity);
 
       l3CpDao.create(sessionWrapper, newL3Cp);
@@ -240,6 +247,47 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
       if (staticRouteEntityList != null) {
         for (L3CpStaticRouteEntity staticRouteEntity : staticRouteEntityList) {
           checkL3NwConstraints(staticRouteEntity);
+        }
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private void checkVlanIdSameCheck(SessionWrapper sessionWrapper, FcL3Slice l3Slice, FcNode node, int edgePointId,
+      int vlanId) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "l3Slice", "node", "edgePointId", "vlanId" },
+          new Object[] { l3Slice, node, edgePointId, vlanId });
+      FcL3CpDao l3CpDao = new FcL3CpDao();
+
+      List<FcL3Cp> l3CpList = l3CpDao.readListByEdgePoint(sessionWrapper, l3Slice.getSliceId(), edgePointId);
+
+      if (!l3CpList.isEmpty()) {
+
+        VlanIfReadListEcResponseBody responseBody = getVlanIfList(sessionWrapper, node.getNodeInfoId());
+        for (VlanIfEcEntity entity : responseBody.getVlanIfList()) {
+
+          for (FcL3Cp l3Cp : l3CpList) {
+
+            if (l3Cp.getVlanIf().getId().getVlanIfId().toString().equals(entity.getVlanIfId())) {
+
+              int vlanIdFromEc = 0;
+
+              if (entity.getVlanId() != null) {
+                vlanIdFromEc = Integer.valueOf(entity.getVlanId());
+              }
+
+              if (vlanId == vlanIdFromEc) {
+                String logMsg = MessageFormat.format(
+                    "l3 nw constraint violation.l3cps vlan id are same. request vlan id = {0}, vlan id from EC = {1}",
+                    vlanId, entity.getVlanId());
+                logger.error(logMsg);
+                throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+              }
+              break;
+            }
+          }
         }
       }
     } finally {
@@ -381,6 +429,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
       l3CpPk.setSliceId(l3Slice.getSliceId());
       l3CpPk.setCpId(cpId);
       newL3Cp.setId(l3CpPk);
+      newL3Cp.setL3Slice(l3Slice);
 
       FcVlanIfPK vlanIfPk = new FcVlanIfPK();
       Set<String> vlanIfIdSet = createVlanIfIdSet(sessionWrapper, node.getNodeInfoId());
@@ -417,5 +466,22 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
 
   protected String makeRouteDistinguisher(int vrfId, int clusterId, int ecNodeId) {
     return vrfId + ":" + (clusterId * 1000 + ecNodeId);
+  }
+
+  private OperationQosEcEntity makeOperationQosEcEntity(FcL3Cp fcL3Cp, L3CpQosCreateEntity qosEntity)
+      throws MsfException {
+    OperationQosEcEntity qosEcEntity = new OperationQosEcEntity();
+
+    if (fcL3Cp.getL3Slice().getRemarkMenu() == null && (qosEntity == null || (qosEntity.getEgressQueueMenu() == null
+        && qosEntity.getEgressShapingRate() == null && qosEntity.getIngressShapingRate() == null))) {
+      return null;
+    }
+    qosEcEntity.setRemarkMenu(fcL3Cp.getL3Slice().getRemarkMenu());
+    if (qosEntity != null) {
+      qosEcEntity.setEgressQueue(qosEntity.getEgressQueueMenu());
+      qosEcEntity.setInflowShapingRate(qosEntity.getIngressShapingRate());
+      qosEcEntity.setOutflowShapingRate(qosEntity.getEgressShapingRate());
+    }
+    return qosEcEntity;
   }
 }

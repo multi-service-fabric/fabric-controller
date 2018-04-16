@@ -22,7 +22,9 @@ public class TrafficManager implements FunctionBlockBase {
   protected Timer timer = null;
 
   /**
-   * Get the instance of TrafficManager.
+   * Get the instance of TrafficManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return TrafficManager instance
    */

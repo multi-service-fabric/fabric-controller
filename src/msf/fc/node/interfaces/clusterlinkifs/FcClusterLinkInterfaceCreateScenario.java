@@ -3,6 +3,7 @@ package msf.fc.node.interfaces.clusterlinkifs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
@@ -16,7 +17,7 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for intercluster link interface registration.
+ * Implementation class for inter-cluster link interface registration.
  *
  * @author NTT
  *
@@ -55,7 +56,7 @@ public class FcClusterLinkInterfaceCreateScenario
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
       ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
 

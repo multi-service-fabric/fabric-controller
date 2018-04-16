@@ -23,7 +23,7 @@ import msf.mfcfc.node.interfaces.internalifs.data.InternalIfReadListResponseBody
 import msf.mfcfc.node.interfaces.internalifs.data.InternalIfRequest;
 
 /**
- * Implementation class for internal link interface information list
+ * Implementation class for intra-cluster link interface information list
  * acquisition.
  *
  * @author NTT
@@ -62,7 +62,7 @@ public class FcInternalInterfaceReadListScenario extends FcAbstractInternalInter
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
 
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 

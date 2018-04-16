@@ -1,6 +1,8 @@
+
 package msf.fc.db.dao.clusters;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
@@ -15,13 +17,10 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-
 public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Long> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcClusterLinkIfDao.class);
 
-
-  
   public FcClusterLinkIf readByPhysicalIfId(SessionWrapper session, Integer ecNodeId, String physicalIfId)
       throws MsfException {
     try {
@@ -30,6 +29,9 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcClusterLinkIf fcClusterLinkIf = null;
       for (FcPhysicalIf fcPhysicalIf : fcNode.getPhysicalIfs()) {
@@ -46,7 +48,6 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
     }
   }
 
-  
   public FcClusterLinkIf readByLagIfId(SessionWrapper session, Integer ecNodeId, String lagIfId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "ecNodeId", "lagIfId" },
@@ -54,6 +55,9 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcClusterLinkIf fcClusterLinkIf = null;
       for (FcLagIf fcLagIf : fcNode.getLagIfs()) {
@@ -70,7 +74,6 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
     }
   }
 
-  
   public FcClusterLinkIf readByBreakoutIfId(SessionWrapper session, Integer ecNodeId, String breakoutIfId)
       throws MsfException {
     try {
@@ -79,6 +82,9 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
 
       FcNodeDao fcNodeDao = new FcNodeDao();
       FcNode fcNode = fcNodeDao.readByEcNodeId(session, ecNodeId);
+      if (Objects.isNull(fcNode)) {
+        return null;
+      }
 
       FcClusterLinkIf fcClusterLinkIf = null;
       for (FcBreakoutIf fcBreakoutIf : fcNode.getBreakoutIfs()) {
@@ -94,7 +100,6 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
       logger.methodEnd();
     }
   }
-
 
   @Override
   public FcClusterLinkIf read(SessionWrapper session, Long clusterLinkIfId) throws MsfException {

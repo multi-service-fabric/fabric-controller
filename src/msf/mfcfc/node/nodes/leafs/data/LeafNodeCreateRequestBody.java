@@ -29,260 +29,206 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodePhysicalIfCreateEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodePhysicalLinkEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class LeafNodeCreateRequestBody implements RestRequestValidator {
-  
+
   private static final MsfLogger logger = MsfLogger.getInstance(LeafNodeCreateRequestBody.class);
 
-  
   @SerializedName("node_id")
   private String nodeId;
 
-  
   @SerializedName("equipment_type_id")
   private String equipmentTypeId;
 
-  
   @SerializedName("leaf_type")
   private String leafType;
 
-  
   @SerializedName("host_name")
   private String hostName;
 
-  
   @SerializedName("mac_address")
   private String macAddress;
 
-  
   @SerializedName("username")
   private String username;
 
-  
   @SerializedName("password")
   private String password;
 
-  
   @SerializedName("provisioning")
   private Boolean provisioning;
 
-  
   @SerializedName("vpn_type")
   private String vpnType;
 
-  
   @SerializedName("plane")
   private Integer plane;
 
-  
   @SerializedName("snmp_community")
   private String snmpCommunity;
 
-  
   @SerializedName("ntp_server_address")
   private String ntpServerAddress;
 
-  
   @SerializedName("breakout")
   private LeafNodeBreakoutEntity breakout;
 
-  
   @SerializedName("internal_links")
   private LeafNodeInternalLinkEntity internalLinks;
-  
+
   @SerializedName("management_if_address")
   private String managementIfAddress;
 
-  
   @SerializedName("management_if_prefix")
   private Integer managementIfPrefix;
 
-  
   public String getNodeId() {
     return nodeId;
   }
 
-  
   public void setNodeId(String nodeId) {
     this.nodeId = nodeId;
   }
 
-  
   public String getEquipmentTypeId() {
     return equipmentTypeId;
   }
 
-  
   public void setEquipmentTypeId(String equipmentTypeId) {
     this.equipmentTypeId = equipmentTypeId;
   }
 
-  
   public String getLeafType() {
     return leafType;
   }
 
-  
   public void setLeafType(String leafType) {
     this.leafType = leafType;
   }
 
-  
   public String getHostName() {
     return hostName;
   }
 
-  
   public void setHostName(String hostName) {
     this.hostName = hostName;
   }
 
-  
   public String getMacAddress() {
     return macAddress;
   }
 
-  
   public void setMacAddress(String macAddress) {
     this.macAddress = macAddress;
   }
 
-  
   public String getUsername() {
     return username;
   }
 
-  
   public void setUsername(String username) {
     this.username = username;
   }
 
-  
   public String getPassword() {
     return password;
   }
 
-  
   public void setPassword(String password) {
     this.password = password;
   }
 
-  
   public Boolean getProvisioning() {
     return provisioning;
   }
 
-  
   public void setProvisioning(Boolean provisioning) {
     this.provisioning = provisioning;
   }
 
-  
   public String getVpnType() {
     return vpnType;
   }
 
-  
   public void setVpnType(String vpnType) {
     this.vpnType = vpnType;
   }
 
-  
   public Integer getPlane() {
     return plane;
   }
 
-  
   public void setPlane(Integer plane) {
     this.plane = plane;
   }
 
-  
   public String getSnmpCommunity() {
     return snmpCommunity;
   }
 
-  
   public void setSnmpCommunity(String snmpCommunity) {
     this.snmpCommunity = snmpCommunity;
   }
 
-  
   public String getNtpServerAddress() {
     return ntpServerAddress;
   }
 
-  
   public void setNtpServerAddress(String ntpServerAddress) {
     this.ntpServerAddress = ntpServerAddress;
   }
 
-  
   public LeafNodeBreakoutEntity getBreakout() {
     return breakout;
   }
 
-  
   public void setBreakout(LeafNodeBreakoutEntity breakout) {
     this.breakout = breakout;
   }
 
-  
   public LeafNodeInternalLinkEntity getInternalLinks() {
     return internalLinks;
   }
 
-  
   public void setInternalLinks(LeafNodeInternalLinkEntity internalLinks) {
     this.internalLinks = internalLinks;
   }
 
-  
   public String getManagementIfAddress() {
     return managementIfAddress;
   }
 
-  
   public void setManagementIfAddress(String managementIfAddress) {
     this.managementIfAddress = managementIfAddress;
   }
 
-  
   public Integer getManagementIfPrefix() {
     return managementIfPrefix;
   }
 
-  
   public void setManagementIfPrefix(Integer managementIfPrefix) {
     this.managementIfPrefix = managementIfPrefix;
   }
 
-  
   public LeafType getLeafTypeEnum() {
     return LeafType.getEnumFromMessage(leafType);
   }
 
-  
   public void setLeafTypeEnum(LeafType leafType) {
     this.leafType = leafType.getMessage();
   }
 
-  
   public VpnType getVpnTypeEnum() {
     return VpnType.getEnumFromMessage(vpnType);
   }
 
-  
   public void setVpnTypeEnum(VpnType vpnType) {
     this.vpnType = vpnType.getMessage();
   }
 
-  
   public PlaneBelongsTo getPlaneEnum() {
     return PlaneBelongsTo.getEnumFromMessage(plane);
   }
 
-  
   public void setPlaneEnum(PlaneBelongsTo plane) {
     this.plane = plane.getMessage();
   }
@@ -347,8 +293,7 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
     for (LeafNodeOppositeEntity tempOpposite : breakout.getOppositeList()) {
 
-
-      ParameterCheckUtil.checkNotNullAndLength(tempOpposite.getOppositeNodeId());
+      ParameterCheckUtil.checkNumericId(tempOpposite.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNullAndLength(tempOpposite.getBreakoutIfList());
 
@@ -385,12 +330,10 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
   private void validateBaseIf(LeafNodeBaseIfEntity baseIf) throws MsfException {
 
-
     ParameterCheckUtil.checkIdSpecifiedByUri(baseIf.getPhysicalIfId());
   }
 
   private void validateInternalLink() throws MsfException {
-
 
     if (internalLinks != null) {
 
@@ -412,9 +355,7 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
     for (LeafNodePhysicalLinkEntity tempPLink : internalLinks.getPhysicalLinkList()) {
 
-      ParameterCheckUtil.checkNotNullAndLength(tempPLink.getOppositeNodeId());
-
-
+      ParameterCheckUtil.checkNumericId(tempPLink.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNull(tempPLink.getInternalLinkIf());
 
@@ -425,9 +366,7 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
   private void validateLagLinkList() throws MsfException {
     for (LeafNodeLagLinkEntity tempLLink : internalLinks.getLagLinkList()) {
 
-      ParameterCheckUtil.checkNotNullAndLength(tempLLink.getOppositeNodeId());
-
-
+      ParameterCheckUtil.checkNumericId(tempLLink.getOppositeNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       ParameterCheckUtil.checkNotNullAndLength(tempLLink.getMemberIfList());
 
@@ -436,7 +375,6 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
   }
 
   private void validateInternalLinkIf(LeafNodeInternalLinkIfEntity internalLinkIf) throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(internalLinkIf.getLocal());
 
@@ -489,7 +427,6 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
   private void validatePhysicalIf(LeafNodePhysicalIfCreateEntity physicalIf) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(physicalIf.getPhysicalIfId());
 
     ParameterCheckUtil.checkNotNullAndLength(physicalIf.getPhysicalIfSpeed());
@@ -497,11 +434,9 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
   private void validateBreakoutIf(LeafNodeInternalBreakoutIfEntity breakoutIf) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(breakoutIf.getBreakoutIfId());
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

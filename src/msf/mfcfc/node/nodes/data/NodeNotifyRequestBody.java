@@ -34,46 +34,36 @@ import msf.mfcfc.node.nodes.data.entity.NodeVirtualLinkEntity;
 import msf.mfcfc.node.nodes.data.entity.NodeVpnEntity;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
-
 public class NodeNotifyRequestBody implements RestRequestValidator {
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(NodeNotifyRequestBody.class);
 
-  
   @SerializedName("status")
   private String status;
 
-  
   @SerializedName("node_info")
   private NodeInfoNodeNotifyEntity nodeInfo;
 
-  
   public String getStatus() {
     return status;
   }
 
-  
   public void setStatus(String status) {
     this.status = status;
   }
 
-  
   public NodeInfoNodeNotifyEntity getNodeInfo() {
     return nodeInfo;
   }
 
-  
   public void setNodeInfo(NodeInfoNodeNotifyEntity nodeInfo) {
     this.nodeInfo = nodeInfo;
   }
 
-  
   public NodeBootStatus getStatusEnum() {
     return NodeBootStatus.getEnumFromMessage(status);
   }
 
-  
   public void setStatusEnum(NodeBootStatus nodeBootStatus) {
     this.status = nodeBootStatus.getMessage();
   }
@@ -83,13 +73,13 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
     try {
       logger.methodStart();
 
-
       ParameterCheckUtil.checkNotNull(getStatusEnum());
       switch (getStatusEnum()) {
         case SUCCESS:
 
-          ParameterCheckUtil.checkNotNull(nodeInfo);
-          validateNodeInfo();
+          if (nodeInfo != null) {
+            validateNodeInfo();
+          }
           break;
         case CANCEL:
         case FAILED:
@@ -105,11 +95,9 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateNodeInfo() throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(nodeInfo.getEquipment());
 
     ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode());
-
 
     validateEquipment();
     validateCreateNode();
@@ -121,8 +109,8 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateEquipment() throws MsfException {
 
-
-    ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getEquipment().getEquipmentTypeId());
+    ParameterCheckUtil.checkNumericId(nodeInfo.getEquipment().getEquipmentTypeId(),
+        ErrorCode.RELATED_RESOURCE_NOT_FOUND);
   }
 
   private void validateCreateNode() throws MsfException {
@@ -147,18 +135,15 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
     ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode().getLoopbackInterface());
 
-
     ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getCreateNode().getSnmpCommunity());
 
     ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode().getCreateNodeIf());
-
 
     ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getCreateNode().getClusterArea());
 
     validateManagementInterface(nodeInfo.getCreateNode().getManagementInterface());
     validateLoopbackInterface(nodeInfo.getCreateNode().getLoopbackInterface());
     validateCreateNodeIf(nodeInfo.getCreateNode().getCreateNodeIf());
-
 
     if (nodeInfo.getCreateNode().getOppositeNodeList() != null) {
       validateOppositeNodeList(nodeInfo.getCreateNode().getOppositeNodeList());
@@ -204,8 +189,7 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateUpdateNode() throws MsfException {
 
-
-    ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getUpdateNode().getNodeId());
+    ParameterCheckUtil.checkNumericId(nodeInfo.getUpdateNode().getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
     ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getUpdateNode().getNodeType());
 
@@ -218,7 +202,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateRange(NodeRangeEntity range) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(range.getAddress());
 
     ParameterCheckUtil.checkNotNull(range.getPrefix());
@@ -227,7 +210,7 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateVirtualLink(NodeVirtualLinkEntity virtualLink) throws MsfException {
 
-    ParameterCheckUtil.checkNotNullAndLength(virtualLink.getNodeId());
+    ParameterCheckUtil.checkNumericId(virtualLink.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
   }
 
   private void validateBleafVpn(NodeVpnEntity vpn) throws MsfException {
@@ -248,8 +231,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
   }
 
   private void validateRrVpn(NodeVpnEntity vpn) throws MsfException {
-
-
 
     ParameterCheckUtil.checkNotNull(vpn.getL3vpn());
 
@@ -277,8 +258,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateLeafL2Vpn(NodeL2VpnEntity l2vpn) throws MsfException {
 
-
-
     ParameterCheckUtil.checkNotNull(l2vpn.getAs());
 
     validateAs(l2vpn.getAs());
@@ -290,8 +269,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
   }
 
   private void validateLeafL3Vpn(NodeL3VpnEntity l3vpn) throws MsfException {
-
-
 
     ParameterCheckUtil.checkNotNull(l3vpn.getAs());
 
@@ -305,8 +282,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateL3Vpn(NodeL3VpnEntity l3vpn) throws MsfException {
 
-
-
     ParameterCheckUtil.checkNotNull(l3vpn.getAs());
 
     validateAs(l3vpn.getAs());
@@ -319,15 +294,12 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateAs(NodeAsNodeNotifyEntity as) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(as.getAsNumber());
   }
 
   private void validateBgp(NodeBgpNodeNotifyEntity bgp, String asNumber) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(bgp.getNeighbor());
-
 
     ParameterCheckUtil.checkNotNullAndLength(bgp.getCommunityWildcard());
     if (!bgp.getCommunityWildcard().matches(asNumber + ":.*")) {
@@ -341,7 +313,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
   }
 
   private void validateLeafBgp(NodeBgpNodeNotifyEntity bgp, String asNumber) throws MsfException {
-
 
     ParameterCheckUtil.checkNotNull(bgp.getNeighbor());
 
@@ -367,12 +338,10 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateNeighbor(NodeNeighborEntity neighbor) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNullAndLength(neighbor.getAddressList());
   }
 
   private void validateManagementInterface(NodeManagementIfEntity managementInterface) throws MsfException {
-
 
     managementInterface.setAddress(ParameterCheckUtil.checkIpv4Address(managementInterface.getAddress()));
 
@@ -382,7 +351,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateLoopbackInterface(NodeLoopbackIfEntity loopbackInterface) throws MsfException {
 
-
     loopbackInterface.setAddress(ParameterCheckUtil.checkIpv4Address(loopbackInterface.getAddress()));
 
     ParameterCheckUtil.checkNotNull(loopbackInterface.getPrefix());
@@ -390,8 +358,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
   }
 
   private void validateCreateNodeIf(NodeCreateNodeIfEntity createNodeIf) throws MsfException {
-
-
 
     if (createNodeIf.getBreakoutBaseIfList() != null) {
       validateBreakoutBaseIfList(createNodeIf.getBreakoutBaseIfList());
@@ -408,9 +374,7 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
     for (NodeOppositeNodeEntity tempOppositeNode : oppositeNodeList) {
 
-      ParameterCheckUtil.checkNotNullAndLength(tempOppositeNode.getNodeId());
-
-
+      ParameterCheckUtil.checkNumericId(tempOppositeNode.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
 
       if (tempOppositeNode.getBreakoutBaseIfList() != null) {
         validateBreakoutBaseIfList(tempOppositeNode.getBreakoutBaseIfList());
@@ -457,15 +421,12 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
   private void validateInternalLinkIf(NodeInternalLinkIfInnerEntity internalLinkIf) throws MsfException {
 
-
     ParameterCheckUtil.checkNotNull(internalLinkIf.getIfTypeEnum());
 
     ParameterCheckUtil.checkNotNullAndLength(internalLinkIf.getIfId());
 
-
     switch (internalLinkIf.getIfTypeEnum()) {
       case LAG_IF:
-      case PHYSICAL_IF:
         if (internalLinkIf.getLagMemberList() == null) {
           break;
         }
@@ -477,6 +438,10 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
           }
         }
         break;
+      case PHYSICAL_IF:
+
+        ParameterCheckUtil.checkNotNullAndLength(internalLinkIf.getLinkSpeed());
+        break;
       case VLAN_IF:
       case BREAKOUT_IF:
         break;
@@ -484,7 +449,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
         throw new IllegalArgumentException(MessageFormat.format("ifType={0}", internalLinkIf.getIfTypeEnum()));
     }
-
 
     internalLinkIf.setLinkIpAddress(ParameterCheckUtil.checkIpv4Address(internalLinkIf.getLinkIpAddress()));
 
@@ -506,7 +470,6 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
     }
   }
 
-  
   @Override
   public String toString() {
     return ToStringBuilder.reflectionToString(this);

@@ -1,3 +1,4 @@
+
 package msf.fc.rest.v1.clusters.breakoutif;
 
 import javax.ws.rs.Consumes;
@@ -63,7 +64,6 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
       BreakoutIfRequest request = new BreakoutIfRequest(requestBody, notificationAddress, notificationPort, clusterId,
           fabricType, nodeId, null, null);
 
-
       setCommonData(request);
 
       FcBreakoutInterfaceCreateDeleteScenario scenario = new FcBreakoutInterfaceCreateDeleteScenario(
@@ -101,7 +101,6 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
       loggingRequestReceived();
 
       BreakoutIfRequest request = new BreakoutIfRequest(null, null, null, clusterId, fabricType, nodeId, null, format);
-
 
       setCommonData(request);
 

@@ -4,6 +4,7 @@ package msf.fc.node.nodes.leafs;
 import org.eclipse.jetty.http.HttpStatus;
 
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.HttpMethod;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -56,7 +57,7 @@ public class FcLeafNodeDeleteScenario extends FcAbstractLeafNodeScenarioBase<Lea
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
       ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
@@ -78,7 +79,7 @@ public class FcLeafNodeDeleteScenario extends FcAbstractLeafNodeScenarioBase<Lea
       try {
         sessionWrapper.openSession();
 
-        boolean isCreateNodeCancelled = checkForExecNodeInfo(sessionWrapper, true, request.getClusterId(),
+        boolean isCreateNodeCancelled = checkForExecNodeInfo(sessionWrapper, HttpMethod.DELETE, request.getClusterId(),
             NodeType.LEAF, request.getNodeId());
 
         FcLeafNodeDeleteRunner fcLeafNodeDeleteRunner = new FcLeafNodeDeleteRunner(request, isCreateNodeCancelled);

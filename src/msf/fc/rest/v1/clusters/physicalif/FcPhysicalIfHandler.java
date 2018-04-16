@@ -107,7 +107,7 @@ public class FcPhysicalIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * Physical IF information change.
+   * Physical IF information modification.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)

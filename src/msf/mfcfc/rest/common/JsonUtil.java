@@ -92,6 +92,7 @@ public class JsonUtil {
       Objects.requireNonNull(errorCode, "error code is null.");
       Gson gson = createGson();
       T javaObject = gson.fromJson(json, clazz);
+
       if (null == javaObject) {
         String logMsg = logger.error("parameter syntax error. parameter = {0}", json);
         throw new MsfException(errorCode, logMsg);
@@ -150,6 +151,7 @@ public class JsonUtil {
       Objects.requireNonNull(errorCode, "error code is null.");
       Gson gson = createGson();
       T javaObject = gson.fromJson(json, typeToken.getType());
+
       if (null == javaObject) {
         String logMsg = logger.error("parameter syntax error. parameter = {0}", json);
         throw new MsfException(errorCode, logMsg);
@@ -166,12 +168,15 @@ public class JsonUtil {
   private static Gson createGson() {
     try {
       logger.methodStart();
+
       if (gson == null) {
         GsonBuilder gsonBuilder = new GsonBuilder().setExclusionStrategies(new MsfExclusionStrategy());
+
         boolean isPrettyPrinting = ConfigManager.getInstance().isPrettyPrinting();
         if (isPrettyPrinting) {
           gsonBuilder.setPrettyPrinting();
         }
+
         boolean isSerializeNulls = ConfigManager.getInstance().isSerializeNulls();
         if (isSerializeNulls) {
           gsonBuilder.serializeNulls();

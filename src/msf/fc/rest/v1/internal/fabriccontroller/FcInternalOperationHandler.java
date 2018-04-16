@@ -18,7 +18,8 @@ import msf.mfcfc.failure.logicalif.data.LogicalIfStatusRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * Common Handler class to execute a request for internal IF processing.
+ * Common Handler class to execute a request for intra-cluster link IF
+ * processing.
  *
  * @author NTT
  */
@@ -50,7 +51,7 @@ public class FcInternalOperationHandler extends AbstractRestHandler {
 
       setCommonData(request);
 
-      FcFailureStatusNotifyScenario scenario = new FcFailureStatusNotifyScenario(OperationType.PRIORITY,
+      FcFailureStatusNotifyScenario scenario = new FcFailureStatusNotifyScenario(OperationType.NORMAL,
           SystemInterfaceType.INTERNAL);
 
       RestResponseBase restResponseBase = scenario.execute(request);

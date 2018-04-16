@@ -37,13 +37,12 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteAsyncResponseBod
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 
 /**
- * Abstract class to implement common process of asynchronous runner processing
- * in CP management.
+ * Abstract class to implement the common process of asynchronous runner
+ * processing in CP management.
  *
  * @author NTT
  *
  */
-
 public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
 
   private static final MsfLogger logger = MsfLogger.getInstance(AbstractCpRunnerBase.class);
@@ -114,17 +113,23 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
       logger.performance("start get available esi.");
       do {
         if (esiSet.contains(EsiUtil.createEsi(lowerClusterId, higherClusterId, targetNextId))) {
+
           targetNextId++;
+
           if (!checkIdRange(targetNextId, 0, EsiUtil.ESI_SERIAL_MAX)) {
+
             targetNextId = 1;
           }
         } else {
+
           updateEsiId(sessionWrapper, esiDao, esiId, targetNextId + 1);
           logger.performance("end get available cp id.");
           return EsiUtil.createEsi(lowerClusterId, higherClusterId, targetNextId);
         }
+
       } while (targetNextId != firstNextId);
       logger.performance("end get available esi id.");
+
       String logMsg = MessageFormat.format("threre is no available esi id. firstCheckId = {0}", firstNextId);
       logger.error(logMsg);
       throw new MsfException(ErrorCode.TARGET_RESOURCE_ALREADY_EXIST, logMsg);
@@ -145,24 +150,32 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
       logger.methodStart(new String[] { "sessionWrapper", "vlanIfIdSet", "nodeInfoId" },
           new Object[] { sessionWrapper, vlanIfIdSet, nodeInfoId });
       VlanIfIdDao vlanIfIdDao = DbManager.getInstance().createVlanIfIdDao();
+
       VlanIfId vlanIfId = vlanIfIdDao.read(sessionWrapper, nodeInfoId);
 
       int firstNextId = vlanIfId.getNextId();
+
       int targetNextId = firstNextId;
       logger.performance("start get available vlan if id.");
       do {
         if (vlanIfIdSet.contains(String.valueOf(targetNextId))) {
+
           targetNextId++;
+
           if (!checkIdRange(targetNextId, 0, Integer.MAX_VALUE)) {
+
             targetNextId = 1;
           }
         } else {
+
           updateVlanIfId(sessionWrapper, vlanIfIdDao, vlanIfId, targetNextId + 1);
           logger.performance("end get available vlan if id.");
           return targetNextId;
         }
+
       } while (targetNextId != firstNextId);
       logger.performance("end get available vlan if id.");
+
       String logMsg = MessageFormat.format("threre is no available vlan if id. firstCheckId = {0}", firstNextId);
       logger.error(logMsg);
       throw new MsfException(ErrorCode.TARGET_RESOURCE_ALREADY_EXIST, logMsg);
@@ -178,9 +191,11 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
           new Object[] { sessionWrapper, cpIdDao, cpId, nextId });
 
       if (!checkIdRange(nextId, 0, Integer.MAX_VALUE)) {
+
         nextId = 1;
       }
       cpId.setNextId(nextId);
+
       cpIdDao.update(sessionWrapper, cpId);
     } finally {
       logger.methodEnd();
@@ -206,9 +221,11 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
           new Object[] { sessionWrapper, esiDao, esiId, nextId });
 
       if (!checkIdRange(nextId, 0, EsiUtil.ESI_SERIAL_MAX)) {
+
         nextId = 1;
       }
       esiId.setNextId(nextId);
+
       esiDao.update(sessionWrapper, esiId);
     } finally {
       logger.methodEnd();
@@ -222,9 +239,11 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
           new Object[] { sessionWrapper, vlanIfIdDao, vlanIfId, nextId });
 
       if (!checkIdRange(nextId, 0, Integer.MAX_VALUE)) {
+
         nextId = 1;
       }
       vlanIfId.setNextId(nextId);
+
       vlanIfIdDao.update(sessionWrapper, vlanIfId);
     } finally {
       logger.methodEnd();
@@ -264,9 +283,11 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
   protected String getIdFromPath(String path) {
     try {
       logger.methodStart();
+
       if (path.startsWith(STATIC_ROUTE_PATH_PREFIX)) {
         path = path.replace(STATIC_ROUTE_PATH_PREFIX, "");
       }
+
       String id = path.replace("/", "");
       if (id.isEmpty()) {
         return null;
@@ -331,6 +352,7 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
   }
 
   protected void checkPairVlanId(Integer vlanId, Integer pairCpVlanId) throws MsfException {
+
     if (!vlanId.equals(pairCpVlanId)) {
       String logMsg = MessageFormat.format(
           "vlan id is different from pair cps vlan id. request vlan id = {0}, pair cps vlan id = {1}", vlanId,

@@ -93,7 +93,9 @@ public class RequestSendRunner implements Callable<RestResponseData> {
           registAsyncRecord(restResponseBase, operationId);
         } catch (Exception exp) {
           logger.warn("error occurred after send async request.", exp);
+
           restResponseBase = new ErrorResponse(ErrorCode.UNDEFINED_ERROR, SystemInterfaceType.EXTERNAL);
+
           restResponseBase.setFailedRegistRecord(true);
         }
       }
@@ -169,6 +171,7 @@ public class RequestSendRunner implements Callable<RestResponseData> {
         if (restRequestData.getRequest() != null) {
           entity.setRequestBody(restRequestData.getRequest().getRequestBody());
         } else {
+
           entity.setRequestBody("");
         }
         entity.setRequestMethod(restRequestData.getHttpMethod().getMessage());

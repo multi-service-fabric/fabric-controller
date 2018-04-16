@@ -71,7 +71,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement common process of node-related processing in
+ * Abstract class to implement the common process of node-related processing in
  * configuration management function.
  *
  * @author NTT
@@ -83,24 +83,35 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractNodeScenarioBase.class);
 
-  protected boolean checkForExecNodeInfo(SessionWrapper sessionWrapper, boolean isDelete, String clusterId,
+  protected boolean checkForExecNodeInfo(SessionWrapper sessionWrapper, HttpMethod method, String clusterId,
       NodeType nodeType, String nodeId) throws MsfException {
 
     boolean isCreateNodeCancelled = false;
     try {
-      logger.methodStart(new String[] { "isDelete", "clusterId", "nodeType", "nodeId" },
-          new Object[] { isDelete, clusterId, nodeType, nodeId });
+      logger.methodStart(new String[] { "method", "clusterId", "nodeType", "nodeId" },
+          new Object[] { method, clusterId, nodeType, nodeId });
       FcAsyncRequestsDao fcAsyncRequestsDao = new FcAsyncRequestsDao();
       List<FcAsyncRequest> fcAsyncRequests = fcAsyncRequestsDao.readListExecNodeInfo(sessionWrapper);
       for (FcAsyncRequest fcAsyncRequest : fcAsyncRequests) {
 
         if (!fcAsyncRequest.getOperationId().equals(getOperationId())) {
-          if (isDelete) {
+          switch (method) {
+            case POST:
 
-            isCreateNodeCancelled = checkForExecDeleteNodeInfo(fcAsyncRequest, clusterId, nodeType, nodeId);
-          } else {
+              throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, "node regist status check error.");
 
-            throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, "node regist status check error.");
+            case DELETE:
+
+              isCreateNodeCancelled = checkForExecDeleteNodeInfo(fcAsyncRequest, clusterId, nodeType, nodeId);
+              break;
+
+            case PUT:
+
+              throw new MsfException(ErrorCode.UPDATE_INFORMATION_ERROR, "node update status check error.");
+
+            default:
+
+              throw new MsfException(ErrorCode.UNDEFINED_ERROR, "method = " + method);
           }
         }
       }
@@ -247,7 +258,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       leaf.setPlane(Integer.parseInt(nodeEcEntity.getPlane()));
       leaf.setSnmpCommunity(nodeEcEntity.getSnmpCommunity());
       leaf.setNtpServerAddress(nodeEcEntity.getNtpServerAddress());
-      leaf.setRouterId(nodeEcEntity.getLoopbackIfAdress());
+      leaf.setRouterId(nodeEcEntity.getLoopbackIfAddress());
       leaf.setManagementIfAddress(nodeEcEntity.getManagementIfAddress());
       leaf.setProvisioningStatus(nodeEcEntity.getNodeState());
 
@@ -334,7 +345,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       spine.setProvisioning(nodeEcEntity.getProvisioning());
       spine.setSnmpCommunity(nodeEcEntity.getSnmpCommunity());
       spine.setNtpServerAddress(nodeEcEntity.getNtpServerAddress());
-      spine.setRouterId(nodeEcEntity.getLoopbackIfAdress());
+      spine.setRouterId(nodeEcEntity.getLoopbackIfAddress());
       spine.setManagementIfAddress(nodeEcEntity.getManagementIfAddress());
       spine.setProvisioningStatus(nodeEcEntity.getNodeState());
 

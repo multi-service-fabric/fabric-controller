@@ -25,15 +25,14 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteRequestBody;
 
 /**
- * Abstract class to implement common process of CP-related processing in slice
- * management function.
+ * Abstract class to implement the common process of CP-related processing in
+ * slice management function.
  *
  * @author NTT
  *
  * @param <T>
  *          Request class that inherits the RestRequestBase class
  */
-
 public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends AbstractScenario<T> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(AbstractCpScenarioBase.class);

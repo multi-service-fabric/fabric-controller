@@ -40,6 +40,8 @@ public class OperationManager {
 
   private String clusterIdForOperationId = "000";
 
+  private Map<String, Integer> lowerRequestNumberMap = new HashMap<>();
+
   protected OperationManager() {
   }
 
@@ -110,6 +112,10 @@ public class OperationManager {
 
           operationDataMap.remove(operationId);
           logger.debug("operation data removed.");
+        }
+        if (lowerRequestNumberMap.get(operationId) != null) {
+
+          lowerRequestNumberMap.remove(operationId);
         }
       } finally {
         logger.methodEnd();
@@ -243,7 +249,6 @@ public class OperationManager {
    *          Lower operation ID
    * @param timeout
    *          Timeout value (ms)
-   *
    * @param timerTask
    *          Processing at timeout
    */
@@ -399,5 +404,32 @@ public class OperationManager {
     String timerId = clusterId + "_" + lowerOperationId;
     logger.debug("timer id = " + timerId);
     return timerId;
+  }
+
+  /**
+   * Set the number of requests that are sent to the lower controller
+   * simultaneously.
+   *
+   * @param operationId
+   *          Target operation ID
+   * @param requestNumber
+   *          Number of simultaneous requests
+   */
+  public void setLowerRequestNumber(String operationId, int requestNumber) {
+    logger.debug("set lower request number = {0},(operation id = {1})", requestNumber, operationId);
+    lowerRequestNumberMap.put(operationId, requestNumber);
+  }
+
+  /**
+   * Get the number of requests that are sent to the lower controller
+   * simultaneously.
+   *
+   * @param operationId
+   *          Operation ID
+   * @return the pre-set number of requests that are sent simultaneously. If
+   *         unset, return null
+   */
+  public Integer getLowerRequestNumber(String operationId) {
+    return lowerRequestNumberMap.get(operationId);
   }
 }

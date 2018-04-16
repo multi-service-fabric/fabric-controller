@@ -1,7 +1,7 @@
+
 package msf.mfcfc.common.data;
 
 import java.io.Serializable;
-
 
 public class VlanIfId implements Serializable {
 

@@ -76,7 +76,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement asynchronous processing in Leaf node addition.
+ * Class to implement the asynchronous processing in Leaf node addition.
  *
  * @author NTT
  *

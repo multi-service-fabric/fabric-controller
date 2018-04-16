@@ -201,6 +201,7 @@ public class SessionWrapper {
         case CP_CREATE_DELETE:
         case CP_CREATE:
         case CP_DELETE:
+        case SLICE_UPDATE:
 
           throw new MsfException(ErrorCode.MFC_CONTROL_ERROR_FC_EC_EM_CONTROL_COMPLETED, msg);
         case EQUIPMENT_CREATE:
@@ -280,13 +281,13 @@ public class SessionWrapper {
   }
 
   /**
-   * Execute the initialization of session. <br>
+   * Execute the session initialization process. <br>
    * <br>
    *
    * @param configuration
-   *          Hibernate config Use only in {@link DbManager} class.
+   *          Make sure to use only in Hibernate config {@link DbManager} class.
    *
-   * @return true initialization success /false initialization fail
+   * @return true: initialization success/false: initialization failure
    */
   public static boolean buildSessionFactory(Configuration configuration) {
     try {

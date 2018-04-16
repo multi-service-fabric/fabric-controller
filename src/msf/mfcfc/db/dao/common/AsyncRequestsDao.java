@@ -1,3 +1,4 @@
+
 package msf.mfcfc.db.dao.common;
 
 import java.sql.Timestamp;
@@ -8,9 +9,7 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.db.dao.AbstractCommonDao;
 
-
 public abstract class AsyncRequestsDao extends AbstractCommonDao<AsyncRequest, String> {
-
 
   public abstract List<AsyncRequest> readList(SessionWrapper session) throws MsfException;
 

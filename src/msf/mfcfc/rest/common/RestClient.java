@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import org.eclipse.jetty.client.api.Request;
+import org.eclipse.jetty.client.util.FutureResponseListener;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
@@ -40,6 +41,8 @@ public class RestClient {
   private static HttpClient httpClient = null;
 
   private static int requestTimeout = 0;
+
+  private static int responseBufferSize = 2;
 
   private static ErrorCode controllTimeoutError = ErrorCode.EC_CONTROL_TIMEOUT;
 
@@ -82,6 +85,8 @@ public class RestClient {
 
       int waitConnectionTimeout = ConfigManager.getInstance().getRestWaitConnectionTimeout() * 1000;
       httpClient.setConnectTimeout(waitConnectionTimeout);
+
+      responseBufferSize = ConfigManager.getInstance().getRestClientResponseBufferSize();
 
       httpClient.start();
 
@@ -207,7 +212,10 @@ public class RestClient {
 
           Request request = createRequest(httpMethod, targetUri, jsonBody);
 
-          ContentResponse contentResponse = request.send();
+          FutureResponseListener listener = new FutureResponseListener(request, responseBufferSize * 1024 * 1024);
+
+          request.send(listener);
+          ContentResponse contentResponse = listener.get(requestTimeout, TimeUnit.SECONDS);
           putRecvCount();
           return createResponse(contentResponse);
         default:
@@ -277,8 +285,12 @@ public class RestClient {
   private static RestResponseBase createResponse(ContentResponse contentResponse) {
     try {
       logger.methodStart(new String[] { "contentResponse" }, new Object[] { contentResponse });
-      RestResponseBase restResponseBase = new RestResponseBase(contentResponse.getStatus(),
-          contentResponse.getContentAsString());
+      String content = null;
+
+      if (contentResponse.getContentAsString() != null && !contentResponse.getContentAsString().isEmpty()) {
+        content = contentResponse.getContentAsString();
+      }
+      RestResponseBase restResponseBase = new RestResponseBase(contentResponse.getStatus(), content);
       return restResponseBase;
     } finally {
       logger.methodEnd();

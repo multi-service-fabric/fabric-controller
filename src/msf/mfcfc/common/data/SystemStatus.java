@@ -1,10 +1,10 @@
+
 package msf.mfcfc.common.data;
 
 import java.io.Serializable;
 
 import msf.mfcfc.common.constant.BlockadeStatus;
 import msf.mfcfc.common.constant.ServiceStatus;
-
 
 public class SystemStatus implements Serializable {
 

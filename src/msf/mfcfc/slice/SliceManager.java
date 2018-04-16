@@ -12,10 +12,13 @@ import msf.mfcfc.common.log.MsfLogger;
  *
  */
 public class SliceManager implements FunctionBlockBase {
+
   protected static final MsfLogger logger = MsfLogger.getInstance(SliceManager.class);
 
   protected static SliceManager instance = null;
+
   private static final Object l2SliceCreateLockObject = new Object();
+
   private static final Object l3SliceCreateLockObject = new Object();
 
   protected SliceManager() {
@@ -23,7 +26,9 @@ public class SliceManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the instance of SliceManager.
+   * Get the instance of SliceManager. <br>
+   * <br>
+   * Make sure to initialize the instance with child class before calling.
    *
    * @return SliceManager instance
    */
@@ -52,18 +57,18 @@ public class SliceManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the lock object for exclusive control of L2 slice generation.
+   * Get the lock object for exclusive control of L2 slice addition.
    *
-   * @return the lock object for exclusive control of L2 slice generation
+   * @return the lock object for exclusive control of L2 slice addition
    */
   public Object getL2SliceCreateLockObject() {
     return l2SliceCreateLockObject;
   }
 
   /**
-   * Get the lock object for exclusive control of L3 slice generation.
+   * Get the lock object for exclusive control of L3 slice addition.
    *
-   * @return the lock object for exclusive control of L3 slice generation
+   * @return the lock object for exclusive control of L3 slice addition
    */
   public Object getL3SliceCreateLockObject() {
     return l3SliceCreateLockObject;

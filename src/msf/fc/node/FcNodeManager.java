@@ -11,8 +11,8 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.NodeManager;
 
 /**
- * Class to provide the initialization function, living confirmation and
- * termination of configuration management function block.
+ * Class to provide the initialization, living confirmation and termination
+ * function of configuration management function block.
  *
  * @author NTT
  *
@@ -86,7 +86,7 @@ public final class FcNodeManager extends NodeManager {
   }
 
   /**
-   * Get the exclusive control object for model information registration.
+   * Get the exclusive control object for device model information registration.
    *
    * @return FC_EQUIPMENT_CREATE_LOCK_OBJECT
    */
@@ -100,7 +100,7 @@ public final class FcNodeManager extends NodeManager {
   }
 
   /**
-   * Get the exclusive control object for model information deletion.
+   * Get the exclusive control object for device model information deletion.
    *
    * @return FC_EQUIPMENT_DELETE_LOCK_OBJECT
    */
@@ -114,7 +114,7 @@ public final class FcNodeManager extends NodeManager {
   }
 
   /**
-   * Get the exclusive control object for device increment/decrement.
+   * Get the exclusive control object for node addition/reduction.
    *
    * @return FC_NODE_CREATE_AND_DELETE_LOCK_OBJECT
    */
@@ -128,7 +128,7 @@ public final class FcNodeManager extends NodeManager {
   }
 
   /**
-   * Get the exclusive control object for device change.
+   * Get the exclusive control object for node modification.
    *
    * @return FC_NODE_UPDATE_LOCK_OBJECT
    */

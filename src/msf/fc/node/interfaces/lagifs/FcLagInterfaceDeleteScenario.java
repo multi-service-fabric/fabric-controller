@@ -1,3 +1,4 @@
+
 package msf.fc.node.interfaces.lagifs;
 
 import org.eclipse.jetty.http.HttpStatus;
@@ -24,7 +25,6 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
 
   private LagIfRequest request;
 
-  
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagInterfaceCreateRunner.class);
 
   /**
@@ -54,8 +54,7 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-
-      ParameterCheckUtil.checkNotNullAndLength(request.getClusterId());
+      ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNumericId(request.getLagIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
@@ -78,7 +77,6 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
       FcLagInterfaceDeleteRunner fcLagInterfaceDeleteRunner = new FcLagInterfaceDeleteRunner(request);
       execAsyncRunner(fcLagInterfaceDeleteRunner);
 
-
       responseBase = responseLagInterfaceDeleteData();
       return responseBase;
     } finally {
@@ -86,7 +84,6 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
     }
   }
 
-  
   private RestResponseBase responseLagInterfaceDeleteData() {
     try {
       logger.methodStart();

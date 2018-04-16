@@ -1,3 +1,4 @@
+
 package msf.fc.db.dao.common;
 
 import java.sql.Timestamp;
@@ -12,18 +13,19 @@ import org.hibernate.criterion.Restrictions;
 import msf.fc.common.data.FcAsyncRequest;
 import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.constant.AsyncProcessStatus;
+import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.LeafNodeUpdateAction;
 import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
-
+import msf.mfcfc.node.nodes.leafs.data.LeafNodeUpdateRequestBody;
+import msf.mfcfc.rest.common.JsonUtil;
 
 public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, String> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAsyncRequestsDao.class);
 
-
-  
   public List<FcAsyncRequest> readListExecNodeInfo(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -35,7 +37,6 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
       if (CollectionUtils.isEmpty(readListExecInfo)) {
         return new ArrayList<>();
       }
-
 
       List<FcAsyncRequest> execNodeInfo = new ArrayList<>();
       for (FcAsyncRequest fcAsyncRequest : readListExecInfo) {
@@ -62,6 +63,19 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
             }
 
             break;
+
+          case PUT:
+            if (MfcFcRequestUri.LEAF_NODE_UPDATE.getUriPattern().matcher(fcAsyncRequest.getRequestUri()).matches()) {
+
+              LeafNodeUpdateRequestBody requestBody = JsonUtil.fromJson(fcAsyncRequest.getRequestBody(),
+                  LeafNodeUpdateRequestBody.class, ErrorCode.UNDEFINED_ERROR);
+
+              if (LeafNodeUpdateAction.RECOVER_NODE.equals(requestBody.getActionEnum())) {
+
+                execNodeInfo.add(fcAsyncRequest);
+              }
+            }
+            break;
           default:
             break;
         }
@@ -72,7 +86,6 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
     }
   }
 
-  
   public List<FcAsyncRequest> readList(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });
@@ -83,7 +96,6 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
     }
   }
 
-  
   public void updateList(SessionWrapper session, Integer beforeStatus, Integer afterStatus, String afterSubStatus)
       throws MsfException {
     try {
@@ -99,7 +111,6 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
     }
   }
 
-  
   public void delete(SessionWrapper session, Timestamp targetTime) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "targetTime" }, new Object[] { session, targetTime });
