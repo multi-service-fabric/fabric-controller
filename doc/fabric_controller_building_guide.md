@@ -3,8 +3,6 @@ Version 1.0
 
 March.28.2018
 
-NTT Confidential
-
 Copyright (c) 2018 NTT corp. All Rights Reserved.
 
 ## Table of Contents
