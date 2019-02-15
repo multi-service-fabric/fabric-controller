@@ -1,6 +1,7 @@
 
 package msf.mfcfc.node.nodes.leafs.data;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -8,6 +9,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.constant.LeafType;
 import msf.mfcfc.common.constant.PlaneBelongsTo;
 import msf.mfcfc.common.constant.VpnType;
@@ -59,6 +61,9 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
   @SerializedName("vpn_type")
   private String vpnType;
+
+  @SerializedName("irb_type")
+  private String irbType;
 
   @SerializedName("plane")
   private Integer plane;
@@ -153,6 +158,14 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
     this.vpnType = vpnType;
   }
 
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
+  }
+
   public Integer getPlane() {
     return plane;
   }
@@ -225,6 +238,14 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
     this.vpnType = vpnType.getMessage();
   }
 
+  public IrbType getIrbTypeEnum() {
+    return IrbType.getEnumFromMessage(irbType);
+  }
+
+  public void setIrbTypeEnum(IrbType irbType) {
+    this.irbType = irbType.getMessage();
+  }
+
   public PlaneBelongsTo getPlaneEnum() {
     return PlaneBelongsTo.getEnumFromMessage(plane);
   }
@@ -255,6 +276,24 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
       ParameterCheckUtil.checkNotNull(provisioning);
 
       ParameterCheckUtil.checkNotNull(getVpnTypeEnum());
+
+      if (irbType != null) {
+        ParameterCheckUtil.checkNotNull(getIrbTypeEnum());
+        if (VpnType.L3VPN.equals(getVpnTypeEnum())) {
+          switch (getIrbTypeEnum()) {
+            case NONE:
+              break;
+            case ASYMMETRIC:
+            case SYMMETRIC:
+              String logMsg = "irbType must match NONE.";
+              logger.error(logMsg);
+              throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+            default:
+
+              throw new IllegalArgumentException(MessageFormat.format("op={0}", getIrbTypeEnum()));
+          }
+        }
+      }
 
       ParameterCheckUtil.checkNotNull(getPlaneEnum());
 

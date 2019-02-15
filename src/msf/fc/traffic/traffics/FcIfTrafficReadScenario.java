@@ -24,7 +24,7 @@ import msf.mfcfc.traffic.traffics.data.IfTrafficRequest;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficEntity;
 
 /**
- * Implementation class for IF traffic information acquisition.
+ * Implementation class for the IF traffic information acquisition.
  *
  * @author NTT
  *
@@ -123,7 +123,7 @@ public class FcIfTrafficReadScenario extends FcAbstractIfTrafficScenarioBase<IfT
 
       if (trafficInfoCollectTrafficEcResponseBody.getSwitchTraffic().getTrafficValueList() == null) {
 
-        String logMsg = MessageFormat.format("target resource not found. parameters={0}, ecNodeId={1}",
+        String logMsg = MessageFormat.format("target resource is not found. parameters={0}, ecNodeId={1}",
             "TrafficValueList", trafficInfoCollectTrafficEcResponseBody.getNodeId());
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
@@ -144,7 +144,7 @@ public class FcIfTrafficReadScenario extends FcAbstractIfTrafficScenarioBase<IfT
       if (ifTraffic == null) {
 
         String logMsg = MessageFormat.format(
-            "target resource not found. parameters={0}, nodeType={1}, nodeId={2}, ifType={3}, ifId={4}", "IfTraffic",
+            "target resource is not found. parameters={0}, nodeType={1}, nodeId={2}, ifType={3}, ifId={4}", "IfTraffic",
             nodeType, nodeId, ifType, ifId);
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }

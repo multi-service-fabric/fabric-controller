@@ -26,8 +26,8 @@ public class CorsResponseFilter implements ContainerResponseFilter {
   private static final String CORS_ALLOW_HEADERS_VALUE = "Content-Type";
 
   /**
-   * Implementation of JAX-RS response filter. Add the HTTP header to avoid the
-   * cross domain barrier.
+   * Implementation of the JAX-RS response filter. Add the HTTP header to avoid
+   * the cross domain barrier.
    */
   @Override
   public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext)

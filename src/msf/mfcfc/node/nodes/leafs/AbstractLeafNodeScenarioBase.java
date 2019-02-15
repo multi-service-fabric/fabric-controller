@@ -5,8 +5,8 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.node.nodes.AbstractNodeScenarioBase;
 
 /**
- * Abstract class to implement the common process of node management
- * (Leaf)-related processing in configuration management function.
+ * Abstract class to implement the common process of the node management
+ * (Leaf)-related processing in the configuration management function.
  *
  * @author NTT
  *

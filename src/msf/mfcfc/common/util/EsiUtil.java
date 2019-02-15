@@ -23,19 +23,19 @@ public class EsiUtil {
 
   private static final String ESI_SEPARATOR = ":";
 
-  private static final Pattern esiPattern = Pattern
+  private static final Pattern ESI_PATTERN = Pattern
       .compile("^(\\d{2}:\\d{2}:\\d{2}:\\d{2}):(\\d{2}:\\d{2}):(\\d{2}:\\d{2}):(\\d{2}:\\d{2})$");
 
   public static final int ESI_SERIAL_MAX = 9999;
 
   /**
-   * Generate ESI value from the specified lower number/higher number cluster ID
-   * as well as serial number.
+   * Generates an ESI value from the specified lower number/higher number
+   * cluster ID as well as serial number.
    *
    * @param lowerSwClusterId
-   *          ID lower number cluster ID
+   *          Lower cluster ID
    * @param higherSwClusterId
-   *          higher number cluster ID
+   *          Higher cluster ID
    * @param serialNumber
    *          Serial number
    * @return ESI value
@@ -63,7 +63,7 @@ public class EsiUtil {
 
   /**
    * Extract and return LACP system ID string from the specified ESI value.
-   * Return Null if specified so, or return "0" if specified so for indicating
+   * Returns Null if specified so, or returns "0" if specified so for indicating
    * ESI deletion.
    *
    * @param esi
@@ -86,7 +86,7 @@ public class EsiUtil {
   }
 
   /**
-   * Return lower SW cluster ID from the specified ESI value.
+   * Returns the lower SW cluster ID from the specified ESI value.
    *
    * @param esi
    *          ESI value
@@ -99,7 +99,7 @@ public class EsiUtil {
   }
 
   /**
-   * Return higher SW cluster ID from the specified ESI value.
+   * Returns the higher SW cluster ID from the specified ESI value.
    *
    * @param esi
    *          ESI value
@@ -112,7 +112,7 @@ public class EsiUtil {
   }
 
   /**
-   * Return ESI serial number from the specified ESI value.
+   * Returns the ESI serial number from the specified ESI value.
    *
    * @param esi
    *          ESI value
@@ -127,12 +127,11 @@ public class EsiUtil {
   private static int getEsiParameter(String esi, int group) throws MsfException {
     try {
       logger.methodStart(new String[] { "esi" }, new Object[] { esi });
-      Matcher matcher = esiPattern.matcher(esi);
+      Matcher matcher = ESI_PATTERN.matcher(esi);
       if (matcher.matches()) {
         return Integer.valueOf(matcher.group(group).replace(ESI_SEPARATOR, ""));
       } else {
         String errorMessage = MessageFormat.format("invalid format esi. esi={0}", esi);
-        logger.warn(errorMessage);
         throw new MsfException(ErrorCode.UNDEFINED_ERROR, errorMessage);
       }
     } finally {

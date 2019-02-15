@@ -3,8 +3,9 @@ package msf.fc.node.nodes.leafs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.ErrorCode;
-import msf.mfcfc.common.constant.HttpMethod;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -18,7 +19,7 @@ import msf.mfcfc.node.nodes.leafs.data.LeafNodeDeleteResponseBody;
 import msf.mfcfc.node.nodes.leafs.data.LeafNodeRequest;
 
 /**
- * Implementation class for Leaf node deletion.
+ * Implementation class for the Leaf node deletion.
  *
  * @author NTT
  *
@@ -59,8 +60,8 @@ public class FcLeafNodeDeleteScenario extends FcAbstractLeafNodeScenarioBase<Lea
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       this.request = request;
 
@@ -79,8 +80,15 @@ public class FcLeafNodeDeleteScenario extends FcAbstractLeafNodeScenarioBase<Lea
       try {
         sessionWrapper.openSession();
 
-        boolean isCreateNodeCancelled = checkForExecNodeInfo(sessionWrapper, HttpMethod.DELETE, request.getClusterId(),
-            NodeType.LEAF, request.getNodeId());
+        boolean isCreateNodeCancelled = false;
+
+        boolean hasChangeNodeOperationStatus = FcNodeOperationInfoDao
+            .hasChangeNodeOperationStatus(NodeOperationStatus.RUNNING.getCode());
+        if (!hasChangeNodeOperationStatus) {
+
+          isCreateNodeCancelled = checkForCancelExecNodeInfo(sessionWrapper, request.getClusterId(), NodeType.LEAF,
+              request.getNodeId());
+        }
 
         FcLeafNodeDeleteRunner fcLeafNodeDeleteRunner = new FcLeafNodeDeleteRunner(request, isCreateNodeCancelled);
         execAsyncRunner(fcLeafNodeDeleteRunner);

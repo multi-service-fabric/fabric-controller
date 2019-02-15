@@ -5,7 +5,7 @@ import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.failure.FailureManager;
 
 /**
- * Class to provide the initialization and termination function of failure
+ * Class to provide the initialization and termination function of the failure
  * management function block.
  *
  * @author NTT
@@ -19,7 +19,11 @@ public final class FcFailureManager extends FailureManager {
   }
 
   /**
-   * Return the instance of FcFailureManager.
+   * Returns the instance of FcFailureManager. This method does not guarantee
+   * the uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcFailureManager instance
    */

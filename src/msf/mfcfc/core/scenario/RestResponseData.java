@@ -1,12 +1,26 @@
 
 package msf.mfcfc.core.scenario;
 
+/**
+ * REST response information with the corresponding request information.
+ *
+ * @author NTT
+ *
+ */
 public class RestResponseData {
 
   private RestRequestData request;
 
   private RestResponseBase response;
 
+  /**
+   * Constructor.
+   *
+   * @param request
+   *          Request information
+   * @param response
+   *          Response data
+   */
   public RestResponseData(RestRequestData request, RestResponseBase response) {
     super();
     this.request = request;

@@ -1,7 +1,0 @@
-{
-    "leaf_node_id" : "3",
-    "lag_if_id" : null,
-    "physical_if_id" : "30",
-    "breakout_if_id" : null,
-    "traffic_threshold" : null
-}

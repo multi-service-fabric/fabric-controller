@@ -45,6 +45,9 @@ public class FcPhysicalIf implements Serializable {
   @OneToMany(mappedBy = "physicalIf", cascade = CascadeType.REMOVE)
   private List<FcInternalLinkIf> internalLinkIfs;
 
+  @OneToMany(mappedBy = "physicalIf")
+  private List<FcPhysicalIfFilterInfo> physicalIfFilterInfos;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "node_info_id")
   private FcNode node;
@@ -134,6 +137,30 @@ public class FcPhysicalIf implements Serializable {
     return internalLinkIf;
   }
 
+  public List<FcPhysicalIfFilterInfo> getPhysicalIfFilterInfos() throws MsfException {
+    return SessionWrapper.getLazyLoadData(this.physicalIfFilterInfos);
+  }
+
+  public void setPhysicalIfFilterInfos(List<FcPhysicalIfFilterInfo> physicalIfFilterInfos) {
+    this.physicalIfFilterInfos = physicalIfFilterInfos;
+  }
+
+  public FcPhysicalIfFilterInfo addPhysicalIfFilterInfo(FcPhysicalIfFilterInfo physicalIfFilterInfo)
+      throws MsfException {
+    getPhysicalIfFilterInfos().add(physicalIfFilterInfo);
+    physicalIfFilterInfo.setPhysicalIf(this);
+
+    return physicalIfFilterInfo;
+  }
+
+  public FcPhysicalIfFilterInfo removePhysicalIfFilterInfo(FcPhysicalIfFilterInfo physicalIfFilterInfo)
+      throws MsfException {
+    getPhysicalIfFilterInfos().remove(physicalIfFilterInfo);
+    physicalIfFilterInfo.setPhysicalIf(null);
+
+    return physicalIfFilterInfo;
+  }
+
   public FcNode getNode() throws MsfException {
     return SessionWrapper.getLazyLoadData(this.node);
   }
@@ -145,7 +172,9 @@ public class FcPhysicalIf implements Serializable {
   @Override
   public String toString() {
     return new ReflectionToStringBuilder(this)
-        .setExcludeFieldNames(new String[] { "clusterLinkIfs", "edgePoints", "internalLinkIfs", "node" }).toString();
+        .setExcludeFieldNames(
+            new String[] { "clusterLinkIfs", "edgePoints", "internalLinkIfs", "physicalIfFilterInfos", "node" })
+        .toString();
   }
 
 }

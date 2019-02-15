@@ -44,7 +44,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in Lag interface addition.
+ * Class to implement the asynchronous processing in the Lag interface
+ * generation.
  *
  * @author NTT
  *
@@ -169,7 +170,7 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType.getCode(), nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {
@@ -190,7 +191,7 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
         if (fcPhysicalIf == null) {
 
           throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-              "target resource not found. parameters = physicalIf");
+              "target resource is not found. parameters = physicalIf");
         }
         fcPhysicalIfs.add(fcPhysicalIf);
       }
@@ -213,7 +214,7 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
         if (fcBreakoutIf == null) {
 
           throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-              "target resource not found. parameters = breakoutIf");
+              "target resource is not found. parameters = breakoutIf");
         }
         fcBreakoutIfs.add(fcBreakoutIf);
       }

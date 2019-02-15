@@ -229,7 +229,7 @@ public class L3CpCreateRequestBody implements RestRequestValidator {
         validateBgp();
       }
 
-      if (staticRouteList != null && staticRouteList.size() > 0) {
+      if (staticRouteList != null && !staticRouteList.isEmpty()) {
         validateStaticRouteList();
       }
 

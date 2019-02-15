@@ -1,6 +1,9 @@
 
 package msf.mfcfc.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.HttpConfiguration;
@@ -30,7 +33,7 @@ import msf.mfcfc.rest.common.RestClient;
  * @author NTT
  *
  */
-public class RestManager implements FunctionBlockBase {
+public final class RestManager implements FunctionBlockBase {
 
   private static final RestManager instance = new RestManager();
 
@@ -40,9 +43,14 @@ public class RestManager implements FunctionBlockBase {
 
   public static final String REST_RESOURCE_PACKAGE_MFC = "msf.mfc.rest";
 
-  private String restResourcePackage = REST_RESOURCE_PACKAGE_FC;
+  public static final String REST_RESOURCE_PACKAGE_FC_SERVICES = "msf.fc.services";
+
+  private List<String> restResourcePackages = new ArrayList<>();
 
   private Server jettyServer;
+
+  private RestManager() {
+  }
 
   /**
    * Get the instance of RestManager. <br>
@@ -129,7 +137,8 @@ public class RestManager implements FunctionBlockBase {
       logger.methodStart();
 
       ResourceConfig resourceConfig = new ResourceConfig();
-      resourceConfig.packages(restResourcePackage);
+
+      resourceConfig.packages(restResourcePackages.toArray(new String[0]));
       resourceConfig.property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, "true");
       resourceConfig.property(ServerProperties.PROVIDER_PACKAGES, new ClientErrorExceptionMapper());
 
@@ -200,11 +209,19 @@ public class RestManager implements FunctionBlockBase {
   /**
    * Set the package path of REST handler.
    *
-   * @param restResourcePackage
-   *          REST handler package path
+   * @param restResourcePackages
+   *          REST handler package path (Variable length argument)
    */
-  public void setRestResourcePackage(String restResourcePackage) {
-    this.restResourcePackage = restResourcePackage;
+  public void setRestResourcePackage(String... restResourcePackages) {
+
+    this.restResourcePackages.clear();
+
+    for (String restResourcePackage : restResourcePackages) {
+      if (restResourcePackage.length() != 0) {
+
+        this.restResourcePackages.add(restResourcePackage);
+      }
+    }
   }
 
   /**

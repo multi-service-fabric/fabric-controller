@@ -71,8 +71,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of node-related processing in
- * configuration management function.
+ * Abstract class to implement the common process of the node-related processing
+ * in the configuration management function.
  *
  * @author NTT
  *
@@ -83,36 +83,20 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractNodeScenarioBase.class);
 
-  protected boolean checkForExecNodeInfo(SessionWrapper sessionWrapper, HttpMethod method, String clusterId,
-      NodeType nodeType, String nodeId) throws MsfException {
+  protected boolean checkForCancelExecNodeInfo(SessionWrapper sessionWrapper, String clusterId, NodeType nodeType,
+      String nodeId) throws MsfException {
 
     boolean isCreateNodeCancelled = false;
     try {
-      logger.methodStart(new String[] { "method", "clusterId", "nodeType", "nodeId" },
-          new Object[] { method, clusterId, nodeType, nodeId });
+      logger.methodStart(new String[] { "clusterId", "nodeType", "nodeId" },
+          new Object[] { clusterId, nodeType, nodeId });
       FcAsyncRequestsDao fcAsyncRequestsDao = new FcAsyncRequestsDao();
       List<FcAsyncRequest> fcAsyncRequests = fcAsyncRequestsDao.readListExecNodeInfo(sessionWrapper);
       for (FcAsyncRequest fcAsyncRequest : fcAsyncRequests) {
 
         if (!fcAsyncRequest.getOperationId().equals(getOperationId())) {
-          switch (method) {
-            case POST:
 
-              throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, "node regist status check error.");
-
-            case DELETE:
-
-              isCreateNodeCancelled = checkForExecDeleteNodeInfo(fcAsyncRequest, clusterId, nodeType, nodeId);
-              break;
-
-            case PUT:
-
-              throw new MsfException(ErrorCode.UPDATE_INFORMATION_ERROR, "node update status check error.");
-
-            default:
-
-              throw new MsfException(ErrorCode.UNDEFINED_ERROR, "method = " + method);
-          }
+          isCreateNodeCancelled = checkForExecDeleteNodeInfo(fcAsyncRequest, clusterId, nodeType, nodeId);
         }
       }
       return isCreateNodeCancelled;
@@ -159,13 +143,15 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if ((!asyncClusterId.equals(clusterId)) || (!asyncNodeType.equals(nodeType)) || (!asyncNodeId.equals(nodeId))) {
 
-          throw new MsfException(ErrorCode.DELETE_INFORMATION_ERROR, "node delete status check error.");
+          throw new MsfException(ErrorCode.DELETE_INFORMATION_ERROR,
+              "Another node related operation is currently in progress.");
         } else {
           return true;
         }
       } else {
 
-        throw new MsfException(ErrorCode.DELETE_INFORMATION_ERROR, "node delete status check error.");
+        throw new MsfException(ErrorCode.DELETE_INFORMATION_ERROR,
+            "Another node related operation is currently in progress.");
       }
     } finally {
       logger.methodEnd();
@@ -193,7 +179,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType, nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {
@@ -278,6 +264,8 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
       leaf.setRegisteredRrNodeIdList(
           getLeafRrNodeIdList(FcConfigManager.getInstance().getDataConfSwClusterData().getRrs()));
+
+      leaf.setIrbType(nodeEcEntity.getIrbType());
 
       return leaf;
     } finally {
@@ -385,12 +373,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (physicalIfEcList.size() != leafNodePhysicalIfForOwnerEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodePhysicalIfForOwnerEntities;
     } finally {
@@ -456,12 +445,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (lagIfEcList.size() != leafNodeLagIfForOwnerEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodeLagIfForOwnerEntities;
     } finally {
@@ -540,12 +530,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (breakoutIfEcList.size() != leafNodeBreakoutIfForOwnerEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodeBreakoutIfForOwnerEntities;
     } finally {
@@ -627,12 +618,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (physicalIfEcList.size() != spineNodePhysicalIfEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return spineNodePhysicalIfEntities;
     } finally {
@@ -698,12 +690,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (lagIfEcList.size() != spineNodeLagIfEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return spineNodeLagIfEntities;
     } finally {
@@ -781,12 +774,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (breakoutIfEcList.size() != spineNodeBreakoutIfEntities.size()) {
 
-        logger.warn("There is only the data in the EC system. It sometimes occurs during node addition.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return spineNodeBreakoutIfEntities;
     } finally {
@@ -858,6 +852,9 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
       List<FcBreakoutIf> breakoutIfs = fcNode.getBreakoutIfs();
       setBreakoutIfLeafUserList(leaf, interfaceReadListEcResponseBody, breakoutIfs);
+
+      leaf.setIrbType(nodeEcEntity.getIrbType());
+
       return leaf;
     } finally {
       logger.methodEnd();
@@ -899,12 +896,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (physicalIfEcList.size() != leafNodePhysicalIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return leafNodePhysicalIfForUserEntities;
     } finally {
@@ -957,12 +955,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (lagIfEcList.size() != leafNodeLagIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return leafNodeLagIfForUserEntities;
     } finally {
@@ -1003,12 +1002,13 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (breakoutIfEcList.size() != leafNodeBreakoutIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return leafNodeBreakoutIfForUserEntities;
     } finally {

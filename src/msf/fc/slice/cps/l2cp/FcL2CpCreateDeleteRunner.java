@@ -28,7 +28,7 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpCreateDeleteRequestBody;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Class to implement the asynchronous processing in L2CP
+ * Class to implement the asynchronous processing in the L2CP
  * addition/deletion(/modification).
  *
  * @author NTT
@@ -48,9 +48,9 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L2CP control
+   *          Request for the L2CP control
    * @param requestBody
-   *          Request body for L2CP addition/deletion(/modification)
+   *          Request body for the L2CP addition/deletion(/modification)
    */
   public FcL2CpCreateDeleteRunner(L2CpRequest request, List<L2CpCreateDeleteRequestBody> requestBody) {
     this.request = request;
@@ -115,7 +115,7 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
             processCreateL2Cp(sessionWrapper, l2SliceAfterLock, nodeAfterLockAdd, cpId,
                 Integer.valueOf(body.getValue().getEdgePointId()), body.getValue().getPortMode(),
                 body.getValue().getVlanId(), body.getValue().getPairCpId(), body.getValue().getEsi(),
-                body.getValue().getQos());
+                body.getValue().getQos(), body.getValue().getIrb(), body.getValue().getTrafficThreshold());
             break;
           case REMOVE:
             FcL2Cp l2CpAfterLockRemove = getL2CpAndCheck(sessionWrapper, request.getSliceId(),
@@ -144,20 +144,27 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
       RestResponseBase response = null;
 
       if (createVlanIfEntityList.size() != 0) {
-        requestJson = makeCreateUpdateL2VlanIfData(createVlanIfEntityList, updateVlanIfEntityList, l2Slice.getVrfId());
+        requestJson = makeCreateUpdateL2VlanIfData(createVlanIfEntityList, updateVlanIfEntityList, l2Slice);
         response = createResponseForMultiL2CpCreate(createdCpIdList);
       } else if (deleteVlanIfEntityList.size() == 0 && updateVlanIfEntityList.size() != 0) {
 
         OperationUpdateVlanIfEcEntity operationUpdateVlanIfEcEntity = updateVlanIfEntityList.get(0);
-        if (operationUpdateVlanIfEcEntity.getEsi().equals("0")) {
-          requestJson = makeDeleteUpdateL2VlanIfData(null, updateVlanIfEntityList, String.valueOf(l2Slice.getVrfId()));
+        if (operationUpdateVlanIfEcEntity.getEsi() != null) {
+          if (operationUpdateVlanIfEcEntity.getEsi().equals("0")) {
+            requestJson = makeDeleteUpdateL2VlanIfData(null, updateVlanIfEntityList, l2Slice);
+          } else {
+            requestJson = makeCreateUpdateL2VlanIfData(null, updateVlanIfEntityList, l2Slice);
+          }
         } else {
-          requestJson = makeCreateUpdateL2VlanIfData(null, updateVlanIfEntityList, l2Slice.getVrfId());
+          if (operationUpdateVlanIfEcEntity.getDummyFlag() != null) {
+            requestJson = makeDeleteUpdateL2VlanIfData(null, updateVlanIfEntityList, l2Slice);
+          } else {
+            requestJson = makeCreateUpdateL2VlanIfData(null, updateVlanIfEntityList, l2Slice);
+          }
         }
         response = new RestResponseBase(HttpStatus.OK_200, (String) null);
       } else {
-        requestJson = makeDeleteUpdateL2VlanIfData(deleteVlanIfEntityList, updateVlanIfEntityList,
-            String.valueOf(l2Slice.getVrfId()));
+        requestJson = makeDeleteUpdateL2VlanIfData(deleteVlanIfEntityList, updateVlanIfEntityList, l2Slice);
         response = new RestResponseBase(HttpStatus.NO_CONTENT_204, (String) null);
       }
 
@@ -205,7 +212,8 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
               Integer.valueOf(body.getValue().getEdgePointId()));
 
           FcL2Cp pairL2Cp = makeNewL2Cp(sessionWrapper, newL2Cp.getL2Slice(), pairNode, pairCpId,
-              Integer.valueOf(body.getValue().getEdgePointId()), body.getValue().getEsi());
+              Integer.valueOf(body.getValue().getEdgePointId()), body.getValue().getEsi(),
+              body.getValue().getTrafficThreshold());
 
           List<FcL2Cp> l2CpList = l2CpDao.readList(sessionWrapper);
           Set<String> esiIdSet = createEsiIdSet(l2CpList);
@@ -215,11 +223,23 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
           newL2Cp.setEsi(esi);
           pairL2Cp.setEsi(esi);
 
+          Set<Integer> clagIdSet = createClagIdSet(l2CpList);
+
+          int clagId = getNextClagId(clagIdSet);
+          newL2Cp.setClagId(clagId);
+          pairL2Cp.setClagId(clagId);
+
           OperationCreateVlanIfEcEntity createVlanIfEntity = makeOperationCreateVlanIfEcEntity(sessionWrapper, pairL2Cp,
               body.getValue().getPortMode(), body.getValue().getVlanId(), body.getValue().getQos());
-          createVlanIfEntityList.add(createVlanIfEntity);
 
-          l2CpDao.create(sessionWrapper, pairL2Cp);
+          if (newL2Cp.getL2Slice().getIrbType() != null) {
+            processCreateL2CpWithIrbEnabled(sessionWrapper, createVlanIfEntity, pairL2Cp, pairNode, vlanId,
+                body.getValue().getIrb());
+          } else {
+
+            createVlanIfEntityList.add(createVlanIfEntity);
+            l2CpDao.create(sessionWrapper, pairL2Cp);
+          }
           break;
         }
       }
@@ -254,8 +274,14 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
           FcNode pairCpNode = nodeDao.read(sessionWrapper, pairL2Cp.getEdgePoint().getEdgePointId());
           OperationDeleteVlanIfEcEntity deleteVlanIfEntity = makeOperationDeleteVlanIfEcEntity(pairCpNode.getEcNodeId(),
               pairL2Cp.getVlanIf().getId().getVlanIfId());
-          deleteVlanIfEntityList.add(deleteVlanIfEntity);
-          l2CpDao.delete(sessionWrapper, pairL2Cp.getId());
+
+          if (pairL2Cp.getL2Slice().getIrbType() != null) {
+            processDeleteL2CpWithIrbEnabled(sessionWrapper, pairL2Cp, pairCpNode, deleteVlanIfEntity);
+          } else {
+            deleteVlanIfEntityList.add(deleteVlanIfEntity);
+
+            l2CpDao.delete(sessionWrapper, pairL2Cp.getId());
+          }
         }
       }
 
@@ -279,7 +305,8 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
       } else {
         updateL2Cp.setEsi(updateEsi);
       }
-      OperationUpdateVlanIfEcEntity updateVlanIfEntity = makeOperationUpdateVlanIfEcEntity(sessionWrapper, updateL2Cp);
+      OperationUpdateVlanIfEcEntity updateVlanIfEntity = makeOperationUpdateVlanIfEcEntity(sessionWrapper, updateL2Cp,
+          false);
       updateVlanIfEntityList.add(updateVlanIfEntity);
 
       l2CpDao.update(sessionWrapper, updateL2Cp);

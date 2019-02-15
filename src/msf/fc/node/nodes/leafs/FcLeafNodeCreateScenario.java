@@ -3,8 +3,9 @@ package msf.fc.node.nodes.leafs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.ErrorCode;
-import msf.mfcfc.common.constant.HttpMethod;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeSubStatus;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -20,7 +21,7 @@ import msf.mfcfc.node.nodes.leafs.data.LeafNodeRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for Leaf node addition.
+ * Implementation class for the Leaf node addition.
  *
  * @author NTT
  *
@@ -59,8 +60,8 @@ public class FcLeafNodeCreateScenario extends FcAbstractLeafNodeScenarioBase<Lea
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       LeafNodeCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           LeafNodeCreateRequestBody.class);
@@ -82,12 +83,18 @@ public class FcLeafNodeCreateScenario extends FcAbstractLeafNodeScenarioBase<Lea
     try {
       logger.methodStart();
 
+      boolean hasChangeNodeOperationStatus = FcNodeOperationInfoDao
+          .hasChangeNodeOperationStatus(NodeOperationStatus.RUNNING.getCode());
+      if (!hasChangeNodeOperationStatus) {
+
+        throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR,
+            "Another node related operation is currently in progress.");
+      }
+
       RestResponseBase responseBase = null;
       SessionWrapper sessionWrapper = new SessionWrapper();
       try {
         sessionWrapper.openSession();
-
-        checkForExecNodeInfo(sessionWrapper, HttpMethod.POST, null, null, null);
 
         if (requestBody.getProvisioning()) {
 
@@ -103,6 +110,8 @@ public class FcLeafNodeCreateScenario extends FcAbstractLeafNodeScenarioBase<Lea
       } catch (MsfException msfException) {
         logger.error(msfException.getMessage(), msfException);
         sessionWrapper.rollback();
+
+        FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
         throw msfException;
       } finally {
         sessionWrapper.closeSession();

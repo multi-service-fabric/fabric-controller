@@ -29,12 +29,12 @@ public class FcInterfaceInfoHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcInterfaceInfoHandler.class);
 
   /**
-   * Interface information list acquisition.
+   * IF information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID
    * @param format

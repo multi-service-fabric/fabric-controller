@@ -13,7 +13,7 @@ import msf.mfcfc.common.log.MsfLogger;
  */
 public class NodeManager implements FunctionBlockBase {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(NodeManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(NodeManager.class);
 
   protected static NodeManager instance = null;
 

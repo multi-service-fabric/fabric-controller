@@ -26,7 +26,7 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceCreateResponseBody;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceRequest;
 
 /**
- * Implementation class for L3 slice addition.
+ * Implementation class for the L3 slice addition.
  *
  * @author NTT
  *

@@ -40,7 +40,7 @@ public class FcClusterLinkIfHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @POST

@@ -18,13 +18,13 @@ import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.status.SystemStatusManager;
 
 /**
- * Based on MFC / FC system status, provide the excecution propriety decision of
+ * Based on MFC / FC system status, provide the execution propriety decision of
  * operation, and the function to manage the operation ID.
  *
  * @author NTT
  *
  */
-public class OperationManager {
+public final class OperationManager {
 
   private static final MsfLogger logger = MsfLogger.getInstance(OperationManager.class);
 
@@ -42,7 +42,7 @@ public class OperationManager {
 
   private Map<String, Integer> lowerRequestNumberMap = new HashMap<>();
 
-  protected OperationManager() {
+  private OperationManager() {
   }
 
   /**
@@ -128,7 +128,7 @@ public class OperationManager {
    *
    * @param operationType
    *          Operation type
-   * @return excecution propriety of operation
+   * @return execution propriety of operation
    *
    */
   public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType) {
@@ -142,7 +142,7 @@ public class OperationManager {
    *          Operation type
    * @param isGetRequest
    *          Whether the request is of information acquisition or not
-   * @return excecution propriety of operation
+   * @return execution propriety of operation
    */
   public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType, boolean isGetRequest) {
     try {
@@ -332,7 +332,7 @@ public class OperationManager {
    * @param operationId
    *          Operation ID
    * @param operationData
-   *          Operation data to set
+   *          Operation data to be set
    */
   public void setOperationData(String operationId, OperationData operationData) {
     synchronized (this) {
@@ -367,7 +367,7 @@ public class OperationManager {
   }
 
   /**
-   * Return the exclusive control object of the specified operation ID.
+   * Returns the exclusive control object of the specified operation ID.
    *
    * @param operationId
    *          Operation ID

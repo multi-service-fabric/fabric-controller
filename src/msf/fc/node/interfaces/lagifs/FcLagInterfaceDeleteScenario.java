@@ -16,7 +16,7 @@ import msf.mfcfc.node.interfaces.lagifs.data.LagIfDeleteResponseBody;
 import msf.mfcfc.node.interfaces.lagifs.data.LagIfRequest;
 
 /**
- * Implementation class for Lag interface deletion.
+ * Implementation class for the Lag interface deletion.
  *
  * @author NTT
  *
@@ -58,8 +58,8 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
       ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNumericId(request.getLagIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       this.request = request;
 

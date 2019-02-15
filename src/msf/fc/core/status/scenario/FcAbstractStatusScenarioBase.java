@@ -10,8 +10,8 @@ import msf.mfcfc.core.status.scenario.AbstractStatusScenarioBase;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement the common process of system status-related
- * processing in system basic function.
+ * Abstract class to implement the common process of the system status-related
+ * processing in the system basic function.
  *
  * @author NTT
  *

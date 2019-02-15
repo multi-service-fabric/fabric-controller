@@ -29,7 +29,7 @@ import msf.mfcfc.node.nodes.spines.data.SpineNodeRequest;
 import msf.mfcfc.node.nodes.spines.data.entity.SpineNodeEntity;
 
 /**
- * Implementation class for Spine node information list acquisition.
+ * Implementation class for the Spine node information list acquisition.
  *
  * @author NTT
  *

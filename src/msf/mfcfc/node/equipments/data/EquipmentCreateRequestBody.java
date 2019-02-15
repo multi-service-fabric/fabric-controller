@@ -93,8 +93,21 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
   private void validateCapability() throws MsfException {
 
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getVpn());
+
+    ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getQos());
+
+    if (!equipmentType.getCapability().getVpn().getL2()) {
+      if (equipmentType.getCapability().getIrb() != null) {
+        String logMsg = "capability information on irb must be not set for the parameter.";
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+      }
+    }
+
     validateVpn();
     validateQos();
+    validateIrb();
+    validateTraffic();
   }
 
   private void validateVpn() throws MsfException {
@@ -122,6 +135,45 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
       ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getQos().getEgressQueueCapabilityList());
 
       ParameterCheckUtil.checkNotNullAndLength(equipmentType.getCapability().getQos().getEgressQueueDefault());
+    }
+  }
+
+  private void validateIrb() throws MsfException {
+
+    if (equipmentType.getCapability().getIrb() != null) {
+
+      Boolean asymmetric = equipmentType.getCapability().getIrb().getAsymmetric();
+      ParameterCheckUtil.checkNotNull(asymmetric);
+
+      Boolean symmetric = equipmentType.getCapability().getIrb().getSymmetric();
+      ParameterCheckUtil.checkNotNull(symmetric);
+    }
+  }
+
+  private void validateTraffic() throws MsfException {
+
+    if (equipmentType.getCapability().getTraffic() != null) {
+      if (equipmentType.getCapability().getTraffic().getVlanTrafficCapability() != null) {
+        ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getTraffic().getVlanTrafficCapabilityEnum());
+        switch (equipmentType.getCapability().getTraffic().getVlanTrafficCapabilityEnum()) {
+          case MIB:
+
+            ParameterCheckUtil
+                .checkNotNullAndLength(equipmentType.getCapability().getTraffic().getVlanTrafficCounterNameMibOid());
+
+            ParameterCheckUtil
+                .checkNotNullAndLength(equipmentType.getCapability().getTraffic().getVlanTrafficCounterValueMibOid());
+            break;
+          case CLI:
+
+            ParameterCheckUtil.checkNotNullAndLength(equipmentType.getCapability().getTraffic().getCliExecPath());
+            break;
+          default:
+
+            throw new IllegalArgumentException(MessageFormat.format("routerType={0}",
+                equipmentType.getCapability().getTraffic().getVlanTrafficCapabilityEnum()));
+        }
+      }
     }
   }
 

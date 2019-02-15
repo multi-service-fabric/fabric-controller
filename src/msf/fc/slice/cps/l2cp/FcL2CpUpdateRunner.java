@@ -43,9 +43,9 @@ public class FcL2CpUpdateRunner extends FcAbstractL2CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L2CP control
+   *          Request for the L2CP control
    * @param requestBody
-   *          Request Body part for L2CP modification
+   *          Request Body part for the L2CP modification
    */
   public FcL2CpUpdateRunner(L2CpRequest request, L2CpUpdateRequestBody requestBody) {
     this.request = request;
@@ -75,7 +75,7 @@ public class FcL2CpUpdateRunner extends FcAbstractL2CpRunnerBase {
       FcNode nodeAfterLock = getNodeAndCheck(sessionWrapper, l2CpAfterLock.getEdgePoint().getEdgePointId());
 
       String requestJson = makeUpdateL2VlanIfData(requestBody.getUpdateOption().getQosUpdateOption(),
-          l2Slice.getVrfId());
+          l2Slice.getVrfId(), l2Slice.getVni());
 
       RestResponseBase restResponse = sendRequestToEc(requestJson, EcRequestUri.VLAN_IF_UPDATE,
           String.valueOf(nodeAfterLock.getEcNodeId()), String.valueOf(l2CpAfterLock.getVlanIf().getId().getVlanIfId()));
@@ -92,7 +92,7 @@ public class FcL2CpUpdateRunner extends FcAbstractL2CpRunnerBase {
     }
   }
 
-  private String makeUpdateL2VlanIfData(L2CpQosCreateEntity l2QosEntity, Integer vrfId) {
+  private String makeUpdateL2VlanIfData(L2CpQosCreateEntity l2QosEntity, Integer vrfId, Integer vni) {
     try {
       logger.methodStart(new String[] { "l2QosEntity" }, new Object[] { l2QosEntity });
 
@@ -107,6 +107,7 @@ public class FcL2CpUpdateRunner extends FcAbstractL2CpRunnerBase {
 
       VlanIfL2VlanOptionEcEntity l2VlanOptionEntity = new VlanIfL2VlanOptionEcEntity();
       l2VlanOptionEntity.setVrfId(vrfId);
+      l2VlanOptionEntity.setVni(vni);
       l2VlanOptionEntity.setQos(qosUpdateEntity);
 
       VlanIfUpdateOptionEcEntity updateOptionEntity = new VlanIfUpdateOptionEcEntity();

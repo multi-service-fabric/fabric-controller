@@ -20,7 +20,7 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.db.SessionWrapper;
 
 /**
- * Implementation class for operation details acquisition.
+ * Implementation class for the operation details acquisition.
  *
  * @author NTT
  *

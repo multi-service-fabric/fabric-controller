@@ -18,7 +18,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpCreateRequestBody;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * Class to implement the asynchronous processing in L3CP addition.
+ * Class to implement the asynchronous processing in the L3CP addition.
  *
  * @author NTT
  *
@@ -34,9 +34,9 @@ public class FcL3CpCreateRunner extends FcAbstractL3CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L3CP control
+   *          Request for the L3CP control
    * @param requestBody
-   *          Request body for L3CP addition
+   *          Request body for the L3CP addition
    */
   public FcL3CpCreateRunner(L3CpRequest request, L3CpCreateRequestBody requestBody) {
     this.request = request;

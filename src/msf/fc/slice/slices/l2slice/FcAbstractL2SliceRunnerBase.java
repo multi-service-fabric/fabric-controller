@@ -9,8 +9,8 @@ import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 
 /**
- * Abstract class to implement the common process of L2 slice related
- * asynchronous runner process in slice management function.
+ * Abstract class to implement the common process of the L2 slice related
+ * asynchronous runner process in the slice management function.
  *
  * @author NTT
  *

@@ -22,7 +22,7 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 
 /**
- * Implementation class for L2 slice deletion.
+ * Implementation class for the L2 slice deletion.
  *
  * @author NTT
  *

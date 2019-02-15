@@ -29,7 +29,7 @@ import msf.mfcfc.rest.common.PATCH;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * REST request handler class for L3CP control (slice management function).
+ * REST request handler class for the L3CP control (slice management function).
  *
  * @author NTT
  *

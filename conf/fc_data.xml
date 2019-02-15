@@ -36,6 +36,8 @@
                 <aggregationStartAddress>1.1.1.1</aggregationStartAddress>
                 <!-- Aggregation prefix -->
                 <aggregationAddressPrefix>24</aggregationAddressPrefix>
+                <!-- Normal IGP Cost of Internal link -->
+                <internalLinkNormalIgpCost>100</internalLinkNormalIgpCost>
             </swCluster>
             <rrs>
                 <rr>

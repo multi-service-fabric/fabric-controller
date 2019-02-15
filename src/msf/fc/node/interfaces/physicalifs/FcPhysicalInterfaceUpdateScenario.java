@@ -34,7 +34,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for physical interface modification.
+ * Implementation class for the physical interface modification.
  *
  * @author NTT
  *
@@ -147,7 +147,7 @@ public class FcPhysicalInterfaceUpdateScenario extends FcAbstractPhysicalInterfa
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType, nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {

@@ -40,7 +40,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param notificationAddress
@@ -48,7 +48,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @POST
@@ -84,7 +84,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param format
@@ -121,7 +121,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
@@ -158,17 +158,17 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
-   *          Node type (URI parameter)
+   *          Node ID (URI parameter)
    * @param lagIfId
    *          LagIF ID (URI parameter)
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort
-   *          Operation completion notification address port
+   *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PUT
@@ -188,7 +188,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId

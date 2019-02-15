@@ -46,7 +46,7 @@ import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for failure information notification.
+ * Implementation class for the failure information notification.
  *
  * @author NTT
  *

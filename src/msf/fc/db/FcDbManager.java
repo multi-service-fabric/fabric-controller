@@ -16,6 +16,8 @@ import org.hibernate.cfg.Configuration;
 import msf.fc.common.data.FcAsyncRequest;
 import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcClusterLinkIf;
+import msf.fc.common.data.FcCpFilterInfo;
+import msf.fc.common.data.FcCpFilterInfoPK;
 import msf.fc.common.data.FcCpId;
 import msf.fc.common.data.FcCpIdPK;
 import msf.fc.common.data.FcEdgePoint;
@@ -23,6 +25,7 @@ import msf.fc.common.data.FcEquipment;
 import msf.fc.common.data.FcEsiId;
 import msf.fc.common.data.FcEsiIdPK;
 import msf.fc.common.data.FcInternalLinkIf;
+import msf.fc.common.data.FcIrbInstance;
 import msf.fc.common.data.FcL2Cp;
 import msf.fc.common.data.FcL2CpPK;
 import msf.fc.common.data.FcL2Slice;
@@ -30,10 +33,15 @@ import msf.fc.common.data.FcL3Cp;
 import msf.fc.common.data.FcL3CpPK;
 import msf.fc.common.data.FcL3Slice;
 import msf.fc.common.data.FcLagIf;
+import msf.fc.common.data.FcLagIfFilterInfo;
+import msf.fc.common.data.FcLagIfFilterInfoPK;
 import msf.fc.common.data.FcLagIfId;
 import msf.fc.common.data.FcLeafNode;
 import msf.fc.common.data.FcNode;
+import msf.fc.common.data.FcNodeOperationInfo;
 import msf.fc.common.data.FcPhysicalIf;
+import msf.fc.common.data.FcPhysicalIfFilterInfo;
+import msf.fc.common.data.FcPhysicalIfFilterInfoPK;
 import msf.fc.common.data.FcSliceId;
 import msf.fc.common.data.FcSwCluster;
 import msf.fc.common.data.FcSystemStatus;
@@ -80,7 +88,7 @@ import msf.mfcfc.db.dao.slices.VrfIdDao;
  */
 public final class FcDbManager extends DbManager {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(FcDbManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FcDbManager.class);
 
   private static final Comparator<FcL2Slice> COMPARATOR_L2SLICE = new Comparator<FcL2Slice>() {
     @Override
@@ -108,7 +116,11 @@ public final class FcDbManager extends DbManager {
   }
 
   /**
-   * Get the instance of FcDbManager.
+   * Get the instance of FcDbManager. This method does not guarantee the
+   * uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcDbManager instance
    */
@@ -351,6 +363,15 @@ public final class FcDbManager extends DbManager {
       configuration.addAnnotatedClass(FcVlanIfId.class);
       configuration.addAnnotatedClass(FcVlanIfPK.class);
       configuration.addAnnotatedClass(FcVrfId.class);
+
+      configuration.addAnnotatedClass(FcCpFilterInfo.class);
+      configuration.addAnnotatedClass(FcCpFilterInfoPK.class);
+      configuration.addAnnotatedClass(FcIrbInstance.class);
+      configuration.addAnnotatedClass(FcLagIfFilterInfo.class);
+      configuration.addAnnotatedClass(FcLagIfFilterInfoPK.class);
+      configuration.addAnnotatedClass(FcNodeOperationInfo.class);
+      configuration.addAnnotatedClass(FcPhysicalIfFilterInfo.class);
+      configuration.addAnnotatedClass(FcPhysicalIfFilterInfoPK.class);
       return configuration;
     } finally {
       logger.methodEnd();

@@ -44,9 +44,9 @@ public class FcL2SliceUpdateRunner extends FcAbstractL2SliceRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L2 slice control
+   *          Request for the L2 slice control
    * @param requestBody
-   *          Request Body part for L2 slice modification
+   *          Request Body part for the L2 slice modification
    */
   public FcL2SliceUpdateRunner(L2SliceRequest request, L2SliceUpdateRequestBody requestBody) {
     this.request = request;
@@ -123,7 +123,8 @@ public class FcL2SliceUpdateRunner extends FcAbstractL2SliceRunnerBase {
         vlanIfEcEntityList.add(vlanIfEcEntity);
       }
       l2VlanIfOptionEcEntity.setVlanIfList(vlanIfEcEntityList);
-      l2VlanIfOptionEcEntity.setVrfId(String.valueOf(fcL2Slice.getVrfId()));
+      l2VlanIfOptionEcEntity.setVrfId(fcL2Slice.getVrfId() == null ? null : String.valueOf(fcL2Slice.getVrfId()));
+      l2VlanIfOptionEcEntity.setVni(fcL2Slice.getVni());
       l2VlanIfOptionEcEntity.setRemarkMenu(fcL2Slice.getRemarkMenu());
       String requestJson = makeUpdateL2VlanIfData(l2VlanIfOptionEcEntity);
 

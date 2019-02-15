@@ -17,7 +17,7 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceRequest;
 import msf.mfcfc.slice.slices.l3slice.data.entity.L3SliceEntity;
 
 /**
- * Implementation class for L3 slice information acquisition.
+ * Implementation class for the L3 slice information acquisition.
  *
  * @author NTT
  *

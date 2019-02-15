@@ -33,7 +33,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for physical interface information list acquisition.
+ * Implementation class for the physical interface information list acquisition.
  *
  * @author NTT
  *

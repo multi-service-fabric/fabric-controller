@@ -66,8 +66,8 @@ public class FcL2SliceUpdateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       L2SliceUpdateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           L2SliceUpdateRequestBody.class);

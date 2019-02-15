@@ -57,8 +57,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of CP traffic information
- * acquisition in traffic management function.
+ * Abstract class to implement the common process in the failure management
+ * function.
  *
  * @author NTT
  *
@@ -93,7 +93,7 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
 
       createAllIfMap(session, ifInfoEcMap);
 
-      if (internalLinkMap.size() > 0 && ifInfoAllMap == null) {
+      if (!internalLinkMap.isEmpty() && ifInfoAllMap == null) {
 
         if (this.ifInfoAllMap != null) {
           ifInfoAllMap = this.ifInfoAllMap;
@@ -186,8 +186,8 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
         return ifInfoAllMap;
       }
 
-      Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoAllMapCp = (Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>>) deepCopy(
-          ifInfoAllMap);
+      Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>> ifInfoAllMapCp = null;
+      ifInfoAllMapCp = (Map<InterfaceType, Map<String, List<LogicalIfStatusIfEntity>>>) deepCopy(ifInfoAllMap);
       for (InterfaceType type : ifInfoEcMap.keySet()) {
         Map<String, List<LogicalIfStatusIfEntity>> statusMap = ifInfoEcMap.get(type);
         for (String ecNodeId : statusMap.keySet()) {

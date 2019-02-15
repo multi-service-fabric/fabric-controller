@@ -18,7 +18,9 @@ import msf.fc.common.data.FcNode;
 import msf.fc.common.util.FcIpAddressUtil;
 import msf.fc.db.FcDbManager;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.fc.node.FcNodeManager;
+import msf.fc.rest.ec.node.equipment.data.EquipmentReadEcResponseBody;
 import msf.fc.rest.ec.node.nodes.operation.data.NodeCreateDeleteEcRequestBody;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeBreakoutBaseIfEcEntity;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeCreateEcEntity;
@@ -37,6 +39,7 @@ import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.InterfaceType;
 import msf.mfcfc.common.constant.InternalNodeType;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeSubStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.exception.MsfException;
@@ -63,7 +66,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in Spine node addition.
+ * Class to implement the asynchronous processing in the Spine node addition.
  *
  * @author NTT
  *
@@ -152,7 +155,8 @@ public class FcSpineNodeCreateRunner extends FcAbstractSpineNodeRunnerBase {
                   physicalLinkList, lagLinkList, oppositeBreakoutIfMap);
 
               FcEquipment fcEquipment = getEquipment(sessionWrapper, Integer.valueOf(requestBody.getEquipmentTypeId()));
-              ArrayList<String> physicalIfIds = getPhysicalIfIds(fcEquipment);
+              EquipmentReadEcResponseBody sendEquipmentRead = sendEquipmentRead(fcEquipment);
+              ArrayList<String> physicalIfIds = getPhysicalIfIds(sendEquipmentRead);
 
               SpineNodeLocalEntity localBreakoutIf = null;
               if (breakoutEntity != null) {
@@ -183,6 +187,8 @@ public class FcSpineNodeCreateRunner extends FcAbstractSpineNodeRunnerBase {
             } catch (MsfException msfException) {
               logger.error(msfException.getMessage(), msfException);
               sessionWrapper.rollback();
+
+              FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
               throw msfException;
             } finally {
               sessionWrapper.closeSession();
@@ -352,6 +358,9 @@ public class FcSpineNodeCreateRunner extends FcAbstractSpineNodeRunnerBase {
         internalLinkIfCreate.setLinkIpAddress(nintrai.get(IpAddressUtil.SPINE));
         internalLinkIfCreate.setPrefix(INTERNAL_LINK_IF_PREFIX);
 
+        internalLinkIfCreate.setCost(
+            FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getInternalLinkNormalIgpCost());
+
         NodeInternalLinkCreateEcEntity linkCreateEcEntity = new NodeInternalLinkCreateEcEntity();
         linkCreateEcEntity.setInternalLinkIfCreate(internalLinkIfCreate);
         internalLinkList.add(linkCreateEcEntity);
@@ -444,6 +453,9 @@ public class FcSpineNodeCreateRunner extends FcAbstractSpineNodeRunnerBase {
         internalLinkIfCreate.setLinkIpAddress(nintrai.get(IpAddressUtil.LEAF));
         internalLinkIfCreate.setPrefix(INTERNAL_LINK_IF_PREFIX);
 
+        internalLinkIfCreate.setCost(
+            FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getInternalLinkNormalIgpCost());
+
         oppositeNodeCreateEcEntity.setInternalLink(internalLinkIfCreate);
         oppositeNodeList.add(oppositeNodeCreateEcEntity);
       }
@@ -520,9 +532,9 @@ public class FcSpineNodeCreateRunner extends FcAbstractSpineNodeRunnerBase {
 
       String errorCode = null;
       if (StringUtils.isNotEmpty(restResponseBase.getResponseBody())) {
-        ErrorInternalResponseBody nodeCreateDeleteEcResponceBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+        ErrorInternalResponseBody nodeCreateDeleteEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
             ErrorInternalResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-        errorCode = nodeCreateDeleteEcResponceBody.getErrorCode();
+        errorCode = nodeCreateDeleteEcResponseBody.getErrorCode();
       }
 
       checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.CREATED_201, errorCode,

@@ -42,7 +42,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for Edge-Point interface registration.
+ * Implementation class for the Edge-Point interface registration.
  *
  * @author NTT
  *
@@ -145,7 +145,7 @@ public class FcEdgePointCreateScenario extends FcAbstractEdgePointScenarioBase<E
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType, nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {

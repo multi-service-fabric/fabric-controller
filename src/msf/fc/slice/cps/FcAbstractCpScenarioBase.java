@@ -20,8 +20,8 @@ import msf.mfcfc.rest.common.RestClient;
 import msf.mfcfc.slice.cps.AbstractCpScenarioBase;
 
 /**
- * Abstract class to implement the common process of CP-related processing in
- * slice management function.
+ * Abstract class to implement the common process of the CP-related processing
+ * in the slice management function.
  *
  * @author NTT
  *

@@ -8,6 +8,12 @@ import java.lang.annotation.Target;
 
 import javax.ws.rs.HttpMethod;
 
+/**
+ * Annotation for accepting PATCH method request in REST.
+ *
+ * @author NTT
+ *
+ */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @HttpMethod("PATCH")

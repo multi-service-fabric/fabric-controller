@@ -33,6 +33,12 @@ public class L2CpValueEntity {
   @SerializedName("port_mode")
   private String portMode;
 
+  @SerializedName("irb")
+  private L2CpIrbEntity irb;
+
+  @SerializedName("traffic_threshold")
+  private Double trafficThreshold;
+
   public String getClusterId() {
     return clusterId;
   }
@@ -89,6 +95,14 @@ public class L2CpValueEntity {
     this.lacpSystemId = lacpSystemId;
   }
 
+  public L2CpIrbEntity getIrb() {
+    return irb;
+  }
+
+  public void setIrb(L2CpIrbEntity irb) {
+    this.irb = irb;
+  }
+
   public String getPortMode() {
     return portMode;
   }
@@ -103,6 +117,14 @@ public class L2CpValueEntity {
 
   public void setPortModeEnum(PortMode portMode) {
     this.portMode = portMode.getMessage();
+  }
+
+  public Double getTrafficThreshold() {
+    return trafficThreshold;
+  }
+
+  public void setTrafficThreshold(Double trafficThreshold) {
+    this.trafficThreshold = trafficThreshold;
   }
 
   @Override

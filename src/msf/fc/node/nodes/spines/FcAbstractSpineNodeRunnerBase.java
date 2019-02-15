@@ -23,8 +23,9 @@ import msf.mfcfc.node.nodes.spines.data.entity.SpineNodeOppositeEntity;
 import msf.mfcfc.node.nodes.spines.data.entity.SpineNodePhysicalLinkEntity;
 
 /**
- * Abstract class to implement the common process of node management
- * (Spine)-related asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of the node management
+ * (Spine)-related asynchronous processing in the configuration management
+ * function.
  *
  * @author NTT
  *
@@ -170,7 +171,7 @@ public abstract class FcAbstractSpineNodeRunnerBase extends FcAbstractNodeRunner
         if (fcPhysicalIf == null) {
 
           throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR,
-              "target resource not found. parameters = base_physicalIf");
+              "target resource is not found. parameters = base_physicalIf");
         }
       }
       return breakoutIfIds;
@@ -428,7 +429,7 @@ public abstract class FcAbstractSpineNodeRunnerBase extends FcAbstractNodeRunner
         if (!physicalIfIds.remove(spineNodeBreakoutIfCreateEntity.getBaseIf().getPhysicalIfId())) {
 
           throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR,
-              "target resource not found. parameters = base_physicalIf");
+              "target resource is not found. parameters = base_physicalIf");
         }
       }
       return breakoutIfIds;

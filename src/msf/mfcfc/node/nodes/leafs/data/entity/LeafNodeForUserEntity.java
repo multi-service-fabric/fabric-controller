@@ -18,6 +18,9 @@ public class LeafNodeForUserEntity {
   @SerializedName("vpn_type")
   private String vpnType;
 
+  @SerializedName("irb_type")
+  private String irbType;
+
   @SerializedName("plane")
   private Integer plane;
 
@@ -55,6 +58,14 @@ public class LeafNodeForUserEntity {
 
   public void setVpnType(String vpnType) {
     this.vpnType = vpnType;
+  }
+
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
   }
 
   public Integer getPlane() {

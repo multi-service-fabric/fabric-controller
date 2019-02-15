@@ -8,18 +8,22 @@ import msf.mfcfc.common.log.MsfLogger;
 
 /**
  * Class to provide the initialization, living confirmation and termination
- * function of traffic management function block.
+ * function of the traffic management function block.
  *
  * @author NTT
  *
  */
 public class TrafficManager implements FunctionBlockBase {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(TrafficManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(TrafficManager.class);
 
   protected static TrafficManager instance = null;
 
   protected Timer timer = null;
+
+  protected TrafficManager() {
+
+  }
 
   /**
    * Get the instance of TrafficManager. <br>

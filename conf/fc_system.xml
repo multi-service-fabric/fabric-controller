@@ -115,5 +115,11 @@
         <remark_menu>be</remark_menu>
         <remark_menu>packet_color</remark_menu>
     </qos>
+    <irb>
+        <!-- Start value of the inner VLAN ID's range for creating L3VNI -->
+        <l3VniVlanIdStartPos>2900</l3VniVlanIdStartPos>
+        <!-- End value of the inner VLAN ID's range for creating L3VNI -->
+        <l3VniVlanIdEndPos>2999</l3VniVlanIdEndPos>
+    </irb>
 </systemConf>
 

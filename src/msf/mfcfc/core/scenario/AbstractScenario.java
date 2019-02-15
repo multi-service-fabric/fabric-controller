@@ -135,7 +135,7 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
    * Execute the scenario.
    *
    * @param request
-   *          Request infromation
+   *          Request information
    * @return execution result information
    */
   public RestResponseBase execute(T request) {
@@ -175,7 +175,7 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
 
         } else {
 
-          if (this.isExecAsyncRunner == false && this.isRegistAsyncRecord) {
+          if (!this.isExecAsyncRunner && this.isRegistAsyncRecord) {
 
             try {
               this.deleteAsyncRecord();
@@ -185,7 +185,7 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
             }
           }
 
-          if (this.syncType == SynchronousType.SYNC || this.isExecAsyncRunner == false
+          if (this.syncType == SynchronousType.SYNC || !this.isExecAsyncRunner
               || this.restRequestType == RestRequestType.NOTIFICATION) {
 
             this.finalizeRestIf();
@@ -291,7 +291,9 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
       ret.setRequestMethod(request.getRequestMethod());
       ret.setRequestBody(request.getRequestBody());
       ret.setNotificationIpAddress(request.getNotificationAddress());
-      ret.setNotificationPortNumber(Integer.valueOf(request.getNotificationPort()));
+      if (request.getNotificationPort() != null) {
+        ret.setNotificationPortNumber(Integer.valueOf(request.getNotificationPort()));
+      }
 
       logger.debug("result={0}", ret);
       return ret;

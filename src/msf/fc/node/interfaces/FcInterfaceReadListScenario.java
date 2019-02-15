@@ -34,7 +34,7 @@ import msf.mfcfc.node.interfaces.data.InterfaceInfoReadListResponseBody;
 import msf.mfcfc.node.interfaces.data.InterfaceRequest;
 
 /**
- * Implementation class for interface information list acquisition.
+ * Implementation class for the interface information list acquisition.
  *
  * @author NTT
  *

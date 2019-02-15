@@ -30,7 +30,7 @@ public class ConfigManager implements FunctionBlockBase {
 
   protected static final String HIBERNATE_CONF_FILE_NAME = "hibernate.cfg.xml";
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(ConfigManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(ConfigManager.class);
 
   protected String confDir = "../conf/";
 
@@ -59,6 +59,10 @@ public class ConfigManager implements FunctionBlockBase {
   protected int l2SlicesMagnificationNum;
 
   protected int l3SlicesMagnificationNum;
+
+  protected int l3VniVlanIdStartPos;
+
+  protected int l3VniVlanIdEndPos;
 
   protected int asyncOperationDataRetentionPeriod;
 
@@ -113,6 +117,15 @@ public class ConfigManager implements FunctionBlockBase {
 
       this.confDir = configPath;
     }
+  }
+
+  /**
+   * Get the config file directory path.
+   *
+   * @return Config file path
+   */
+  public String getConfigPath() {
+    return this.confDir;
   }
 
   /**
@@ -172,7 +185,7 @@ public class ConfigManager implements FunctionBlockBase {
   }
 
   /**
-   * Return the config file path of Hibernate.
+   * Returns the config file path of Hibernate.
    *
    * @return Hibernate config file path
    */
@@ -284,8 +297,27 @@ public class ConfigManager implements FunctionBlockBase {
     }
   }
 
-  protected Object loadConfig(String confFile, String xsdPath, Class<?> objectFactory)
-      throws SAXException, JAXBException {
+  /**
+   * Load config files.
+   *
+   * @param confFile
+   *          Config file path
+   *
+   * @param xsdPath
+   *          XSD config file path
+   *
+   * @param objectFactory
+   *          ObjectFactory class
+   *
+   * @return JAXBIntrospctor object
+   *
+   * @throws SAXException
+   *           Config file read error
+   *
+   * @throws JAXBException
+   *           Config file read error
+   */
+  public Object loadConfig(String confFile, String xsdPath, Class<?> objectFactory) throws SAXException, JAXBException {
 
     File conf = new File(confFile);
 
@@ -302,8 +334,8 @@ public class ConfigManager implements FunctionBlockBase {
   protected void setCommonData(String managementIpAddress, String restServerListeningAddress,
       int restServerListeningPort, int restWaitConnectionTimeout, int restClientRequestTimeout,
       int restClientResponseBufferSize, boolean restIsPrettyPrinting, boolean restIsSerializeNulls, int l2SlicesMaxNum,
-      int l3SlicesMaxNum, int l2SlicesMagnificationNum, int l3SlicesMagnificationNum,
-      int asyncOperationDataRetentionPeriod, int maxAsyncRunnerThreadNum, int invokeAllTimout,
+      int l3SlicesMaxNum, int l2SlicesMagnificationNum, int l3SlicesMagnificationNum, int l3VniVlanIdStartPos,
+      int l3VniVlanIdEndPos, int asyncOperationDataRetentionPeriod, int maxAsyncRunnerThreadNum, int invokeAllTimout,
       int waitOperationResultTimeout, int executingOperationCheckCycle, int lockRetryNum, int lockTimeout,
       int noticeRetryNum) {
     try {
@@ -331,6 +363,10 @@ public class ConfigManager implements FunctionBlockBase {
       this.l2SlicesMagnificationNum = l2SlicesMagnificationNum;
 
       this.l3SlicesMagnificationNum = l3SlicesMagnificationNum;
+
+      this.l3VniVlanIdStartPos = l3VniVlanIdStartPos;
+
+      this.l3VniVlanIdEndPos = l3VniVlanIdEndPos;
 
       this.asyncOperationDataRetentionPeriod = asyncOperationDataRetentionPeriod;
 
@@ -469,4 +505,23 @@ public class ConfigManager implements FunctionBlockBase {
     return noticeRetryNum;
   }
 
+  /**
+   * Get the minimum value of VLAN IDs' range in the system config, which are
+   * assigned for creating L3VNI.
+   *
+   * @return The minimum value of VLAN IDs assigned for L3VNI creating
+   */
+  public int getL3VniVlanIdStartPos() {
+    return l3VniVlanIdStartPos;
+  }
+
+  /**
+   * Get the maximum value of VLAN IDs' range in the system config, which are
+   * assigned for creating L3VNI.
+   *
+   * @return The maximum value of VLAN IDs assigned for the L3VNI creating
+   */
+  public int getL3VniVlanIdEndPos() {
+    return l3VniVlanIdEndPos;
+  }
 }

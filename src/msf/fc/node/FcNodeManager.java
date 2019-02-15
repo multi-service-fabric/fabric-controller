@@ -4,7 +4,10 @@ package msf.fc.node;
 import java.util.List;
 
 import msf.fc.common.data.FcLagIfId;
+import msf.fc.common.data.FcNodeOperationInfo;
 import msf.fc.db.dao.clusters.FcLagIfIdDao;
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
@@ -36,7 +39,11 @@ public final class FcNodeManager extends NodeManager {
   public static final int FC_LAG_IF_START_ID = 801;
 
   /**
-   * Get the instance of FcNodeManager.
+   * Get the instance of FcNodeManager. This method does not guarantee the
+   * uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcNodeManager instance
    */
@@ -67,6 +74,18 @@ public final class FcNodeManager extends NodeManager {
         FcLagIfId fcLagIfId = new FcLagIfId();
         fcLagIfId.setNextId(FC_LAG_IF_START_ID);
         fcLagIfIdDao.create(sessionWrapper, fcLagIfId);
+      }
+
+      FcNodeOperationInfoDao fcNodeOperationInfoDao = new FcNodeOperationInfoDao();
+      List<FcNodeOperationInfo> fcNodeOperationInfos = fcNodeOperationInfoDao.readList(sessionWrapper);
+      if (fcNodeOperationInfos.isEmpty()) {
+        FcNodeOperationInfo fcNodeOperationInfo = new FcNodeOperationInfo();
+
+        fcNodeOperationInfo.setNodeOperationStatusEnum(NodeOperationStatus.WAITING);
+        fcNodeOperationInfoDao.create(sessionWrapper, fcNodeOperationInfo);
+      }
+
+      if ((fcLagIfIds.isEmpty()) || (fcNodeOperationInfos.isEmpty())) {
         sessionWrapper.commit();
       }
 
@@ -86,7 +105,8 @@ public final class FcNodeManager extends NodeManager {
   }
 
   /**
-   * Get the exclusive control object for device model information registration.
+   * Get the exclusive control object for the device model information
+   * registration.
    *
    * @return FC_EQUIPMENT_CREATE_LOCK_OBJECT
    */

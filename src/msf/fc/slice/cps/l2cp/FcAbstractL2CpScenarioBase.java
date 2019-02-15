@@ -16,11 +16,12 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpEntity;
+import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpIrbEntity;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpQosEntity;
 
 /**
- * Abstract class to implement the common process of L2CP-related processing in
- * slice management function.
+ * Abstract class to implement the common process of the L2CP-related processing
+ * in the slice management function.
  *
  * @author NTT
  *
@@ -52,10 +53,8 @@ public abstract class FcAbstractL2CpScenarioBase<T extends RestRequestBase> exte
           String.valueOf(FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId()));
       l2CpEntity.setCpId(l2Cp.getId().getCpId());
       l2CpEntity.setSliceId(l2Cp.getId().getSliceId());
-      l2CpEntity.setVlanId(vlanIfEcEntity.getVlanId() == null ? 0 : Integer.valueOf(vlanIfEcEntity.getVlanId()));
+      l2CpEntity.setVlanId(vlanIfEcEntity.getVlanIdInt());
       l2CpEntity.setEdgePointId(String.valueOf(l2Cp.getEdgePoint().getEdgePointId()));
-      l2CpEntity.setEsi(l2Cp.getEsi());
-      l2CpEntity.setLacpSystemId(EsiUtil.getLacpSystemIdFromEsi(l2Cp.getEsi()));
 
       int myClusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
       if (l2Cp.getEsi() != null && EsiUtil.getLowerSwClusterId(l2Cp.getEsi()) == myClusterId
@@ -86,6 +85,15 @@ public abstract class FcAbstractL2CpScenarioBase<T extends RestRequestBase> exte
         qos.setEgressShapingRate(vlanIfEcEntity.getQos().getSetValue().getOutflowShapingRate());
       }
       l2CpEntity.setQos(qos);
+
+      if (vlanIfEcEntity.getIrb() != null) {
+        L2CpIrbEntity irb = new L2CpIrbEntity();
+        irb.setIrbIpv4Address(vlanIfEcEntity.getIrb().getIpv4Address());
+        irb.setVgaIpv4Address(vlanIfEcEntity.getIrb().getVirtualGatewayAddress());
+        irb.setIpv4AddressPrefix(vlanIfEcEntity.getIrb().getIpv4Prefix());
+        l2CpEntity.setIrb(irb);
+      }
+      l2CpEntity.setTrafficThreshold(l2Cp.getTrafficThreshold());
 
       return l2CpEntity;
     } finally {

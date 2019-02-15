@@ -30,12 +30,12 @@ public class FcInternalIfHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcInternalIfHandler.class);
 
   /**
-   * Intra-cluster link IF information list acquisition.
+   * Internal link IF information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID
    * @param format
@@ -67,16 +67,16 @@ public class FcInternalIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * Intra-cluster link IF information acquisition.
+   * Internal link IF information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID
    * @param internalLinkIfId
-   *          Intra-cluster link IF ID
+   *          Internal link IF ID
    * @return response data
    */
   @GET

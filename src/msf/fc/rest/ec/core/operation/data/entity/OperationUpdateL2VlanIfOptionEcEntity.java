@@ -12,6 +12,9 @@ public class OperationUpdateL2VlanIfOptionEcEntity {
   @SerializedName("vrf_id")
   private String vrfId;
 
+  @SerializedName("vni")
+  private Integer vni;
+
   @SerializedName("vlan_ifs")
   private List<OperationVlanIfEcEntity> vlanIfList;
 
@@ -24,6 +27,14 @@ public class OperationUpdateL2VlanIfOptionEcEntity {
 
   public void setVrfId(String vrfId) {
     this.vrfId = vrfId;
+  }
+
+  public Integer getVni() {
+    return vni;
+  }
+
+  public void setVni(Integer vni) {
+    this.vni = vni;
   }
 
   public List<OperationVlanIfEcEntity> getVlanIfList() {

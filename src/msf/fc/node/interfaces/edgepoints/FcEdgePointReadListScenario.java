@@ -38,7 +38,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for Edge-Point interface information list acquisition.
+ * Implementation class for the Edge-Point interface information list
+ * acquisition.
  *
  * @author NTT
  *
@@ -254,7 +255,8 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       return edgePoinForOwnertEntities;
@@ -320,7 +322,8 @@ public class FcEdgePointReadListScenario extends FcAbstractEdgePointScenarioBase
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       return edgePointForUserEntities;

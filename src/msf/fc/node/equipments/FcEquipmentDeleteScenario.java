@@ -25,7 +25,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for device model information deletion.
+ * Implementation class for the device model information deletion.
  *
  * @author NTT
  *

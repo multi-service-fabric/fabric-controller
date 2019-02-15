@@ -5,6 +5,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import msf.mfcfc.common.constant.HttpMethod;
 
+/**
+ * REST request information with the destination address.
+ *
+ * @author NTT
+ *
+ */
 public class RestRequestData {
 
   private int clusterId;
@@ -23,10 +29,32 @@ public class RestRequestData {
 
   private String lowerOperationId;
 
+  /**
+   * Constructor.
+   */
   public RestRequestData() {
 
   }
 
+  /**
+   * Constructor.
+   *
+   * @param clusterId
+   *          Destination SW cluster ID
+   * @param ipAddress
+   *          Destination IP address
+   * @param port
+   *          Destination port number
+   * @param httpMethod
+   *          HTTP method to send
+   * @param targetUri
+   *          URI path for the HTTP request target (including URI parameter,
+   *          optional parameter, but excluding address, port)
+   * @param request
+   *          Data to send
+   * @param expectHttpStatusCode
+   *          The expected HTTP response code for this request
+   */
   public RestRequestData(int clusterId, String ipAddress, int port, HttpMethod httpMethod, String targetUri,
       RestRequestBase request, int expectHttpStatusCode) {
     super();

@@ -13,6 +13,7 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.rest.common.RestRequestValidator;
+import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpIrbEntity;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpValueEntity;
 
 public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
@@ -167,6 +168,29 @@ public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
     ParameterCheckUtil.checkNotNull(value.getPortModeEnum());
 
+    if (value.getIrb() != null) {
+      validateIrb(value.getIrb());
+    }
+  }
+
+  private void validateIrb(L2CpIrbEntity irb) throws MsfException {
+
+    if (irb.getIrbIpv4Address() != null) {
+      irb.setIrbIpv4Address(ParameterCheckUtil.checkIpv4Address(irb.getIrbIpv4Address()));
+    }
+
+    if (irb.getVgaIpv4Address() != null) {
+      irb.setVgaIpv4Address(ParameterCheckUtil.checkIpv4Address(irb.getVgaIpv4Address()));
+      if (irb.getVgaIpv4Address().equals(irb.getIrbIpv4Address())) {
+        String logMsg = "VGA IPv4 address is equal to IRB IPv4 address.";
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+      }
+    }
+
+    if (irb.getIpv4AddressPrefix() != null) {
+      ParameterCheckUtil.checkNumberRange(irb.getIpv4AddressPrefix(), 0, 31);
+    }
   }
 
   @Override

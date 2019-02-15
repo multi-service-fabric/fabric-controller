@@ -20,6 +20,7 @@ import msf.fc.common.util.FcIpAddressUtil;
 import msf.fc.db.FcDbManager;
 import msf.fc.db.dao.clusters.FcEquipmentDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.fc.node.FcNodeManager;
 import msf.fc.rest.ec.node.nodes.operation.data.NodeCreateDeleteEcRequestBody;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodePairNodeEcEntity;
@@ -37,6 +38,7 @@ import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.InternalNodeType;
 import msf.mfcfc.common.constant.LeafNodeUpdateAction;
 import msf.mfcfc.common.constant.LeafType;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -50,7 +52,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in Leaf node update.
+ * Class to implement the asynchronous processing in the Leaf node modification.
  *
  * @author NTT
  *
@@ -127,6 +129,10 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
           } catch (MsfException msfException) {
             logger.error(msfException.getMessage(), msfException);
             sessionWrapper.rollback();
+            if (LeafNodeUpdateAction.RECOVER_NODE.equals(requestBody.getActionEnum())) {
+
+              FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
+            }
             throw msfException;
           } finally {
             sessionWrapper.closeSession();
@@ -278,7 +284,8 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
       }
       if (updateFcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = fcNode");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcNode");
       }
       return updateFcNode;
     } finally {
@@ -405,7 +412,7 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
       if (fcEquipment == null) {
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = fcEquipment");
+            "target resource is not found. parameters = fcEquipment");
       }
       return fcEquipment;
     } finally {
@@ -456,9 +463,9 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
 
       String errorCode = null;
       if (StringUtils.isNotEmpty(restResponseBase.getResponseBody())) {
-        ErrorInternalResponseBody recoverNodeEcResponceBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+        ErrorInternalResponseBody recoverNodeEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
             ErrorInternalResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
-        errorCode = recoverNodeEcResponceBody.getErrorCode();
+        errorCode = recoverNodeEcResponseBody.getErrorCode();
       }
 
       checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.ACCEPTED_202, errorCode,

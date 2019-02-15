@@ -66,8 +66,8 @@ public class FcL3CpUpdateScenario extends FcAbstractL3CpScenarioBase<L3CpRequest
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       L3CpUpdateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(), L3CpUpdateRequestBody.class);
       requestBody.validate();

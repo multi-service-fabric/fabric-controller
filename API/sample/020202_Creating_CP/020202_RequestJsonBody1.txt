@@ -1,0 +1,16 @@
+{
+    "cluster_id": "1",
+    "edge_point_id": "1",
+    "vlan_id": "100",
+    "cp_id": "A-1",
+    "port_mode": "trunk",
+    "qos": {
+        "ingress_shaping_rate": 1.0,
+        "egress_shaping_rate": 1.0
+    },
+    "irb": {
+        "irb_ipv4_address": "100.1.0.250",
+        "vga_ipv4_address": "100.1.0.254",
+        "ipv4_address_prefix": 24
+    }
+}

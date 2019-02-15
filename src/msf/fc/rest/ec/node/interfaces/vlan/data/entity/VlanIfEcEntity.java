@@ -54,6 +54,9 @@ public class VlanIfEcEntity {
   @SerializedName("qos")
   private VlanIfQosEcEntity qos;
 
+  @SerializedName("irb")
+  private VlanIfIrbEcEntity irb;
+
   public String getVlanIfId() {
     return vlanIfId;
   }
@@ -172,6 +175,22 @@ public class VlanIfEcEntity {
 
   public void setQos(VlanIfQosEcEntity qos) {
     this.qos = qos;
+  }
+
+  public VlanIfIrbEcEntity getIrb() {
+    return irb;
+  }
+
+  public void setIrb(VlanIfIrbEcEntity irb) {
+    this.irb = irb;
+  }
+
+  public int getVlanIdInt() {
+    if (vlanId == null) {
+      return 0;
+    } else {
+      return Integer.valueOf(vlanId);
+    }
   }
 
   @Override

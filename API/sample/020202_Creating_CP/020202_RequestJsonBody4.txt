@@ -1,0 +1,12 @@
+{
+    "cluster_id": "1",
+    "edge_point_id": "4",
+    "vlan_id": "400",
+    "cp_id": "B-2",
+    "port_mode": "trunk",
+    "irb": {
+        "irb_ipv4_address": "100.4.0.250",
+        "vga_ipv4_address": "100.4.0.254",
+        "ipv4_address_prefix": 24
+    }
+}

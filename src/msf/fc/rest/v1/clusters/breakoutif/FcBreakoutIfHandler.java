@@ -32,12 +32,12 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcBreakoutIfHandler.class);
 
   /**
-   * breakoutIF registration/deletion.
+   * breakout IF registration/deletion.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param notificationAddress
@@ -45,7 +45,7 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PATCH
@@ -77,12 +77,12 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * breakoutIF information list acquisition.
+   * breakout IF information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param format
@@ -115,16 +115,16 @@ public class FcBreakoutIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * breakoutIF information acquisition.
+   * breakout IF information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param breakoutIfId
-   *          breakoutIF ID (URI parameter)
+   *          breakout IF ID (URI parameter)
    * @return response data
    */
   @GET

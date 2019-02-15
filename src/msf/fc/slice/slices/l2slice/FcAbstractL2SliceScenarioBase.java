@@ -7,6 +7,7 @@ import java.util.List;
 import msf.fc.common.data.FcL2Cp;
 import msf.fc.common.data.FcL2Slice;
 import msf.fc.slice.slices.FcAbstractSliceScenarioBase;
+import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
@@ -15,8 +16,8 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 import msf.mfcfc.slice.slices.l2slice.data.entity.L2SliceEntity;
 
 /**
- * Abstract class to implement the common process of L2 slice-related processing
- * in slice management function.
+ * Abstract class to implement the common process of the L2 slice-related
+ * processing in the slice management function.
  *
  * @author NTT
  *
@@ -50,6 +51,7 @@ public abstract class FcAbstractL2SliceScenarioBase<T extends RestRequestBase> e
       l2SliceEntity.setL2CpIdList(cpIdList);
       l2SliceEntity.setSliceId(l2Slice.getSliceId());
       l2SliceEntity.setRemarkMenu(l2Slice.getRemarkMenu());
+      l2SliceEntity.setIrbType(IrbType.getEnumFromCode(l2Slice.getIrbType()).getMessage());
       return l2SliceEntity;
     } finally {
       logger.methodEnd();

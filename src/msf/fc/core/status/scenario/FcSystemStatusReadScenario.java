@@ -51,7 +51,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for status confirmation.
+ * Implementation class for the status check.
  *
  * @author NTT
  *

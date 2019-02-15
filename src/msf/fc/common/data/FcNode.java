@@ -38,6 +38,9 @@ public class FcNode implements Serializable {
   @Column(name = "ec_node_id")
   private Integer ecNodeId;
 
+  @Column(name = "is_priority_node_group_member")
+  private Boolean isPriorityNodeGroupMember;
+
   @Column(name = "node_id")
   private Integer nodeId;
 
@@ -77,6 +80,14 @@ public class FcNode implements Serializable {
 
   public void setEcNodeId(Integer ecNodeId) {
     this.ecNodeId = ecNodeId;
+  }
+
+  public Boolean getIsPriorityNodeGroupMember() {
+    return this.isPriorityNodeGroupMember;
+  }
+
+  public void setIsPriorityNodeGroupMember(Boolean isPriorityNodeGroupMember) {
+    this.isPriorityNodeGroupMember = isPriorityNodeGroupMember;
   }
 
   public Integer getNodeId() {

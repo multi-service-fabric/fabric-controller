@@ -23,7 +23,7 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.node.interfaces.edgepoints.data.EdgePointRequest;
 
 /**
- * Implementation class for Edge-Point interface deletion.
+ * Implementation class for the Edge-Point interface deletion.
  *
  * @author NTT
  *
@@ -122,7 +122,7 @@ public class FcEdgePointDeleteScenario extends FcAbstractEdgePointScenarioBase<E
 
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {
@@ -138,7 +138,7 @@ public class FcEdgePointDeleteScenario extends FcAbstractEdgePointScenarioBase<E
       if (fcEdgePoint == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = edgePoint");
+            "target resource is not found. parameters = edgePoint");
       } else if ((!fcEdgePoint.getL2Cps().isEmpty()) || (!fcEdgePoint.getL3Cps().isEmpty())) {
 
         throw new MsfException(ErrorCode.TRANSITION_STATUS_ERROR, "cps exist related to the edgepoint.");

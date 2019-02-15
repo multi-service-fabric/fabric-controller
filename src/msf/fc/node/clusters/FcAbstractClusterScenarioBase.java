@@ -42,8 +42,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of SW cluster-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of the SW cluster-related
+ * processing in the configuration management function.
  *
  * @author NTT
  *
@@ -185,7 +185,7 @@ public abstract class FcAbstractClusterScenarioBase<T extends RestRequestBase> e
           } else {
 
             throw new MsfException(ErrorCode.UNDEFINED_ERROR,
-                "illegal parameter. vpnType = " + nodeEcEntity.getVpnType());
+                "Illegal parameter. vpnType = " + nodeEcEntity.getVpnType());
           }
         }
       }

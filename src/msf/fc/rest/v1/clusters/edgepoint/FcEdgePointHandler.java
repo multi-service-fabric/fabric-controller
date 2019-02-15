@@ -24,7 +24,7 @@ import msf.mfcfc.node.interfaces.edgepoints.data.EdgePointRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * Configuration management: EdgePoint management (downlinkIF).
+ * Configuration management: EdgePoint management (downlink IF).
  *
  * @author NTT
  */
@@ -34,12 +34,12 @@ public class FcEdgePointHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcEdgePointHandler.class);
 
   /**
-   * downlinkIF registration.
+   * downlink IF registration.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @POST
@@ -67,7 +67,7 @@ public class FcEdgePointHandler extends AbstractRestHandler {
   }
 
   /**
-   * downlinkIF information list acquisition.
+   * downlink IF information list acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
@@ -102,14 +102,14 @@ public class FcEdgePointHandler extends AbstractRestHandler {
   }
 
   /**
-   * downlinkIF information acquisition.
+   * downlink IF information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param edgePointId
-   *          Edge-point ID (URI parameter)
+   *          edge-point ID (URI parameter)
    * @param userType
-   *          User type
+   *          User type (URI parameter)
    * @return response data
    */
   @GET
@@ -137,12 +137,12 @@ public class FcEdgePointHandler extends AbstractRestHandler {
   }
 
   /**
-   * downlinkIF deletion.
+   * downlink IF deletion.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param edgePointId
-   *          Edge-point ID (URI parameter)
+   *          edge-point ID (URI parameter)
    * @return response data
    */
   @DELETE

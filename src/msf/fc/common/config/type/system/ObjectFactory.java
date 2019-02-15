@@ -86,4 +86,8 @@ public class ObjectFactory {
   public Failure createFailure() {
     return new Failure();
   }
+
+  public Irb createIrb() {
+    return new Irb();
+  }
 }

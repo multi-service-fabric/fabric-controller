@@ -2,7 +2,9 @@
 package msf.fc.common.data;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
@@ -26,7 +29,16 @@ public class FcL2Cp implements Serializable {
   @EmbeddedId
   private FcL2CpPK id;
 
+  @Column(name = "clag_id")
+  private Integer clagId;
+
   private String esi;
+
+  @Column(name = "traffic_threshold")
+  private Double trafficThreshold;
+
+  @OneToMany(mappedBy = "l2Cp")
+  private List<FcCpFilterInfo> cpFilterInfos;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "edge_point_id")
@@ -52,12 +64,50 @@ public class FcL2Cp implements Serializable {
     this.id = id;
   }
 
+  public Integer getClagId() {
+    return this.clagId;
+  }
+
+  public void setClagId(Integer clagId) {
+    this.clagId = clagId;
+  }
+
   public String getEsi() {
     return this.esi;
   }
 
   public void setEsi(String esi) {
     this.esi = esi;
+  }
+
+  public Double getTrafficThreshold() {
+    return this.trafficThreshold;
+  }
+
+  public void setTrafficThreshold(Double trafficThreshold) {
+    this.trafficThreshold = trafficThreshold;
+  }
+
+  public List<FcCpFilterInfo> getCpFilterInfos() throws MsfException {
+    return SessionWrapper.getLazyLoadData(this.cpFilterInfos);
+  }
+
+  public void setCpFilterInfos(List<FcCpFilterInfo> cpFilterInfos) {
+    this.cpFilterInfos = cpFilterInfos;
+  }
+
+  public FcCpFilterInfo addCpFilterInfo(FcCpFilterInfo cpFilterInfo) throws MsfException {
+    getCpFilterInfos().add(cpFilterInfo);
+    cpFilterInfo.setL2Cp(this);
+
+    return cpFilterInfo;
+  }
+
+  public FcCpFilterInfo removeCpFilterInfo(FcCpFilterInfo cpFilterInfo) throws MsfException {
+    getCpFilterInfos().remove(cpFilterInfo);
+    cpFilterInfo.setL2Cp(null);
+
+    return cpFilterInfo;
   }
 
   public FcEdgePoint getEdgePoint() throws MsfException {
@@ -86,8 +136,8 @@ public class FcL2Cp implements Serializable {
 
   @Override
   public String toString() {
-    return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "edgePoint", "l2Slice", "vlanIf" })
-        .toString();
+    return new ReflectionToStringBuilder(this)
+        .setExcludeFieldNames(new String[] { "edgePoint", "l2Slice", "vlanIf", "cpFilterInfos" }).toString();
   }
 
 }

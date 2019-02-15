@@ -20,7 +20,7 @@ import msf.mfcfc.node.interfaces.breakoutifs.data.BreakoutIfReadResponseBody;
 import msf.mfcfc.node.interfaces.breakoutifs.data.BreakoutIfRequest;
 
 /**
- * Implementation class for breakout interface information acquisition.
+ * Implementation class for the breakout interface information acquisition.
  *
  * @author NTT
  *
@@ -113,7 +113,7 @@ public class FcBreakoutInterfaceReadScenario extends FcAbstractBreakoutInterface
       if (fcBreakoutIf == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = fcBreakoutIf");
+            "target resource is not found. parameters = fcBreakoutIf");
       }
       return fcBreakoutIf;
     } finally {

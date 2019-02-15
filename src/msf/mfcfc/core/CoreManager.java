@@ -1,6 +1,9 @@
 
 package msf.mfcfc.core;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -21,6 +24,8 @@ public final class CoreManager implements FunctionBlockBase {
   private static final MsfLogger logger = MsfLogger.getInstance(CoreManager.class);
 
   private static final CoreManager instance = new CoreManager();
+
+  private static List<FunctionBlockBase> extensionsList = new ArrayList<FunctionBlockBase>();
 
   private CoreManager() {
   }
@@ -98,6 +103,29 @@ public final class CoreManager implements FunctionBlockBase {
     } finally {
       logger.methodEnd();
     }
+  }
+
+  /**
+   * Add an instance of an extension function.
+   *
+   * @param extensionFunction
+   *          Instance of an extension function
+   */
+  public void addExtensionFunction(FunctionBlockBase extensionFunction) {
+
+    extensionsList.add(extensionFunction);
+  }
+
+  /**
+   * Get instances of extension functions.<BR>
+   * Function configuration information is returned in the order set by
+   * setExtensionFunction ().
+   *
+   * @return Function configuration information
+   */
+  public List<FunctionBlockBase> getExtensionFunctions() {
+
+    return extensionsList;
   }
 
 }

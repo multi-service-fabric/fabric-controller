@@ -27,7 +27,7 @@ import msf.mfcfc.node.clusters.data.entity.SwClusterForOwnerEntity;
 import msf.mfcfc.node.clusters.data.entity.SwClusterForUserEntity;
 
 /**
- * Implementation class for SW cluster information list acquisition.
+ * Implementation class for the SW cluster information list acquisition.
  *
  * @author NTT
  *

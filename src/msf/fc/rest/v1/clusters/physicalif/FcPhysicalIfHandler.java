@@ -37,11 +37,12 @@ public class FcPhysicalIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param format
    *          Information type to acquire (optional parameter)
+   *
    * @return response data
    */
   @GET
@@ -74,7 +75,7 @@ public class FcPhysicalIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter)
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param ifId
@@ -112,7 +113,7 @@ public class FcPhysicalIfHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param fabricType
-   *          Node type (URI parameter))
+   *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID (URI parameter)
    * @param ifId
@@ -122,7 +123,7 @@ public class FcPhysicalIfHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PUT

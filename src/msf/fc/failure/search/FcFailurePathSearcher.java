@@ -165,7 +165,7 @@ public class FcFailurePathSearcher extends AbstractFailurePathSearcher {
 
   /**
    * Based on the given information, execute the failure path identification
-   * process in a cluster and return the failure notification information for
+   * process in a cluster and return the information of failure notification for
    * slice by slice.
    *
    * @param sessionWrapper
@@ -174,9 +174,9 @@ public class FcFailurePathSearcher extends AbstractFailurePathSearcher {
    *          IF information of inter-cluster link IF notified by failure
    *          notification
    * @param l2CpMap
-   *          IF information of L2CP notified by failure notification
+   *          IF information of the L2CP notified by failure notification
    * @param l3CpMap
-   *          IF information of L3CP notified by failure notification
+   *          IF information of the L3CP notified by failure notification
    * @param internalLinkPairMap
    *          Both endpoints information of intra-cluster link IF
    * @return failure notification information for slice by slice

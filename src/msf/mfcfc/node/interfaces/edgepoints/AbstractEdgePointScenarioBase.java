@@ -5,8 +5,8 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.node.interfaces.AbstractInterfaceScenarioBase;
 
 /**
- * Abstract class to implement the common process of Edge-Point
- * interface-related processing in configuration management function.
+ * Abstract class to implement the common process of the Edge-Point
+ * interface-related processing in the configuration management function.
  *
  * @author NTT
  *

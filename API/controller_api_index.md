@@ -72,7 +72,7 @@
 ||Getting lists of CP|020206|GET|/v1/slices/{slice_type}/{slice_id}/cps|/v1/slices/l2vpn/1/cps<br>/v1/slices/l3vpn/100/cps|
 ||Creating or deleting static route|020207|PATCH|/v1/slices/{slice_type}/{slice_id}/cps/{cp_id}|/v1/slices/l3vpn/100/cps/1|
 
-### Traffic Information API
+### Traffic Management API
 |group|Interface(API) description|Identification ID|Method|URI|URI example|
 |:----|:----|:----|:----|:----|:----|
 |Traffic information|Getting list of IF traffic|030102|GET|/v1/traffic/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces|/v1/traffic/clusters/1/nodes/1/interfaces|
@@ -80,7 +80,17 @@
 ||Getting list of CP traffic|030104|GET|/v1/traffic/slices/{slice_type}/{slice_id}/cps|/v1/traffic/slices/l3vpn/1/cps|
 ||Getting CP traffic|030105|GET|/v1/traffic/slices/{slice_type}/{slice_id}/cps/{cp_id}|/v1/traffic/slices/l3vpn/1/cps/1|
 
-### Fault detection API
+### Fault Management API
 |group|Interface(API) description|Identification ID|Method|URI|URI example|
 |:----|:----|:----|:----|:----|:----|
 |Failure detection|Getting list of failures|050101|GET|/v1/failures/failure_status|/v1/failures/failure_status|
+
+### Filter Management API
+|group|Interface(API) description|Identification ID|Method|URI|URI example|
+|:----|:----|:----|:----|:----|:----|
+|Filter information|Creating or Deleting filter by physical interface|070104|PATCH|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/physical-ifs/{physical_if}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/physical-ifs/1|
+||Getting list of filter by physical interface|070105|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/physical-ifs|/v1/filter/clusters/1/nodes/leafs/1/interfaces/physical-ifs|
+||Getting information of filter by physical interface|070106|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/physical-ifs/{physical_if}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/physical-ifs/1|
+||Creating or Deleting filter by Link-aggregation interface|070107|PACTH|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|
+||Getting list of filter by Link-aggregation interface|0700108|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs|
+||Getting information of filter by Link-aggregation interface|070109|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|

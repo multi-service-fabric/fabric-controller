@@ -1,0 +1,14 @@
+{
+	"action": "recover_node",
+	"leaf_type_option": 
+	{
+		"leaf_type": "EL"
+	},
+	"recover_node_option":
+	{
+		"equipment_type_id": "4",
+		"mac_address": "c0:42:d0:4b:d7:21",
+		"username": "nslab",
+		"password": "nslab1"
+	}
+}

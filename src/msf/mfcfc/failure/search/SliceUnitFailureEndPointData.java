@@ -6,8 +6,27 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import msf.mfcfc.common.constant.FailureStatus;
 import msf.mfcfc.common.constant.SliceType;
 
+/**
+ * Class to store each endpoint information which is needed to calculate the
+ * reachability in failure information of a slice.
+ *
+ * @author NTT
+ *
+ */
 public class SliceUnitFailureEndPointData {
 
+  /**
+   * Constructor.
+   *
+   * @param sliceType
+   *          Slice type
+   * @param sliceId
+   *          Slice ID
+   * @param endPointId
+   *          Endpoint ID
+   * @param failureStatus
+   *          Failure status
+   */
   public SliceUnitFailureEndPointData(SliceType sliceType, String sliceId, String endPointId,
       FailureStatus failureStatus) {
     this.sliceType = sliceType;
@@ -56,6 +75,13 @@ public class SliceUnitFailureEndPointData {
     this.failureStatus = failureStatus;
   }
 
+  /**
+   * Returns whether this endpoint is a CP (i.e. slice type, slice ID have been
+   * set).
+   *
+   * @return true; if this is a CP, false; otherwise (i.e. this is an
+   *         Inter-cluster link).
+   */
   public boolean isCp() {
     return (sliceType != null && sliceId != null);
   }

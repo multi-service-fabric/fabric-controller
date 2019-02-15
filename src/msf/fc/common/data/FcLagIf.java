@@ -39,6 +39,9 @@ public class FcLagIf implements Serializable {
   @OneToMany(mappedBy = "lagIf", cascade = CascadeType.REMOVE)
   private List<FcInternalLinkIf> internalLinkIfs;
 
+  @OneToMany(mappedBy = "lagIf")
+  private List<FcLagIfFilterInfo> lagIfFilterInfos;
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "node_info_id")
   private FcNode node;
@@ -120,6 +123,28 @@ public class FcLagIf implements Serializable {
     return internalLinkIf;
   }
 
+  public List<FcLagIfFilterInfo> getLagIfFilterInfos() throws MsfException {
+    return SessionWrapper.getLazyLoadData(this.lagIfFilterInfos);
+  }
+
+  public void setLagIfFilterInfos(List<FcLagIfFilterInfo> lagIfFilterInfos) {
+    this.lagIfFilterInfos = lagIfFilterInfos;
+  }
+
+  public FcLagIfFilterInfo addLagIfFilterInfo(FcLagIfFilterInfo lagIfFilterInfo) throws MsfException {
+    getLagIfFilterInfos().add(lagIfFilterInfo);
+    lagIfFilterInfo.setLagIf(this);
+
+    return lagIfFilterInfo;
+  }
+
+  public FcLagIfFilterInfo removeLagIfFilterInfo(FcLagIfFilterInfo lagIfFilterInfo) throws MsfException {
+    getLagIfFilterInfos().remove(lagIfFilterInfo);
+    lagIfFilterInfo.setLagIf(null);
+
+    return lagIfFilterInfo;
+  }
+
   public FcNode getNode() throws MsfException {
     return SessionWrapper.getLazyLoadData(this.node);
   }
@@ -130,8 +155,8 @@ public class FcLagIf implements Serializable {
 
   @Override
   public String toString() {
-    return new ReflectionToStringBuilder(this)
-        .setExcludeFieldNames(new String[] { "clusterLinkIfs", "edgePoints", "internalLinkIfs", "node" }).toString();
+    return new ReflectionToStringBuilder(this).setExcludeFieldNames(
+        new String[] { "clusterLinkIfs", "edgePoints", "internalLinkIfs", "internalLinkIfs", "node" }).toString();
   }
 
 }

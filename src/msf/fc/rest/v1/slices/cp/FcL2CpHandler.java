@@ -28,7 +28,7 @@ import msf.mfcfc.rest.common.PATCH;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * REST request handler class for L2CP control (slice management function).
+ * REST request handler class for the L2CP control (slice management function).
  *
  * @author NTT
  *

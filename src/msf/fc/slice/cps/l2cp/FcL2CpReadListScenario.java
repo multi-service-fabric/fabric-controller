@@ -31,7 +31,7 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpEntity;
 
 /**
- * Implementation class for L2CP information list acquisition.
+ * Implementation class for the L2CP information list acquisition.
  *
  * @author NTT
  *

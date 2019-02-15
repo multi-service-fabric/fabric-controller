@@ -10,6 +10,9 @@ public class VlanIfL2VlanOptionEcEntity {
   @SerializedName("vrf_id")
   private Integer vrfId;
 
+  @SerializedName("vni")
+  private Integer vni;
+
   @SerializedName("qos")
   private VlanIfQosUpdateEcEntity qos;
 
@@ -19,6 +22,14 @@ public class VlanIfL2VlanOptionEcEntity {
 
   public void setVrfId(Integer vrfId) {
     this.vrfId = vrfId;
+  }
+
+  public Integer getVni() {
+    return vni;
+  }
+
+  public void setVni(Integer vni) {
+    this.vni = vni;
   }
 
   public VlanIfQosUpdateEcEntity getQos() {

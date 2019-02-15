@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.eclipse.jetty.http.HttpStatus;
 
@@ -37,8 +38,8 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteAsyncResponseBod
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 
 /**
- * Abstract class to implement the common process of asynchronous runner
- * processing in CP management.
+ * Abstract class to implement the common process of the asynchronous runner
+ * processing in the CP management.
  *
  * @author NTT
  *
@@ -437,6 +438,31 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
         }
       }
       return cpIdList;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected int getNextClagId(Set<Integer> clagIdSet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "clagIdSet" }, new Object[] { clagIdSet });
+
+      Set<Integer> allClagIdSet = new TreeSet<>();
+      for (int i = 1; i <= 65535; i++) {
+        allClagIdSet.add(i);
+      }
+
+      allClagIdSet.removeAll(clagIdSet);
+
+      if (!allClagIdSet.isEmpty()) {
+        return allClagIdSet.iterator().next();
+      } else {
+
+        String logMsg = "could not be assigned clag id.";
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+      }
+
     } finally {
       logger.methodEnd();
     }

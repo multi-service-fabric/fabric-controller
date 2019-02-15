@@ -5,6 +5,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import msf.mfcfc.common.constant.SliceType;
 
+/**
+ * Class to hold CP information on a specific slice.
+ *
+ * @author NTT
+ *
+ */
 public class CpData {
 
   private String sliceId;
@@ -13,6 +19,16 @@ public class CpData {
 
   private String cpId;
 
+  /**
+   * Constructor.
+   *
+   * @param sliceId
+   *          Slice ID
+   * @param sliceType
+   *          Slice type
+   * @param cpId
+   *          CP ID
+   */
   public CpData(String sliceId, SliceType sliceType, String cpId) {
     this.sliceId = sliceId;
     this.sliceType = sliceType;

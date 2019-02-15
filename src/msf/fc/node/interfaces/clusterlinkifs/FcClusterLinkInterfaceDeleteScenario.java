@@ -15,7 +15,7 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfDeleteResponse
 import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfRequest;
 
 /**
- * Implementation class for inter-cluster link interface deletion.
+ * Implementation class for the inter-cluster link interface deletion.
  *
  * @author NTT
  *
@@ -55,8 +55,8 @@ public class FcClusterLinkInterfaceDeleteScenario
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getClusterLinkIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       this.request = request;
 

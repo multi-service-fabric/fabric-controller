@@ -26,7 +26,8 @@ import msf.mfcfc.rest.common.AbstractRestHandler;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceRequest;
 
 /**
- * REST request handler class for L3 slice control (slice management function).
+ * REST request handler class for the L3 slice control (slice management
+ * function).
  *
  * @author NTT
  *

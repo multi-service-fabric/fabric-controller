@@ -9,14 +9,14 @@ import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
-import msf.mfcfc.core.scenario.AbstractAsyncRunner;
 import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.node.nodes.data.InternalNodeRequest;
 import msf.mfcfc.node.nodes.data.NodeNotifyRequestBody;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class to receive startup completion notification from EC node.
+ * Implementation class to receive startup completion notification from the EC
+ * node.
  *
  * @author NTT
  *
@@ -61,9 +61,6 @@ public class FcInternalNodeNotifyScenario extends FcAbstractNodeScenarioBase<Int
       requestBody.validate();
 
       logger.debug("requestBody=" + request.getRequestBody());
-
-      request.setNotificationAddress(AbstractAsyncRunner.NOT_NOTIFY_IP_ADDRESS);
-      request.setNotificationPort(AbstractAsyncRunner.NOT_NOTIFY_PORT_NUMBER);
 
       this.request = request;
       this.requestBody = requestBody;

@@ -21,22 +21,24 @@ import msf.mfcfc.node.equipments.AbstractEquipmentScenarioBase;
 import msf.mfcfc.node.equipments.data.entity.EquipmentCapabilityEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentDhcpEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentIfDefinitionEntity;
+import msf.mfcfc.node.equipments.data.entity.EquipmentIrbEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentPortEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentQosEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSlotEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSnmpEntity;
+import msf.mfcfc.node.equipments.data.entity.EquipmentTrafficEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentTypeEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentVpnEntity;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement the common process of device model
- * information-related processing in configuration management function.
+ * Abstract class to implement the common process of the device model
+ * information-related processing in the configuration management function.
  *
  * @author NTT
  *
  * @param <T>
- *          Request classs that inherits the RestRequestBase class
+ *          Request class that inherits the RestRequestBase class
  */
 public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
     extends AbstractEquipmentScenarioBase<T> {
@@ -53,7 +55,7 @@ public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
       if (fcEquipment == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = equipment");
+            "target resource is not found. parameters = equipment");
       }
       return fcEquipment;
     } finally {
@@ -99,6 +101,22 @@ public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
         qos.setEgressQueueDefault(equipmentEcData.getQos().getEgress().getEgressDefault());
       }
       capability.setQos(qos);
+
+      if ((equipmentEcData.getCapabilities() != null) && (equipmentEcData.getCapabilities().getIrb() != null)) {
+        EquipmentIrbEntity irb = new EquipmentIrbEntity();
+        irb.setAsymmetric(equipmentEcData.getCapabilities().getIrb().getAsymmetric());
+        irb.setSymmetric(equipmentEcData.getCapabilities().getIrb().getSymmetric());
+        capability.setIrb(irb);
+      }
+
+      EquipmentTrafficEntity traffic = new EquipmentTrafficEntity();
+      traffic.setSameVlanNumberTrafficTotalValueFlag(equipmentEcData.getSameVlanNumberTrafficTotalValueFlag());
+      traffic.setVlanTrafficCapability(equipmentEcData.getVlanTrafficCapability());
+      traffic.setVlanTrafficCounterNameMibOid(equipmentEcData.getVlanTrafficCounterNameMibOid());
+      traffic.setVlanTrafficCounterValueMibOid(equipmentEcData.getVlanTrafficCounterValueMibOid());
+      traffic.setCliExecPath(equipmentEcData.getCliExecPath());
+      capability.setTraffic(traffic);
+
       equipmentType.setCapability(capability);
 
       EquipmentDhcpEntity dhcp = new EquipmentDhcpEntity();

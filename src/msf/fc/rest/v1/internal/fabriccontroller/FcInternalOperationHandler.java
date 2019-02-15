@@ -18,8 +18,7 @@ import msf.mfcfc.failure.logicalif.data.LogicalIfStatusRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * Common Handler class to execute a request for intra-cluster link IF
- * processing.
+ * Common Handler class to execute a request for the internal IF processing.
  *
  * @author NTT
  */

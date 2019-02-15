@@ -43,9 +43,9 @@ public class FcL3CpUpdateRunner extends FcAbstractL3CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L3CP control
+   *          Request for the L3CP control
    * @param requestBody
-   *          Request Body part for L3CP modification
+   *          Request Body part for the L3CP modification
    */
   public FcL3CpUpdateRunner(L3CpRequest request, L3CpUpdateRequestBody requestBody) {
     this.request = request;

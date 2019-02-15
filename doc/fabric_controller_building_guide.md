@@ -1,7 +1,7 @@
 # MSF Controller (FC) Building Guide
-Version 1.0
+Version 1.1
 
-March.28.2018
+December.07.2018
 
 Copyright (c) 2018 NTT corp. All Rights Reserved.
 
@@ -59,8 +59,11 @@ Copyright (c) 2018 NTT corp. All Rights Reserved.
 
   |Version  |Date           |Contents     |
   |:--------|:--------------|:------------|
-  |1.0      |Mar.28.2018  |First edition|
+  |1.1      |Dec.07.2018    |Second edition (MSF2018A)|
+  |1.0      |Mar.28.2018    |First edition (MSF2017)|
 
+#### Notice 
+MFC(Multi-Fabric Controller) is not supported on Version 1.1 (MSF2018A). If you use MFC, you have to download of automatic installation file from [MSF2017 (Version 1.0)](https://github.com/multi-service-fabric/fabric-controller/tree/msf2017) and use it.
 
 ## 1. Overview
 This manual describes the installation procedures of MFC(Multi-Fabric Controller) and FC(Fabric Controller) which manages multiple cluster network and single cluster network,respectively.
@@ -93,7 +96,7 @@ Table 4-1 shows the list of software to be installed on each server.
 
 |No.|Server        |Software    |Version|
 |:--|:-------------|:-----------|:------|
-|1  |MFC or FC     |Oracle Java    |Oracle JDK 8 Update 162 |
+|1  |MFC or FC     |Oracle Java    |Oracle JDK 8 Update 101 |
 |2  ||Jetty|9.3.11|
 |3  ||Gson|2.7|
 |4  ||Jersey|2.23.2|
@@ -118,7 +121,7 @@ Table 4-2 shows the list of software to be installed for your reference.
 |No.|Server        |Software    |Version|
 |:--|:-------------|:-----------|:------|
 |1  |Ansible Server|Apache Maven|3.5.0|
-|2  ||Oracle Java|Oracle JDK 8 Update 162|
+|2  ||Oracle Java|Oracle JDK 8 Update 101|
 
 ## 5. Installation procedures
 Overview of installation procedures is shown below.
@@ -178,13 +181,13 @@ ansible_ssh_user=root
 
 (3) Proxy settings of Ansible Server (skip this procedure if the Internet access does not require Proxy)
 
- ~~~shell-session
- # vi group_vars/ansible-server.yml
- ~~~
+~~~shell-session
+# vi group_vars/ansible-server.yml
+~~~
 The sample of group_vars/ansible-server.yml is shown below.
 
 ~~~bash
-proxy_user: "username"              # Modify this based on the environment
+proxy_user: "username"             # Modify this based on the environment
 proxy_pass: "password"             # Modify this based on the environment
 proxy_server: "proxyname.xxx.org"  # Modify this based on the environment
 proxy_port: "8080"                 # Modify this based on the environment
@@ -368,7 +371,7 @@ MFC/FC initial setting Config should be edited before the first startup of the M
 
 ##### 6.1.1.1 Brief description of MFC/FC initial setting Config
 
-MFC/FC initial setting Config is shown briefly in Table 6-1.
+MFC/FC initial setting Config is shown briefly in the table 6-1.
 
 **Table 6-1 Brief description of MFC/FC initial setting Config**
 
@@ -382,7 +385,7 @@ MFC/FC initial setting Config is shown briefly in Table 6-1.
 This section describes the parameters in MFC/FC initial setting Config.  
 MFC/FC initial setting Config file is in xml format.  
 An example of MFC/FC initial setting Config is shown below.  
-Parameters in MFC/FC initial setting Config are summarized in Table 6-2.
+Parameters in MFC/FC initial setting Config are summarized in the table 6-2.
 
 **MFC initial setting Config**
 ~~~xml
@@ -429,6 +432,7 @@ Parameters in MFC/FC initial setting Config are summarized in Table 6-2.
                 <outchannelStartAddress>1.1.1.1</outchannelStartAddress>
                 <aggregationStartAddress>1.1.1.1</aggregationStartAddress>
                 <aggregationAddressPrefix>24</aggregationAddressPrefix>
+                <internalLinkNormalIgpCost>100</internalLinkNormalIgpCost>
             </swCluster>
             <rrs>
                 <rr>
@@ -472,6 +476,7 @@ Parameters in MFC/FC initial setting Config are summarized in Table 6-2.
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;outchannelStartAddress|-   |M    |string|-|1 |Outchannel starting IP address of SW cluster.<BR><BR>Initiating with starting IP address, an suitable IP address is calculated automatically within MSF controller and is assigned when interface (node) is added.|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aggregationStartAddress|-   |M    |string|-|1 |Aggregation starting IP address.<BR><BR>Starting IP address for aggregation of paths to each node of SW cluster.|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;aggregationAddressPrefix|-   |M    |integer|1 - 32|1 |Aggregation prefix|
+|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;internalLinkNormalIgpCost|-   |M    |integer|1 - 65535|1 |Normal IGP cost of internal link|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rrs|M   |M    |-|-|1 |RR information of SW cluster|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rr|O   |O    |-|-|0 and over |RR information|
 |&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;rrNodeId|M   |M    |integer|1 - 65535|1|RR node ID of SW cluster|
@@ -488,11 +493,11 @@ Parameters in MFC/FC initial setting Config are summarized in Table 6-2.
 This section describes the settings during MFC/FC operation. Edit MFC/FC system
 setting Config while MFC/FC is not running. Note that any changes of MFC/FC
 system setting Config while MFC/FC is running cannot be reflected in the
-behavior of MFCFC.
+behavior of MFC/FC.
 
 ##### 6.1.2.1 Brief description of MFC/FC system setting Config
 
-The brief description of MFC/FC system setting Config is shown in Table 6-3.
+The brief description of MFC/FC system setting Config is shown in the table 6-3.
 
 **Table 6-3 Brief description of system setting Config**
 
@@ -506,8 +511,8 @@ The brief description of MFC/FC system setting Config is shown in Table 6-3.
 
 This section describes the parameters in MFC/FC system setting Config.  
 MFC/FC system setting Config file is in xml format.  
-An example of MFC/FC system setting Config is shown below.  
-Parameters in MFC/FC system setting Config are summarized in Table 6-4.  
+An example of the MFC/FC system setting Config is shown below.  
+Parameters in the MFC/FC system setting Config are summarized in the table 6-4.
 
 **MFC system setting Config**
 ~~~xml
@@ -662,6 +667,10 @@ Parameters in MFC/FC system setting Config are summarized in Table 6-4.
         <remark_menu>be</remark_menu>
         <remark_menu>packet_color</remark_menu>
     </qos>
+    <irb>
+        <l3VniVlanIdStartPos>3900</l3VniVlanIdStartPos>
+        <l3VniVlanIdEndPos>3999</l3VniVlanIdEndPos>
+    </irb> 
 </systemConf>
 ~~~
 
@@ -729,6 +738,9 @@ Parameters in MFC/FC system setting Config are summarized in Table 6-4.
 |&nbsp;&nbsp;&nbsp;&nbsp;execCycle|-   |M    |integer|0 and over|1|Interval of acquiring traffic information (second)|
 |&nbsp;&nbsp;qos|-   |M    |-    |-              |1                  |QoS|
 |&nbsp;&nbsp;&nbsp;&nbsp;remark_menu|-   |M    |string|-              |1                  |Remark menu|
+|&nbsp;&nbsp;irb|-   |M    |-    |-              |1                  |IRB|
+|&nbsp;&nbsp;&nbsp;&nbsp;l3VniVlanIdStartPos|-   |M    |integer|0 - 4094|1                  |Start value of the inner VLAN ID's range for creating L3VNI|
+|&nbsp;&nbsp;&nbsp;&nbsp;l3VniVlanIdEndPos|-   |M    |integer|0 - 4094|1                  |End value of the inner VLAN ID's range for creating L3VNI|
 
 
 \* If the upper limit of setting range of an attribute is not described,
@@ -740,8 +752,7 @@ its upper limit is the maximum number of integer type (2147483647).
 
 This section gives the simple MFC/FC startup confirmation methods.
 
-(1) Change MFC/FC Config (MFC/FC initial setting Config, MFC/FC system setting
-    Config, and Hibernate Config) appropriately.
+(1) Change MFC/FC Configs appropriately.
 
 (2) Execute the following command after changing to the directory where
     MFC/FC startup/shutdown script resides.
@@ -840,14 +851,14 @@ $ sh fc_ctl.sh status
 
 MFC/FC startup status can be determined based on the result of the above
 command (standard output log). The standard output logs are summarized
-in the Table 6-5 and Table 6-6.
+in the table 6-5 and the table 6-6.
 
 **Table 6-5 MFC startup status**
 
 |MFC startup status |Standard output log|Remarks|
 |:-----------------|:------------------|:------|
 |Running (normal)  |INFO. MultiFabricController\[pid=PID\] is running.|PID shows actual pid of MFC.|
-|Running (abnormal: double startup)|WARN. MultiFabricController is running (two or more applications are running).|More than or equal to 2 MFCs are running. In order to get back normal condition, it is necessary to shutdown the MFC that started up by mistake.In this case, since it is not possible to shutdown MFC with MFC startup/shutdown script, kill command is required to shutdown the MFC.|
+|Running (abnormal: double startup)|WARN. MultiFabricController is running (two or more applications are running).|More than or equal to 2 MFCs are running. In order to get back normal condition, it is necessary to shutdown the MFC that started up by mistake. In this case, since it is not possible to shutdown MFC with MFC startup/shutdown script, kill command is required to shutdown the MFC.|
 |Not running       |INFO. MultiFabricController is not running.|-|
 
 
@@ -856,13 +867,13 @@ in the Table 6-5 and Table 6-6.
 |FC startup status |Standard output log|Remarks|
 |:-----------------|:------------------|:------|
 |Running (normal)  |INFO. FabricController\[pid=PID\] is running.|PID shows actual pid of FC.|
-|Running (abnormal: double startup)|WARN. FabricController is running (two or more applications are running).|More than or equal to 2 FCs are running. In order to get back normal condition, it is necessary to shutdown the FC that started up by mistake.In this case, since it is not possible to shutdown FC with FC startup/shutdown script, kill command is required to shutdown the FC.|
+|Running (abnormal: double startup)|WARN. FabricController is running (two or more applications are running).|More than or equal to 2 FCs are running. In order to get back normal condition, it is necessary to shutdown the FC that started up by mistake. In this case, since it is not possible to shutdown FC with FC startup/shutdown script, kill command is required to shutdown the FC.|
 |Not running       |INFO. FabricController is not running.|-|
 
 #### 6.1.5 MFC/FC status confirmation (normal/abnormal)
 
 This section describes how to validate MFC/FC status.  
-In order to validate MFC/FC status, the REST message in Table 6-7 needs to
+In order to validate MFC/FC status, the REST message in the table 6-7 needs to
 be sent to management address of the MFC/FC.
 
 **Table 6-7 REST request for status confirmation**
@@ -884,7 +895,7 @@ Table 6-8 summarizes response codes.
 |500          |abnormal    |
 
 When the response code is 200, relevant body field of its response
-consists of the following information shown in Table 6-9.
+consists of the following information shown in the table 6-9.
 
 **Table 6-9 Response body field of status confirmation**
 

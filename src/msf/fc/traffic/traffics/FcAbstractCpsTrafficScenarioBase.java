@@ -20,13 +20,14 @@ import msf.mfcfc.rest.common.AbstractResponseBody;
 import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 import msf.mfcfc.traffic.traffics.AbstractCpsTrafficScenarioBase;
-import msf.mfcfc.traffic.traffics.data.CpTrafficRequest;
-import msf.mfcfc.traffic.traffics.data.entity.CpTrafficEntity;
-import msf.mfcfc.traffic.traffics.data.entity.CpTrafficValueCpEntity;
+import msf.mfcfc.traffic.traffics.data.entity.L2CpTrafficEntity;
+import msf.mfcfc.traffic.traffics.data.entity.L2CpTrafficValueCpEntity;
+import msf.mfcfc.traffic.traffics.data.entity.L3CpTrafficEntity;
+import msf.mfcfc.traffic.traffics.data.entity.L3CpTrafficValueCpEntity;
 
 /**
- * Abstract class to implement the common process of CP traffic information
- * acquisition processing in traffic management function.
+ * Abstract class to implement the common process of the CP traffic information
+ * acquisition in the traffic management function.
  *
  * @author NTT
  *
@@ -35,8 +36,6 @@ import msf.mfcfc.traffic.traffics.data.entity.CpTrafficValueCpEntity;
  */
 public abstract class FcAbstractCpsTrafficScenarioBase<T extends RestRequestBase>
     extends AbstractCpsTrafficScenarioBase<T> {
-
-  protected CpTrafficRequest request;
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractCpsTrafficScenarioBase.class);
 
@@ -59,8 +58,9 @@ public abstract class FcAbstractCpsTrafficScenarioBase<T extends RestRequestBase
           responseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
 
       if (!responseBody.getIsSuccess()) {
-        String logMsg = MessageFormat.format("target resource not found. parameters={0}, ecNodeId={1}, isSuccess={2}",
-            "NodeTraffic", ecNodeId, responseBody.getIsSuccess());
+        String logMsg = MessageFormat.format(
+            "target resource is not found. parameters={0}, ecNodeId={1}, isSuccess={2}", "NodeTraffic", ecNodeId,
+            responseBody.getIsSuccess());
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
 
@@ -89,8 +89,8 @@ public abstract class FcAbstractCpsTrafficScenarioBase<T extends RestRequestBase
           responseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
 
       if (!responseBody.getIsSuccess()) {
-        String logMsg = MessageFormat.format("target resource not found. parameters={0}, isSuccess={1}", "NodeTraffic",
-            responseBody.getIsSuccess());
+        String logMsg = MessageFormat.format("target resource is not found. parameters={0}, isSuccess={1}",
+            "NodeTraffic", responseBody.getIsSuccess());
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
       return responseBody;
@@ -99,18 +99,39 @@ public abstract class FcAbstractCpsTrafficScenarioBase<T extends RestRequestBase
     }
   }
 
-  protected CpTrafficEntity getCpTrafficEntity(String sliceId, String cpId,
+  protected L2CpTrafficEntity getL2CpTrafficEntity(String sliceId, String cpId,
       TrafficInfoTrafficValueEcEntity trafficInfo) {
 
     try {
       logger.methodStart(new String[] { "sliceId", "cpId", "trafficInfo" },
           new Object[] { sliceId, cpId, trafficInfo });
 
-      CpTrafficEntity cpTraffic = new CpTrafficEntity();
+      L2CpTrafficEntity cpTraffic = new L2CpTrafficEntity();
       cpTraffic.setSliceId(sliceId);
       cpTraffic.setCpId(cpId);
 
-      CpTrafficValueCpEntity cpTrafficValueCpEntity = new CpTrafficValueCpEntity();
+      L2CpTrafficValueCpEntity cpTrafficValueCpEntity = new L2CpTrafficValueCpEntity();
+      cpTrafficValueCpEntity.setReceiveRate(trafficInfo.getReceiveRate());
+      cpTrafficValueCpEntity.setSendRate(trafficInfo.getSendRate());
+      cpTraffic.setTrafficValue(cpTrafficValueCpEntity);
+      return cpTraffic;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected L3CpTrafficEntity getL3CpTrafficEntity(String sliceId, String cpId,
+      TrafficInfoTrafficValueEcEntity trafficInfo) {
+
+    try {
+      logger.methodStart(new String[] { "sliceId", "cpId", "trafficInfo" },
+          new Object[] { sliceId, cpId, trafficInfo });
+
+      L3CpTrafficEntity cpTraffic = new L3CpTrafficEntity();
+      cpTraffic.setSliceId(sliceId);
+      cpTraffic.setCpId(cpId);
+
+      L3CpTrafficValueCpEntity cpTrafficValueCpEntity = new L3CpTrafficValueCpEntity();
       cpTrafficValueCpEntity.setReceiveRate(trafficInfo.getReceiveRate());
       cpTrafficValueCpEntity.setSendRate(trafficInfo.getSendRate());
       cpTraffic.setTrafficValue(cpTrafficValueCpEntity);

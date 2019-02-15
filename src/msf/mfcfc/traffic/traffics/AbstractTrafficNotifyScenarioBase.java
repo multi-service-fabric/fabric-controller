@@ -5,7 +5,7 @@ import msf.mfcfc.core.scenario.AbstractScenario;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement the common process in traffic information
+ * Abstract class to implement the common process in the traffic information
  * notification function.
  *
  * @author NTT

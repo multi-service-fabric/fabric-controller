@@ -30,7 +30,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for breakout interface information list acquisition.
+ * Implementation class for the breakout interface information list acquisition.
  *
  * @author NTT
  *

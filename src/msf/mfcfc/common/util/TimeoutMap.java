@@ -32,7 +32,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
   }
 
   /**
-   * Return the first key. Timed out keys do not apply.
+   * Returns the first key. Timed out keys do not apply.
    *
    * @return the first key
    */
@@ -42,7 +42,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
   }
 
   /**
-   * Return the last key. Timed out keys do not apply.
+   * Returns the last key. Timed out keys do not apply.
    *
    * @return the last key
    */
@@ -52,8 +52,8 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
   }
 
   /**
-   * Return the value of the specified key. Return null if the specified key is
-   * timed out.
+   * Returns the value of the specified key. Returns null if the specified key
+   * is timed out.
    *
    * @param key
    *          Key
@@ -118,7 +118,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
   }
 
   /**
-   * Return the registered time of specified key.
+   * Returns the registered time of the specified key.
    *
    * @param key
    *          Key

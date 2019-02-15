@@ -5,8 +5,8 @@ import msf.fc.node.interfaces.FcAbstractInterfaceScenarioBase;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstract class to implement the common process of Lag interface-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of the Lag interface-related
+ * processing in the configuration management function.
  *
  *
  * @author NTT

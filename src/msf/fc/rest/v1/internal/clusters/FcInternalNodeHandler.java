@@ -33,7 +33,7 @@ public class FcInternalNodeHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PUT

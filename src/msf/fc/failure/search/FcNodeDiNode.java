@@ -8,6 +8,12 @@ import msf.fc.common.data.FcNode;
 import msf.mfcfc.common.constant.FailureStatus;
 import msf.mfcfc.failure.search.DiNode;
 
+/**
+ * Class for nodes used by Dijkstra's algorithm with node information.
+ *
+ * @author NTT
+ *
+ */
 public class FcNodeDiNode extends DiNode {
   public FcNodeDiNode(int nodeNo) {
     super(nodeNo);

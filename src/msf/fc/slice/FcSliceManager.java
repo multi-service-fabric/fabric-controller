@@ -24,14 +24,18 @@ import msf.mfcfc.slice.SliceManager;
  */
 public final class FcSliceManager extends SliceManager {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(FcSliceManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FcSliceManager.class);
 
   private FcSliceManager() {
 
   }
 
   /**
-   * Get the instance of FcSliceManager.
+   * Get the instance of FcSliceManager. This method does not guarantee the
+   * uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcSliceManager instance
    */

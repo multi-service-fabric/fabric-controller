@@ -32,7 +32,11 @@ public final class FcSystemStatusManager extends SystemStatusManager {
   }
 
   /**
-   * Return the instance of FcSystemStatusManager
+   * Returns the instance of FcSystemStatusManager This method does not
+   * guarantee the uniqueness of the returned instance if it is called by
+   * multi-threads simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcSystemStatusManager instance
    */

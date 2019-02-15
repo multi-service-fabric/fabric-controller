@@ -26,11 +26,24 @@ public class FcL2Slice implements Serializable {
   @Column(name = "slice_id")
   private String sliceId;
 
+  @Column(name = "irb_type")
+  private Integer irbType;
+
+  private Integer l3vni;
+
+  @Column(name = "l3vni_vlan_id")
+  private Integer l3vniVlanId;
+
   @Column(name = "remark_menu")
   private String remarkMenu;
 
+  private Integer vni;
+
   @Column(name = "vrf_id")
   private Integer vrfId;
+
+  @OneToMany(mappedBy = "l2Slice")
+  private List<FcIrbInstance> irbInstances;
 
   @OneToMany(mappedBy = "l2Slice")
   private List<FcL2Cp> l2Cps;
@@ -46,6 +59,30 @@ public class FcL2Slice implements Serializable {
     this.sliceId = sliceId;
   }
 
+  public Integer getIrbType() {
+    return this.irbType;
+  }
+
+  public void setIrbType(Integer irbType) {
+    this.irbType = irbType;
+  }
+
+  public Integer getL3vni() {
+    return this.l3vni;
+  }
+
+  public void setL3vni(Integer l3vni) {
+    this.l3vni = l3vni;
+  }
+
+  public Integer getL3vniVlanId() {
+    return this.l3vniVlanId;
+  }
+
+  public void setL3vniVlanId(Integer l3vniVlanId) {
+    this.l3vniVlanId = l3vniVlanId;
+  }
+
   public String getRemarkMenu() {
     return this.remarkMenu;
   }
@@ -54,12 +91,42 @@ public class FcL2Slice implements Serializable {
     this.remarkMenu = remarkMenu;
   }
 
+  public Integer getVni() {
+    return this.vni;
+  }
+
+  public void setVni(Integer vni) {
+    this.vni = vni;
+  }
+
   public Integer getVrfId() {
     return this.vrfId;
   }
 
   public void setVrfId(Integer vrfId) {
     this.vrfId = vrfId;
+  }
+
+  public List<FcIrbInstance> getIrbInstances() throws MsfException {
+    return SessionWrapper.getLazyLoadData(this.irbInstances);
+  }
+
+  public void setIrbInstances(List<FcIrbInstance> irbInstances) {
+    this.irbInstances = irbInstances;
+  }
+
+  public FcIrbInstance addIrbInstance(FcIrbInstance irbInstance) throws MsfException {
+    getIrbInstances().add(irbInstance);
+    irbInstance.setL2Slice(this);
+
+    return irbInstance;
+  }
+
+  public FcIrbInstance removeIrbInstance(FcIrbInstance irbInstance) throws MsfException {
+    getIrbInstances().remove(irbInstance);
+    irbInstance.setL2Slice(null);
+
+    return irbInstance;
   }
 
   public List<FcL2Cp> getL2Cps() throws MsfException {
@@ -86,7 +153,8 @@ public class FcL2Slice implements Serializable {
 
   @Override
   public String toString() {
-    return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "l2Cps" }).toString();
+    return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "irbInstances", "l2Cps" })
+        .toString();
   }
 
 }

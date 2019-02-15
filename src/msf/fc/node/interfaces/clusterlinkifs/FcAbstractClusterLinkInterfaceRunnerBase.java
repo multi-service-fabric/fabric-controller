@@ -4,8 +4,8 @@ package msf.fc.node.interfaces.clusterlinkifs;
 import msf.fc.node.interfaces.FcAbstractInterfaceRunnerBase;
 
 /**
- * Abstract class to implement the common process of inter-cluster link
- * interface-related asynchronous processing in configuration management
+ * Abstract class to implement the common process of the inter-cluster link
+ * interface-related asynchronous processing in the configuration management
  * function.
  *
  * @author NTT

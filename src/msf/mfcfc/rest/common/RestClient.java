@@ -64,7 +64,7 @@ public class RestClient {
   }
 
   /**
-   * HTTP client startup procedeure (synchronized to prevent problems caused by
+   * HTTP client startup procedure (synchronized to prevent problems caused by
    * lazy initialization).
    *
    * @throws MsfException
@@ -166,10 +166,10 @@ public class RestClient {
    * @param httpMethod
    *          HTTP method
    * @param targetUriPath
-   *          URI path for HTTP request target (including URI parameter,
+   *          URI path for the HTTP request target (including URI parameter,
    *          optional parameter, but excluding address, port)
    * @param restRequest
-   *          Parameter of HTTP request
+   *          Parameter of the HTTP request
    * @param ipAddress
    *          Destination IP address
    * @param port

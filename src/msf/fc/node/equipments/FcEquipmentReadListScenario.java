@@ -31,7 +31,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for device model information list acquisition.
+ * Implementation class for the device model information list acquisition.
  *
  * @author NTT
  *
@@ -179,12 +179,13 @@ public class FcEquipmentReadListScenario extends FcAbstractEquipmentScenarioBase
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (equipmentEcList.size() != equipmentTypes.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return equipmentTypes;
     } finally {

@@ -8,7 +8,8 @@
 	<xsd:complexType name="SystemConf">
 		<xsd:all>
 			<xsd:element name="controller" type="tns:Controller"
-				minOccurs="1" maxOccurs="1"></xsd:element>
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
 			<xsd:element name="rest" type="tns:Rest" minOccurs="1"
 				maxOccurs="1" />
 			<xsd:element name="slice" type="tns:Slice" minOccurs="1"
@@ -27,6 +28,7 @@
 			<xsd:element name="qos" type="tns:Qos" minOccurs="1"
 				maxOccurs="1">
 			</xsd:element>
+			<xsd:element name="irb" type="tns:Irb" minOccurs="1" maxOccurs="1"></xsd:element>
 		</xsd:all>
 	</xsd:complexType>
 
@@ -249,5 +251,19 @@
 				minOccurs="1" maxOccurs="1"></xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
+
+	<xsd:complexType name="Irb">
+		<xsd:sequence>
+			<xsd:element name="l3VniVlanIdStartPos" type="tns:integer_of_vlan_id" minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="l3VniVlanIdEndPos" type="tns:integer_of_vlan_id" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="integer_of_vlan_id">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="1"></xsd:minInclusive>
+			<xsd:maxInclusive value="4094"></xsd:maxInclusive>
+		</xsd:restriction>
+	</xsd:simpleType>
 </xsd:schema>
 

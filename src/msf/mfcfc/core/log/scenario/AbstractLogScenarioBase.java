@@ -49,8 +49,8 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement the common process of log acquisition
- * related-processing in system basic function.
+ * Abstract class to implement the common process of the log acquisition
+ * related-processing in the system basic function.
  *
  * @author NTT
  *
@@ -564,6 +564,9 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     return logLevels;
   }
 
+  /**
+   * Sort the controller logs in order of MFC, FC, EC and EM.
+   */
   protected static final Comparator<LogDataEntity> COMPARATOR_LOGCONTROLLER = new Comparator<LogDataEntity>() {
     @Override
     public int compare(LogDataEntity o1, LogDataEntity o2) {
@@ -574,6 +577,9 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     }
   };
 
+  /**
+   * Sort the controller logs in order of MFC, FC, EC and EM.
+   */
   protected static final Comparator<LogMergedDataEntity> COMPARATOR_LOGDATA_LOGCONTROLLER = new Comparator<LogMergedDataEntity>() {
     @Override
     public int compare(LogMergedDataEntity o1, LogMergedDataEntity o2) {
@@ -584,6 +590,10 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     }
   };
 
+  /**
+   * Sort the controller logs in order of ClusterID. In MFC, treat the cluster
+   * ID as -1 since it has no cluster ID.
+   */
   protected static final Comparator<LogMergedDataEntity> COMPARATOR_LOGDATA_CLUSTERID = new Comparator<LogMergedDataEntity>() {
     @Override
     public int compare(LogMergedDataEntity o1, LogMergedDataEntity o2) {

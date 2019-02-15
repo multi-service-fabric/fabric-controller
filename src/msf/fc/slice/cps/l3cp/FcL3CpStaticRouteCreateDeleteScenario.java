@@ -16,7 +16,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteRequestBody;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteResponseBody;
 
 /**
- * Implementation class for L3CP static route addition/deletion.
+ * Implementation class for the L3CP static route addition/deletion.
  *
  * @author NTT
  *

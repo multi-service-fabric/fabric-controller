@@ -5,8 +5,8 @@ import msf.mfcfc.core.operation.scenario.AbstractOperationScenarioBase;
 import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
- * Abstraction class to implement the common process of operation-related
- * processing in system basic function.
+ * Abstract class to implement the common process of operation-related
+ * processing in the system basic function.
  *
  * @author NTT
  *

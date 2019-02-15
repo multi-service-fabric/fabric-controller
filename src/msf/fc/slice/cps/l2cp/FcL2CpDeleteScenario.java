@@ -63,8 +63,8 @@ public class FcL2CpDeleteScenario extends FcAbstractL2CpScenarioBase<L2CpRequest
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       this.request = request;
     } finally {

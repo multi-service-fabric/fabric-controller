@@ -5,6 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
 
+import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.ParameterCheckUtil;
@@ -22,6 +23,9 @@ public class L2SliceCreateRequestBody implements RestRequestValidator {
 
   @SerializedName("vrf_id")
   private Integer vrfId;
+
+  @SerializedName("irb_type")
+  private String irbType;
 
   public String getSliceId() {
     return sliceId;
@@ -47,6 +51,22 @@ public class L2SliceCreateRequestBody implements RestRequestValidator {
     this.vrfId = vrfId;
   }
 
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
+  }
+
+  public IrbType getIrbTypeEnum() {
+    return IrbType.getEnumFromMessage(irbType);
+  }
+
+  public void setIrbTypeEnum(IrbType irbType) {
+    this.irbType = irbType.getMessage();
+  }
+
   @Override
   public void validate() throws MsfException {
     try {
@@ -56,6 +76,9 @@ public class L2SliceCreateRequestBody implements RestRequestValidator {
         ParameterCheckUtil.checkIdSpecifiedByUri(sliceId);
       }
 
+      if (irbType != null) {
+        ParameterCheckUtil.checkNotNull(getIrbTypeEnum());
+      }
     } finally {
       logger.methodEnd();
     }

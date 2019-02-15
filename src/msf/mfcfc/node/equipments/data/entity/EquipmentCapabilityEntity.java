@@ -13,6 +13,12 @@ public class EquipmentCapabilityEntity {
   @SerializedName("qos")
   private EquipmentQosEntity qos;
 
+  @SerializedName("irb")
+  private EquipmentIrbEntity irb;
+
+  @SerializedName("traffic")
+  private EquipmentTrafficEntity traffic;
+
   public EquipmentVpnEntity getVpn() {
     return vpn;
   }
@@ -27,6 +33,22 @@ public class EquipmentCapabilityEntity {
 
   public void setQos(EquipmentQosEntity qos) {
     this.qos = qos;
+  }
+
+  public EquipmentIrbEntity getIrb() {
+    return irb;
+  }
+
+  public void setIrb(EquipmentIrbEntity irb) {
+    this.irb = irb;
+  }
+
+  public EquipmentTrafficEntity getTraffic() {
+    return traffic;
+  }
+
+  public void setTraffic(EquipmentTrafficEntity traffic) {
+    this.traffic = traffic;
   }
 
   @Override

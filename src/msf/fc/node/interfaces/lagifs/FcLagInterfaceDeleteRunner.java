@@ -26,7 +26,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in Lag interface deletion.
+ * Class to implement the asynchronous processing in the Lag interface deletion.
  *
  * @author NTT
  *
@@ -100,7 +100,8 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
       FcLagIf fcLagIf = fcLagIfDao.read(sessionWrapper, nodeType, nodeId, lagIfId);
       if (fcLagIf == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = fcLagIf");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcLagIf");
       }
       return fcLagIf;
     } finally {

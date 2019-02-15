@@ -10,6 +10,7 @@ import msf.fc.common.data.FcL2Slice;
 import msf.fc.db.dao.slices.FcL2SliceDao;
 import msf.fc.slice.FcSliceManager;
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SliceType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -23,7 +24,7 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceCreateRequestBody;
 import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 
 /**
- * Implementation class for L2 slice addition.
+ * Implementation class for L2 the slice addition.
  *
  * @author NTT
  *
@@ -121,15 +122,36 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
 
       FcL2Slice newL2Slice = new FcL2Slice();
 
-      if (requestBody.getVrfId() == null) {
+      IrbType irbType = IrbType.getEnumFromMessage(requestBody.getIrbType());
+      if (irbType.equals(IrbType.ASYMMETRIC) || irbType.equals(IrbType.SYMMETRIC)) {
 
-        Set<Integer> vrfIdSet = createVrfIdSet(l2SliceList);
-        int vrfId = getNextVrfId(sessionWrapper, vrfIdSet, SliceType.L2_SLICE);
-        newL2Slice.setVrfId(vrfId);
+        newL2Slice.setIrbType(irbType.getCode());
 
+        if (requestBody.getVrfId() == null) {
+
+          Set<Integer> vrfIdSet = createVrfIdSet(l2SliceList);
+          int vrfId = getNextVrfId(sessionWrapper, vrfIdSet, SliceType.L2_SLICE);
+          newL2Slice.setVrfId(vrfId);
+
+        } else {
+          checkVrfDuplicate(sessionWrapper, l2SliceDao);
+          newL2Slice.setVrfId(requestBody.getVrfId());
+        }
+
+        if (irbType.equals(IrbType.SYMMETRIC)) {
+
+          int l3Vni = getL3Vni(newL2Slice.getVrfId());
+          newL2Slice.setL3vni(l3Vni);
+          List<FcL2Slice> irbL2SliceList = l2SliceDao.readListByIrbType(sessionWrapper, IrbType.SYMMETRIC.getCode());
+          Set<Integer> l3VniVlanIdSet = createL3VniVlanIdSet(irbL2SliceList);
+          int l3VniVlanId = getVlanIdForL3Vni(sessionWrapper, l3VniVlanIdSet);
+          newL2Slice.setL3vniVlanId(l3VniVlanId);
+        }
       } else {
-        checkVrfDuplicate(sessionWrapper, l2SliceDao);
-        newL2Slice.setVrfId(requestBody.getVrfId());
+
+        Set<Integer> vniSet = createVniSet(l2SliceList);
+        int vni = getNextVni(sessionWrapper, vniSet);
+        newL2Slice.setVni(vni);
       }
 
       if (requestBody.getSliceId() == null) {
@@ -155,7 +177,9 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
       logger.methodStart(new String[] { "l2SliceList" }, new Object[] { l2SliceList });
       Set<Integer> vrfIdSet = new TreeSet<>();
       for (FcL2Slice l2Slice : l2SliceList) {
-        vrfIdSet.add(l2Slice.getVrfId());
+        if (l2Slice.getVrfId() != null) {
+          vrfIdSet.add(l2Slice.getVrfId());
+        }
       }
       return vrfIdSet;
     } finally {
@@ -203,6 +227,36 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
         throw new MsfException(ErrorCode.TARGET_RESOURCE_ALREADY_EXIST, logMsg);
       }
 
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private Set<Integer> createL3VniVlanIdSet(List<FcL2Slice> l2SliceList) {
+    try {
+      logger.methodStart(new String[] { "l2SliceList" }, new Object[] { l2SliceList });
+      Set<Integer> vlanIdSet = new TreeSet<>();
+      for (FcL2Slice l2Slice : l2SliceList) {
+        if (l2Slice.getL3vniVlanId() != null) {
+          vlanIdSet.add(l2Slice.getL3vniVlanId());
+        }
+      }
+      return vlanIdSet;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private Set<Integer> createVniSet(List<FcL2Slice> l2SliceList) {
+    try {
+      logger.methodStart(new String[] { "l2SliceList" }, new Object[] { l2SliceList });
+      Set<Integer> vniSet = new TreeSet<>();
+      for (FcL2Slice l2Slice : l2SliceList) {
+        if (l2Slice.getVni() != null) {
+          vniSet.add(l2Slice.getVni());
+        }
+      }
+      return vniSet;
     } finally {
       logger.methodEnd();
     }

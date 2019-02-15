@@ -31,7 +31,7 @@ import msf.mfcfc.slice.SliceManager;
 import msf.mfcfc.traffic.TrafficManager;
 
 /**
- * Implementation class for status check.
+ * Implementation class for the status check.
  *
  * @author NTT
  *
@@ -117,6 +117,14 @@ public class InternalSystemStatusReadScenario extends AbstractStatusScenarioBase
       fbList.add(SliceManager.getInstance());
       fbList.add(FailureManager.getInstance());
       fbList.add(TrafficManager.getInstance());
+
+      List<FunctionBlockBase> extensionsList = CoreManager.getInstance().getExtensionFunctions();
+
+      for (FunctionBlockBase extensionFunction : extensionsList) {
+
+        fbList.add(extensionFunction);
+      }
+
       fbList.add(RestManager.getInstance());
 
       for (FunctionBlockBase fbBase : fbList) {

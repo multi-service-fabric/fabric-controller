@@ -54,8 +54,8 @@ import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpVrrpEntity;
 
 /**
- * Abstract class to implement the common process of L3CP-related asynchronous
- * runner processing in slice management function.
+ * Abstract class to implement the common process of the L3CP-related
+ * asynchronous runner processing in the slice management function.
  *
  * @author NTT
  *
@@ -254,6 +254,20 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
     }
   }
 
+  protected void checkL3NwConstraints(L3CpStaticRouteEntity staticRouteEntity) throws MsfException {
+    try {
+      logger.methodStart();
+      if (!IpAddressUtil.isNetworkAddress(staticRouteEntity.getAddress(), staticRouteEntity.getPrefix())) {
+
+        String logMsg = logger.error("static route address violates network constraints. address = {0}, prefix = {1}",
+            staticRouteEntity.getAddress(), staticRouteEntity.getPrefix());
+        throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
   private void checkVlanIdSameCheck(SessionWrapper sessionWrapper, FcL3Slice l3Slice, FcNode node, int edgePointId,
       int vlanId) throws MsfException {
     try {
@@ -289,20 +303,6 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
             }
           }
         }
-      }
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  protected void checkL3NwConstraints(L3CpStaticRouteEntity staticRouteEntity) throws MsfException {
-    try {
-      logger.methodStart();
-      if (!IpAddressUtil.isNetworkAddress(staticRouteEntity.getAddress(), staticRouteEntity.getPrefix())) {
-
-        String logMsg = logger.error("static route address violates network constraints. address = {0}, prefix = {1}",
-            staticRouteEntity.getAddress(), staticRouteEntity.getPrefix());
-        throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
       }
     } finally {
       logger.methodEnd();
@@ -465,7 +465,7 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
   }
 
   protected String makeRouteDistinguisher(int vrfId, int clusterId, int ecNodeId) {
-    return vrfId + ":" + (clusterId * 1000 + ecNodeId);
+    return vrfId + ":" + (clusterId * MULTIPLY_VALUE_FOR_RD_CALCULATION_ + ecNodeId);
   }
 
   private OperationQosEcEntity makeOperationQosEcEntity(FcL3Cp fcL3Cp, L3CpQosCreateEntity qosEntity)

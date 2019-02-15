@@ -25,8 +25,8 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpStaticRouteCreateDeleteRequestBody;
 
 /**
- * Abstract class to implement the common process of CP-related processing in
- * slice management function.
+ * Abstract class to implement the common process of the CP-related processing
+ * in the slice management function.
  *
  * @author NTT
  *
@@ -57,8 +57,7 @@ public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends 
 
   protected List<L2CpCreateDeleteRequestBody> checkParameterL2CpCreateDelete(L2CpRequest request) throws MsfException {
 
-    ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-    ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+    ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(), request.getNotificationPort());
 
     List<L2CpCreateDeleteRequestBody> requestBody = (List<L2CpCreateDeleteRequestBody>) JsonUtil
         .fromJson(request.getRequestBody(), new TypeToken<ArrayList<L2CpCreateDeleteRequestBody>>() {
@@ -76,8 +75,7 @@ public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends 
 
   protected L2CpCreateRequestBody checkParameterL2CpCreate(L2CpRequest request) throws MsfException {
 
-    ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-    ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+    ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(), request.getNotificationPort());
 
     L2CpCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(), L2CpCreateRequestBody.class);
     requestBody.validate();
@@ -87,8 +85,7 @@ public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends 
 
   protected List<L3CpCreateDeleteRequestBody> checkParameterL3CpCreateDelete(L3CpRequest request) throws MsfException {
 
-    ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-    ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+    ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(), request.getNotificationPort());
 
     List<L3CpCreateDeleteRequestBody> requestBody = (List<L3CpCreateDeleteRequestBody>) JsonUtil
         .fromJson(request.getRequestBody(), new TypeToken<ArrayList<L3CpCreateDeleteRequestBody>>() {
@@ -106,8 +103,7 @@ public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends 
 
   protected L3CpCreateRequestBody checkParameterL3CpCreate(L3CpRequest request) throws MsfException {
 
-    ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-    ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+    ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(), request.getNotificationPort());
 
     L3CpCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(), L3CpCreateRequestBody.class);
     requestBody.validate();
@@ -119,8 +115,7 @@ public abstract class AbstractCpScenarioBase<T extends RestRequestBase> extends 
   protected List<L3CpStaticRouteCreateDeleteRequestBody> checkParameterL3CpStaticRouteCreateDelete(L3CpRequest request)
       throws MsfException {
 
-    ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-    ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+    ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(), request.getNotificationPort());
 
     List<L3CpStaticRouteCreateDeleteRequestBody> requestBody = (List<L3CpStaticRouteCreateDeleteRequestBody>) JsonUtil
         .fromJson(request.getRequestBody(), new TypeToken<ArrayList<L3CpStaticRouteCreateDeleteRequestBody>>() {

@@ -35,7 +35,7 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeForUserEntity;
 import msf.mfcfc.node.nodes.spines.data.entity.SpineNodeEntity;
 
 /**
- * Implementation class for node information list acquisition.
+ * Implementation class for the node information list acquisition.
  *
  * @author NTT
  *

@@ -18,7 +18,7 @@ public class CorsRequestFilter implements ContainerRequestFilter {
   private static final String HTTP_METHOD_OPTIONS = "OPTIONS";
 
   /**
-   * Implementation of JAX-RS request filter. Return as HTTP 200 OK without
+   * Implementation of the JAX-RS request filter. Returns HTTP 200 OK without
    * processing scenario when HTTP method is OPTIONS.
    */
   @Override

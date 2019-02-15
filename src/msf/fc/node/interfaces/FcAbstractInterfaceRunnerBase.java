@@ -17,8 +17,8 @@ import msf.mfcfc.node.interfaces.AbstractInterfaceRunnerBase;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 
 /**
- * Abstract class to implement the common process of interface-related
- * asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of the interface-related
+ * asynchronous processing in the configuration management function.
  *
  * @author NTT
  *
@@ -48,7 +48,7 @@ public abstract class FcAbstractInterfaceRunnerBase extends AbstractInterfaceRun
       if (fcPhysicalIf == null) {
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = physicalIf");
+            "target resource is not found. parameters = physicalIf");
       }
       if ((!fcPhysicalIf.getClusterLinkIfs().isEmpty()) || (!fcPhysicalIf.getInternalLinkIfs().isEmpty())
           || (!fcPhysicalIf.getEdgePoints().isEmpty())) {
@@ -71,7 +71,7 @@ public abstract class FcAbstractInterfaceRunnerBase extends AbstractInterfaceRun
       if (fcBreakoutIf == null) {
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = breakoutIf");
+            "target resource is not found. parameters = breakoutIf");
       }
       if ((!fcBreakoutIf.getClusterLinkIfs().isEmpty()) || (!fcBreakoutIf.getInternalLinkIfs().isEmpty())
           || (!fcBreakoutIf.getEdgePoints().isEmpty())) {

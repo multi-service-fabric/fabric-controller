@@ -4,8 +4,8 @@ package msf.mfcfc.node.clusters;
 import msf.mfcfc.core.scenario.AbstractAsyncRunner;
 
 /**
- * Abstract class to implement the common process of SW cluster-related
- * asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of the SW cluster-related
+ * asynchronous processing in the configuration management function.
  *
  * @author NTT
  *

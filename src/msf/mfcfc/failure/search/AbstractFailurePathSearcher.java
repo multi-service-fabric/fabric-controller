@@ -28,8 +28,8 @@ import msf.mfcfc.failure.status.data.entity.FailureStatusSliceFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 
 /**
- * Base class for the failure path identification process in failure management
- * function
+ * Base class for the failure path identification process in the failure
+ * management function
  *
  */
 public abstract class AbstractFailurePathSearcher {

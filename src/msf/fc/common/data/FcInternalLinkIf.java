@@ -30,6 +30,9 @@ public class FcInternalLinkIf implements Serializable {
   @Column(name = "internal_link_if_id")
   private Integer internalLinkIfId;
 
+  @Column(name = "igp_cost")
+  private Integer igpCost;
+
   @Column(name = "traffic_threshold")
   private Double trafficThreshold;
 
@@ -61,6 +64,14 @@ public class FcInternalLinkIf implements Serializable {
 
   public void setInternalLinkIfId(Integer internalLinkIfId) {
     this.internalLinkIfId = internalLinkIfId;
+  }
+
+  public Integer getIgpCost() {
+    return this.igpCost;
+  }
+
+  public void setIgpCost(Integer igpCost) {
+    this.igpCost = igpCost;
   }
 
   public Double getTrafficThreshold() {

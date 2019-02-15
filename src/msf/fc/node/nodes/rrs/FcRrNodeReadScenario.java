@@ -18,7 +18,7 @@ import msf.mfcfc.node.nodes.rrs.data.RrNodeReadOwnerResponseBody;
 import msf.mfcfc.node.nodes.rrs.data.RrNodeRequest;
 
 /**
- * Implementation class for RR node information acquisition.
+ * Implementation class for the RR node information acquisition.
  *
  * @author NTT
  *
@@ -104,7 +104,7 @@ public class FcRrNodeReadScenario extends FcAbstractRrNodeScenarioBase<RrNodeReq
         }
       }
 
-      throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = rr");
+      throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = rr");
     } finally {
       logger.methodEnd();
     }

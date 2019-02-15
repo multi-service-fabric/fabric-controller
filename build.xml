@@ -55,10 +55,93 @@
     </jar>
   </target>
 
+	<target name="makeExtensionsConfig" depends="build">
+		<delete file="./conf/services/sys/fc_extensions.cnf"/>
+		<delete dir="./conf/services/sys"/>
+		<mkdir dir="./conf/services"/>
+		<mkdir dir="./conf/services/sys"/>
+		<mkdir dir="./.work" />
+		<exec executable="jar" output="./.work/${ant.project.name}.txt" >
+			<arg line="-tf ./lib/${ant.project.name}.jar"/>
+		</exec>
+		<copy file="./.work/${ant.project.name}.txt" tofile="./.work/${ant.project.name}_extensions.txt">
+			<filterchain>
+				<linecontainsregexp>
+					<regexp pattern="^.*\/fc\/services\/.*\/.*Manager\.class"/>
+				</linecontainsregexp>
+			</filterchain>
+		</copy>
+		<replace file="./.work/${ant.project.name}_extensions.txt">
+		   <replacefilter token="/" value="." />
+		   <replacefilter token=".class" value="" />
+		</replace>
+		<copy file="./.work/${ant.project.name}_extensions.txt" tofile="./.work/${ant.project.name}_extensions2.txt" overwrite="true">
+			<filterchain>
+				<tokenfilter>
+			    	<ignoreblank/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<copy file="./.work/${ant.project.name}_extensions2.txt" tofile="./.work/${ant.project.name}_extensions.txt" overwrite="true" />
 
-  <target description="make release file." depends="build" name="release">
+		<length file="./.work/${ant.project.name}_extensions.txt" property="extensions.len"/>
+		<condition property="isExtensions">
+			<not>
+				<equals arg1="0" arg2="${extensions.len}" />
+			</not>
+		</condition>
+		<antcall target = "extensionFunctionAndUp"/>
+		<antcall target = "exetensionFunctionZero"/>
+		<delete dir="./.work"/>
+	</target>
+
+	<target name="extensionFunctionAndUp" if="isExtensions" >
+		<copy file="./fc_extensionsbase.txt" tofile="./.work/${ant.project.name}_unmatch.txt" overwrite="true" />
+		<replace file="./.work/${ant.project.name}_unmatch.txt"
+			replacefilterfile="./.work/${ant.project.name}_extensions.txt" >
+		</replace>
+		<copy file="./.work/${ant.project.name}_unmatch.txt" tofile="./.work/${ant.project.name}_unmatch2.txt" overwrite="true">
+			<filterchain>
+				<tokenfilter>
+			    	<ignoreblank/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+		<copy file="./.work/${ant.project.name}_unmatch2.txt" tofile="./.work/${ant.project.name}_unmatch.txt" overwrite="true" />
+		<length file="./.work/${ant.project.name}_unmatch.txt" property="unmatch.len" length="0" when="ne" />
+		<condition property="isUnmatch">
+			<not>
+				<equals arg1="0" arg2="${unmatch.len}" />
+			</not>
+		</condition>
+		<antcall target = "noneExtensionFunctionAndUp"/>
+		<antcall target = "noneExtensionFunctionZero"/>
+	</target>
+
+	<target name="exetensionFunctionZero" unless="isExtensions" >
+		<copy file="./.work/${ant.project.name}_extensions.txt" tofile="./conf/services/sys/fc_extensions.cnf" overwrite="true" />
+	</target>
+
+	<target name="noneExtensionFunctionAndUp" if="isUnmatch" >
+		<copy file="./fc_extensionsbase.txt" tofile="./.work/${ant.project.name}_match.txt" overwrite="true" />
+		<replace file="./.work/${ant.project.name}_match.txt"
+			replacefilterfile="./.work/${ant.project.name}_unmatch.txt" />
+		<copy file="./.work/${ant.project.name}_match.txt" tofile="./conf/services/sys/fc_extensions.cnf" overwrite="true">
+			<filterchain>
+				<tokenfilter>
+			    	<ignoreblank/>
+				</tokenfilter>
+			</filterchain>
+		</copy>
+	</target>
+
+	<target name="noneExtensionFunctionZero" unless="isUnmatch" >
+		<copy file="./fc_extensionsbase.txt" tofile="./conf/services/sys/fc_extensions.cnf" overwrite="true" />
+	</target>
+
+  <target description="make release file." depends="makeExtensionsConfig" name="release">
     <tar destfile="release/msf-controller.tar">
-      <tarfileset file="./lib/${ant.project.name}.jar" prefix="lib" />
+      <tarfileset dir="./lib" includes="**/*" prefix="lib" />
       <tarfileset dir="./script" includes="**/*" prefix="bin" />
       <tarfileset dir="./conf" includes="**/*" prefix="conf" />
       <tarfileset dir="./sql" includes="**/*" prefix="sql" />

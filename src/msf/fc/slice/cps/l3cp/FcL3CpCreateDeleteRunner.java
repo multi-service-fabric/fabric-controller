@@ -24,7 +24,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpValueEntity;
 
 /**
- * Class to implement the asynchronous processing in L3CP addition.
+ * Class to implement the asynchronous processing in the L3CP addition.
  *
  * @author NTT
  *
@@ -45,9 +45,9 @@ public class FcL3CpCreateDeleteRunner extends FcAbstractL3CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L3CP control
+   *          Request for the L3CP control
    * @param requestBody
-   *          Request body for L3CP addition
+   *          Request body for the L3CP addition
    */
   public FcL3CpCreateDeleteRunner(L3CpRequest request, List<L3CpCreateDeleteRequestBody> requestBody) {
     this.request = request;

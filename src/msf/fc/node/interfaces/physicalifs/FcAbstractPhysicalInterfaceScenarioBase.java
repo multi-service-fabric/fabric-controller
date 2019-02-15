@@ -11,14 +11,14 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.db.SessionWrapper;
 
 /**
- * Abstract class to implement the common process of physical interface-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of the physical
+ * interface-related processing in the configuration management function.
  *
  *
  * @author NTT
  *
  * @param <T>
- *          REST request base class
+ *          Base class for REST request
  */
 public abstract class FcAbstractPhysicalInterfaceScenarioBase<T extends RestRequestBase>
     extends FcAbstractInterfaceScenarioBase<T> {
@@ -33,7 +33,7 @@ public abstract class FcAbstractPhysicalInterfaceScenarioBase<T extends RestRequ
       if (fcPhysicalIf == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = physicalIf");
+            "target resource is not found. parameters = physicalIf");
       }
       return fcPhysicalIf;
     } finally {

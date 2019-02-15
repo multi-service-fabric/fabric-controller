@@ -18,7 +18,7 @@ import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Class to implement the asynchronous processing in L2CP deletion.
+ * Class to implement the asynchronous processing in the L2CP deletion.
  *
  * @author NTT
  *
@@ -32,7 +32,7 @@ public class FcL2CpDeleteRunner extends FcAbstractL2CpRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L2CP control
+   *          Request for the L2CP control
    */
   public FcL2CpDeleteRunner(L2CpRequest request) {
     this.request = request;
@@ -65,8 +65,7 @@ public class FcL2CpDeleteRunner extends FcAbstractL2CpRunnerBase {
 
       processDeleteL2Cp(sessionWrapper, l2CpAfterLock, nodeAfterLock);
 
-      String requestJson = makeDeleteUpdateL2VlanIfData(deleteVlanIfEntityList, updateVlanIfEntityList,
-          String.valueOf(l2Slice.getVrfId()));
+      String requestJson = makeDeleteUpdateL2VlanIfData(deleteVlanIfEntityList, updateVlanIfEntityList, l2Slice);
 
       RestResponseBase restResponse = sendRequestToEc(requestJson, EcRequestUri.OPERATION_REQUEST, (String[]) null);
 

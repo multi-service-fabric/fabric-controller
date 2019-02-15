@@ -29,6 +29,9 @@ public class NodeInternalLinkIfInnerEntity {
   @SerializedName("prefix")
   private Integer prefix;
 
+  @SerializedName("cost")
+  private Integer cost;
+
   public String getIfType() {
     return ifType;
   }
@@ -75,6 +78,14 @@ public class NodeInternalLinkIfInnerEntity {
 
   public void setPrefix(Integer prefix) {
     this.prefix = prefix;
+  }
+
+  public Integer getCost() {
+    return cost;
+  }
+
+  public void setCost(Integer cost) {
+    this.cost = cost;
   }
 
   public InterfaceType getIfTypeEnum() {

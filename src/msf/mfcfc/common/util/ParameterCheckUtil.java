@@ -41,15 +41,15 @@ public class ParameterCheckUtil {
 
   public static final String URI_PATTERN_MATCHER = "(" + URI_PATTERN + ")";
 
-  private static final Pattern idSpecifiedByUriPattern = Pattern.compile("^" + URI_PATTERN + "$");
+  private static final Pattern ID_SPECIFIED_BY_URI_PATTERN = Pattern.compile("^" + URI_PATTERN + "$");
 
-  private static final Pattern numericIdPattern = Pattern.compile("^[1-9][0-9]*$");
+  private static final Pattern NUMERIC_ID_PATTERN = Pattern.compile("^[1-9][0-9]*$");
 
-  private static final Pattern macAddressPattern = Pattern.compile("^([0-9A-Fa-f]{2}[:]){5}[0-9A-Fa-f]{2}$");
+  private static final Pattern MAC_ADDRESS_PATTERN = Pattern.compile("^([0-9A-Fa-f]{2}[:]){5}[0-9A-Fa-f]{2}$");
 
-  private static final Pattern clusterIdPattern = Pattern.compile("^[1-9][0-9]*(\\+[1-9][0-9]*)*$");
+  private static final Pattern CLUSTER_ID_PATTERN = Pattern.compile("^[1-9][0-9]*(\\+[1-9][0-9]*)*$");
 
-  private static final Pattern pathParameterPattern = Pattern.compile("^/(.*)$");
+  private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("^/(.*)$");
 
   private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
 
@@ -68,7 +68,6 @@ public class ParameterCheckUtil {
       logger.methodStart(new String[] { "checkTarget" }, new Object[] { checkTarget });
       if (checkTarget == null) {
         String logMsg = "specified parameter is null";
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -92,7 +91,6 @@ public class ParameterCheckUtil {
       checkNotNull(checkTargetStr);
       if (checkTargetStr.length() == 0) {
         String logMsg = "specified string parameter length is 0.";
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -116,7 +114,6 @@ public class ParameterCheckUtil {
       checkNotNull(checkTargetList);
       if (checkTargetList.size() == 0) {
         String logMsg = "specified list parameter length is 0.";
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -137,9 +134,8 @@ public class ParameterCheckUtil {
     try {
       logger.methodStart(new String[] { "checkTargetId" }, new Object[] { checkTargetId });
       checkNotNull(checkTargetId);
-      if (!idSpecifiedByUriPattern.matcher(checkTargetId).matches()) {
+      if (!ID_SPECIFIED_BY_URI_PATTERN.matcher(checkTargetId).matches()) {
         String logMsg = MessageFormat.format("id format invalid. checkTargetId = {0}", checkTargetId);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -163,14 +159,12 @@ public class ParameterCheckUtil {
 
       if (errorCode == null) {
         String logMsg = "errorCode is required.";
-        logger.error(logMsg);
         throw new IllegalArgumentException(logMsg);
       }
 
       checkNotNullAndLength(checkTargetId);
-      if (!numericIdPattern.matcher(checkTargetId).matches()) {
+      if (!NUMERIC_ID_PATTERN.matcher(checkTargetId).matches()) {
         String logMsg = MessageFormat.format("id format invalid. checkTargetId = {0}", checkTargetId);
-        logger.error(logMsg);
         throw new MsfException(errorCode, logMsg);
       }
     } finally {
@@ -196,10 +190,9 @@ public class ParameterCheckUtil {
       logger.methodStart(new String[] { "checkTargetMacAddress" }, new Object[] { checkTargetMacAddress });
 
       checkNotNullAndLength(checkTargetMacAddress);
-      if (!macAddressPattern.matcher(checkTargetMacAddress).matches()) {
+      if (!MAC_ADDRESS_PATTERN.matcher(checkTargetMacAddress).matches()) {
         String logMsg = MessageFormat.format("mac address format invalid.checkTargetMacAddress = {0}",
             checkTargetMacAddress);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
 
@@ -233,7 +226,6 @@ public class ParameterCheckUtil {
       return modifiedIpAddress;
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("checkTargetIpAddress = {0}", checkTargetIpAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -264,7 +256,6 @@ public class ParameterCheckUtil {
       if (!(inetAddress instanceof Inet4Address)) {
         String logMsg = MessageFormat.format("target ipaddress is not IPv4. checkTargetIpAddress = {0}",
             checkTargetIpAddress);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
       String modifiedIpAddress = inetAddress.getHostAddress();
@@ -272,7 +263,6 @@ public class ParameterCheckUtil {
       return modifiedIpAddress;
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("ip address is invalid. checkTargetIpAddress = {0}", checkTargetIpAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -303,7 +293,6 @@ public class ParameterCheckUtil {
       if (!(inetAddress instanceof Inet6Address)) {
         String logMsg = MessageFormat.format("target ipaddress is not IPv6. checkTargetIpAddress = {0}",
             checkTargetIpAddress);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
       String modifiedIpAddress = inetAddress.getHostAddress();
@@ -311,7 +300,6 @@ public class ParameterCheckUtil {
       return modifiedIpAddress;
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("ip address is invalid. checkTargetIpAddress = {0}", checkTargetIpAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -349,7 +337,6 @@ public class ParameterCheckUtil {
 
     } catch (ParseException exp) {
       String logMsg = MessageFormat.format("date format invalid. checkTargetDatetime = {0}", checkTargetDatetime);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -381,7 +368,6 @@ public class ParameterCheckUtil {
 
         if (checkTargetNumber < minValue) {
           String logMsg = MessageFormat.format("value {0} is less than threshold {1}", checkTargetNumber, minValue);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_OUT_OF_RANGE, logMsg);
         }
       }
@@ -389,7 +375,6 @@ public class ParameterCheckUtil {
 
         if (checkTargetNumber > maxValue) {
           String logMsg = MessageFormat.format("value {0} is greater than threshold {1}", checkTargetNumber, maxValue);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_OUT_OF_RANGE, logMsg);
         }
       }
@@ -416,9 +401,8 @@ public class ParameterCheckUtil {
       logger.methodStart(new String[] { "targetResource", "keys", "values" },
           new Object[] { targetResource, keys, values });
       if (targetResource == null) {
-        String logMsg = MessageFormat.format("target resource not found. parameters = {0}",
+        String logMsg = MessageFormat.format("target resource is not found. parameters = {0}",
             makeValuesMessage(keys, values));
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
 
@@ -448,7 +432,6 @@ public class ParameterCheckUtil {
       if (relatedResource == null) {
         String logMsg = MessageFormat.format("related resource not found. parameters = {0}",
             makeValuesMessage(keys, values));
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, logMsg);
       }
 
@@ -471,7 +454,6 @@ public class ParameterCheckUtil {
       checkNumberRange(Integer.valueOf(portStr), 0, 65535);
     } catch (NumberFormatException ex) {
       String logMsg = MessageFormat.format("value {0} is not a number.", portStr);
-      logger.error(logMsg);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_OUT_OF_RANGE, logMsg);
     } finally {
       logger.methodEnd();
@@ -499,7 +481,6 @@ public class ParameterCheckUtil {
     }
     if (existAdd && existRemove) {
       String logMsg = "patch operation 'add' and 'remove' are mixed.";
-      logger.error(logMsg);
       throw new MsfException(ErrorCode.PARAMETER_FORMAT_ERROR, logMsg);
     }
   }
@@ -538,7 +519,6 @@ public class ParameterCheckUtil {
       LogType logtypeEnum = LogType.getEnumFromMessage(logType);
       if (logtypeEnum == null) {
         String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "log_type", logType);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -563,7 +543,6 @@ public class ParameterCheckUtil {
         LogLevel loglevelEnum = LogLevel.getEnumFromMessage(level);
         if (loglevelEnum == null) {
           String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "log_level", logLevel);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
         }
       }
@@ -590,7 +569,6 @@ public class ParameterCheckUtil {
         if (controllerEnum == null) {
           String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "controller",
               controllerType);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
         }
       }
@@ -613,7 +591,6 @@ public class ParameterCheckUtil {
       MergeType mergetypeEnum = MergeType.getEnumFromMessage(mergeType);
       if (mergetypeEnum == null) {
         String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "merge_type", mergeType);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
     } finally {
@@ -636,9 +613,8 @@ public class ParameterCheckUtil {
       logger.methodStart(new String[] { "cluster" }, new Object[] { cluster });
       List<String> clusters = Arrays.asList(cluster.split("\\+", 0));
       for (String id : clusters) {
-        if (!clusterIdPattern.matcher(id).matches()) {
+        if (!CLUSTER_ID_PATTERN.matcher(id).matches()) {
           String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
         }
       }
@@ -668,7 +644,6 @@ public class ParameterCheckUtil {
 
       if (!clusters.contains(String.valueOf(clusterId))) {
         String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, logMsg);
       }
     } finally {
@@ -692,9 +667,8 @@ public class ParameterCheckUtil {
       List<String> clusters = Arrays.asList(cluster.split("\\+", 0));
 
       for (String id : clusters) {
-        if (!clusterIdPattern.matcher(id).matches()) {
+        if (!CLUSTER_ID_PATTERN.matcher(id).matches()) {
           String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "cluster", cluster);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
         }
       }
@@ -720,7 +694,6 @@ public class ParameterCheckUtil {
       formatDate.parse(date);
     } catch (ParseException parseException) {
       String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "date", date);
-      logger.error(logMsg);
       throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -731,7 +704,7 @@ public class ParameterCheckUtil {
    * Method for checking the acquired information of status acquisition.
    *
    * @param getInfo
-   *          Information type to acquire
+   *          Acquired information
    * @throws MsfException
    *           If parameter check is of NG
    */
@@ -744,7 +717,6 @@ public class ParameterCheckUtil {
         GetInfo getInfoEnum = GetInfo.getEnumFromMessage(info);
         if (getInfoEnum == null) {
           String logMsg = MessageFormat.format("param is undefined.param = {0}, value = {1}", "controller", getInfo);
-          logger.error(logMsg);
           throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
         }
       }
@@ -772,7 +744,7 @@ public class ParameterCheckUtil {
       logger.methodStart();
       checkNotNull(checkTargetPath);
 
-      Matcher matcher = pathParameterPattern.matcher(checkTargetPath);
+      Matcher matcher = PATH_PARAMETER_PATTERN.matcher(checkTargetPath);
       if (matcher.matches()) {
 
         String checkTargetId = matcher.group(1);
@@ -780,7 +752,6 @@ public class ParameterCheckUtil {
 
           if (requiredId) {
             String logMsg = MessageFormat.format("path format invalid. checkTargetPath = {0}", checkTargetPath);
-            logger.error(logMsg);
             throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
           }
         } else {
@@ -789,7 +760,6 @@ public class ParameterCheckUtil {
         }
       } else {
         String logMsg = MessageFormat.format("path format invalid. checkTargetPath = {0}", checkTargetPath);
-        logger.error(logMsg);
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
       }
 
@@ -797,4 +767,36 @@ public class ParameterCheckUtil {
       logger.methodEnd();
     }
   }
+
+  /**
+   * Check parameters for the response notification of asynchronous
+   * completion.<br>
+   * This method performs only the check process when the target parameters
+   * contain values.<br>
+   * Whether a completion notification will be sent or not is determined by the
+   * scenario by checking target parameters.
+   *
+   * @param checkTargetIpAddress
+   *          IPv4 address string to check
+   * @param checkTargetPort
+   *          Port number to check (string)
+   * @throws MsfException
+   *           If parameter check is of NG
+   */
+  public static void checkNotificationAddressAndPort(String checkTargetIpAddress, String checkTargetPort)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "checkTargetIpAddress", "checkTargetPort" },
+          new Object[] { checkTargetIpAddress, checkTargetPort });
+      if (checkTargetIpAddress != null) {
+        ParameterCheckUtil.checkIpv4Address(checkTargetIpAddress);
+      }
+      if (checkTargetPort != null) {
+        ParameterCheckUtil.checkPortNumber(checkTargetPort);
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
 }

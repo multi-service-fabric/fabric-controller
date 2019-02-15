@@ -55,7 +55,7 @@ public class SystemStatusManager {
   }
 
   /**
-   * Return the system status held on memory.
+   * Returns the system status held on memory.
    *
    * @return system status
    */

@@ -3,8 +3,9 @@ package msf.fc.node.nodes.spines;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.ErrorCode;
-import msf.mfcfc.common.constant.HttpMethod;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SynchronousType;
@@ -18,7 +19,7 @@ import msf.mfcfc.node.nodes.spines.data.SpineNodeDeleteResponseBody;
 import msf.mfcfc.node.nodes.spines.data.SpineNodeRequest;
 
 /**
- * Implementation class for Spine node deletion.
+ * Implementation class for the Spine node deletion.
  *
  * @author NTT
  *
@@ -57,8 +58,8 @@ public class FcSpineNodeDeleteScenario extends FcAbstractSpineNodeScenarioBase<S
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       this.request = request;
 
@@ -77,8 +78,15 @@ public class FcSpineNodeDeleteScenario extends FcAbstractSpineNodeScenarioBase<S
       try {
         sessionWrapper.openSession();
 
-        boolean isCreateNodeCancelled = checkForExecNodeInfo(sessionWrapper, HttpMethod.DELETE, request.getClusterId(),
-            NodeType.SPINE, request.getNodeId());
+        boolean isCreateNodeCancelled = false;
+
+        boolean hasChangeNodeOperationStatus = FcNodeOperationInfoDao
+            .hasChangeNodeOperationStatus(NodeOperationStatus.RUNNING.getCode());
+        if (!hasChangeNodeOperationStatus) {
+
+          isCreateNodeCancelled = checkForCancelExecNodeInfo(sessionWrapper, request.getClusterId(), NodeType.SPINE,
+              request.getNodeId());
+        }
 
         FcSpineNodeDeleteRunner fcSpineNodeDeleteRunner = new FcSpineNodeDeleteRunner(request, isCreateNodeCancelled);
         execAsyncRunner(fcSpineNodeDeleteRunner);

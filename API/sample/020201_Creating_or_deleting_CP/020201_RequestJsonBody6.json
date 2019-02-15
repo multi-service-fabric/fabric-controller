@@ -1,0 +1,36 @@
+[
+    {
+        "op": "add",
+        "path": "/1",
+        "value": {
+            "cluster_id": "1",
+            "edge_point_id": "13",
+            "vlan_id": 101,
+            "mtu" : "1500",
+            "ipv4_address" : "100.100.0.250",
+            "ipv4_prefix" : "24",
+            "vrrp" : {
+                "group_id" : "1",
+                "role" : "master",
+                "virtual_ipv4_address" : "100.100.0.254"
+            }
+        }
+    },
+    {
+        "op": "add",
+        "path": "/2",
+        "value": {
+            "cluster_id": "1",
+            "edge_point_id": "14",
+            "vlan_id": 101,
+            "mtu" : "1500",
+            "ipv4_address" : "100.101.0.250",
+            "ipv4_prefix" : "24",
+            "vrrp" : {
+                "group_id" : "2",
+                "role" : "master",
+                "virtual_ipv4_address" : "100.101.0.254"
+            }
+        }
+    }
+]

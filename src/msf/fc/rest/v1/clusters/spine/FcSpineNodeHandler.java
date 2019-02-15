@@ -43,7 +43,7 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
    * @param notificationPort
    *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @POST
@@ -81,7 +81,7 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
    * @param format
    *          Information type to acquire (optional parameter)
    * @param userType
-   *          User type (optional parameter)
+   *          User type (URI parameter)
    * @return response data
    */
   @GET
@@ -117,7 +117,7 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID
    * @param userType
-   *          User type (optional parameter)
+   *          User type (URI parameter)
    * @return response data
    */
   @GET

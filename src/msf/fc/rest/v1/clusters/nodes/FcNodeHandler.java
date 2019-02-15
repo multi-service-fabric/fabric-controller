@@ -36,7 +36,7 @@ public class FcNodeHandler extends AbstractRestHandler {
    * @param format
    *          Information type to acquire (optional parameter)
    * @param userType
-   *          User type (optional parameter)
+   *          User type (URI parameter)
    * @return response data
    */
   @GET

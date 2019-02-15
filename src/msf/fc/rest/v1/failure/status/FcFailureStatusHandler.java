@@ -17,7 +17,7 @@ import msf.mfcfc.failure.status.data.FailureStatusRequest;
 import msf.mfcfc.rest.common.AbstractRestHandler;
 
 /**
- * REST request handler class of failure management function.
+ * REST request handler class of the failure management function.
  *
  * @author NTT
  *

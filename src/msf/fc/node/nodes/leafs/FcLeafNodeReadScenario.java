@@ -22,7 +22,7 @@ import msf.mfcfc.node.nodes.leafs.data.LeafNodeReadResponseBody;
 import msf.mfcfc.node.nodes.leafs.data.LeafNodeRequest;
 
 /**
- * Implementation class for Leaf node information acquisition.
+ * Implementation class for the Leaf node information acquisition.
  *
  * @author NTT
  *

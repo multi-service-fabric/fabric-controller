@@ -25,8 +25,8 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceCreateResponseBody;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceCreateResponseBody;
 
 /**
- * Abstract class to implement the common process of L2 / L3 slice-related
- * processing in slice management function.
+ * Abstract class to implement the common process of the L2/L3 slice-related
+ * processing in the slice management function.
  *
  * @author NTT
  *
@@ -36,6 +36,8 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceCreateResponseBody;
 public abstract class AbstractSliceScenarioBase<T extends RestRequestBase> extends AbstractScenario<T> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(AbstractSliceScenarioBase.class);
+
+  private static final int SYMMETRIC_IRB_L3VNI_BASE = 20000;
 
   protected void checkSliceMaxNum(int sliceNum, SliceType sliceType) throws MsfException {
     try {
@@ -268,4 +270,48 @@ public abstract class AbstractSliceScenarioBase<T extends RestRequestBase> exten
     RestResponseBase restResponse = new RestResponseBase(HttpStatus.NO_CONTENT_204, (String) null);
     return restResponse;
   }
+
+  protected int getL3Vni(int vrfId) {
+    try {
+      logger.methodStart(new String[] { "vrfId" }, new Object[] { vrfId });
+      return SYMMETRIC_IRB_L3VNI_BASE + vrfId;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected int getVlanIdForL3Vni(SessionWrapper sessionWrapper, Set<Integer> vlanIdSet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "vlanIdSet" }, new Object[] { vlanIdSet });
+
+      int startPos = ConfigManager.getInstance().getL3VniVlanIdStartPos();
+      int endPos = ConfigManager.getInstance().getL3VniVlanIdEndPos();
+
+      for (int i = startPos; i <= endPos; i++) {
+        if (!vlanIdSet.contains(i)) {
+
+          return i;
+        }
+      }
+
+      String logMsg = MessageFormat.format("could not be assigned vlan id for l3vi. startPos = {0}, endPos = {1}",
+          startPos, endPos);
+      logger.error(logMsg);
+      throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected int getNextVni(SessionWrapper sessionWrapper, Set<Integer> vniSet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "vniSet" }, new Object[] { vniSet });
+      int vniId = getNextVrfId(sessionWrapper, vniSet, SliceType.L2_SLICE);
+      return vniId;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
 }

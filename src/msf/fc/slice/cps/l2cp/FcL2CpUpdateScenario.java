@@ -66,8 +66,8 @@ public class FcL2CpUpdateScenario extends FcAbstractL2CpScenarioBase<L2CpRequest
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       L2CpUpdateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(), L2CpUpdateRequestBody.class);
       requestBody.validate();

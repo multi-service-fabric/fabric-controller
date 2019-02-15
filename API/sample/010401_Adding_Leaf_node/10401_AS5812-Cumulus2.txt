@@ -1,0 +1,64 @@
+{
+    "node_id": "3",
+    "equipment_type_id": "2",
+    "leaf_type": "EL",
+    "host_name": "AS5812-Cumulus2",
+    "mac_address": "3c:2c:99:5e:76:92",
+    "username": "cumulus",
+    "password": "CumulusLinux!",
+    "provisioning": true,
+    "vpn_type": "l2",
+    "irb_type": "symmetric",
+    "plane": 1,
+    "snmp_community": "ntt-msf",
+    "ntp_server_address": "192.168.134.14",
+    "breakout": null,
+    "internal_links": {
+        "lag_links": [
+            {
+                "opposite_node_id": "1",
+                "local_traffic_threshold": null,
+                "opposite_traffic_threshold": null,
+                "member_ifs": [
+                    {
+                        "local": {
+                            "physical_if": {
+                                "physical_if_id": "1",
+                                "physical_if_speed": "10g"
+                            }
+                        },
+                        "opposite": {
+                            "physical_if": {
+                                "physical_if_id": "3",
+                                "physical_if_speed": "10g"
+                            }
+                        }
+                    }
+                ]
+            },
+            {
+                "opposite_node_id": "2",
+                "local_traffic_threshold": null,
+                "opposite_traffic_threshold": null,
+                "member_ifs": [
+                    {
+                        "local": {
+                            "physical_if": {
+                                "physical_if_id": "2",
+                                "physical_if_speed": "10g"
+                            }
+                        },
+                        "opposite": {
+                            "physical_if": {
+                                "physical_if_id": "3",
+                                "physical_if_speed": "10g"
+                            }
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "management_if_address": "192.168.2.12",
+    "management_if_prefix": 16
+}

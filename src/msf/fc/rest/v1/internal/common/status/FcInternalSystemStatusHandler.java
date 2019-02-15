@@ -34,7 +34,7 @@ public class FcInternalSystemStatusHandler extends AbstractRestHandler {
    * System status modification (internal).
    *
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @PUT
@@ -91,7 +91,7 @@ public class FcInternalSystemStatusHandler extends AbstractRestHandler {
    * System status notification.
    *
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    *
    * @return response data
    */

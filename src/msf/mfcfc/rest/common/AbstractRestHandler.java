@@ -13,7 +13,7 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.core.scenario.RestResponseBase;
 
 /**
- * Implementation class for REST handler common process.
+ * Implementation class for the REST handler common process.
  *
  * @author NTT
  *

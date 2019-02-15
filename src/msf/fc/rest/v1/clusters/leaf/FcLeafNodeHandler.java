@@ -43,9 +43,9 @@ public class FcLeafNodeHandler extends AbstractRestHandler {
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort
-   *          Operation completion notification node
+   *          Operation completion notification port
    * @param requestBody
-   *          Request message body
+   *          Request message (Body part)
    * @return response data
    */
   @POST

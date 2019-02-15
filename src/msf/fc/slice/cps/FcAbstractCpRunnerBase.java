@@ -18,6 +18,8 @@ import msf.fc.db.dao.slices.FcVlanIfDao;
 import msf.fc.rest.ec.core.operation.data.OperationResponseBody;
 import msf.fc.rest.ec.node.interfaces.vlan.data.VlanIfReadEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.vlan.data.VlanIfReadListEcResponseBody;
+import msf.fc.rest.ec.node.nodes.data.NodeReadEcResponseBody;
+import msf.fc.rest.ec.node.nodes.data.NodeReadListEcResponseBody;
 import msf.mfcfc.common.constant.EcEmControlStatus;
 import msf.mfcfc.common.constant.EcRequestUri;
 import msf.mfcfc.common.constant.ErrorCode;
@@ -33,8 +35,8 @@ import msf.mfcfc.rest.common.RestClient;
 import msf.mfcfc.slice.cps.AbstractCpRunnerBase;
 
 /**
- * Abstract class to implement the common process of asynchronous runner
- * processing in CP management.
+ * Abstract class to implement the common process of the asynchronous runner
+ * processing in the CP management.
  *
  * @author NTT
  *
@@ -42,6 +44,8 @@ import msf.mfcfc.slice.cps.AbstractCpRunnerBase;
 public abstract class FcAbstractCpRunnerBase extends AbstractCpRunnerBase {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractCpRunnerBase.class);
+
+  protected static final int MULTIPLY_VALUE_FOR_RD_CALCULATION_ = 1000;
 
   protected VlanIfReadEcResponseBody getVlanIf(SessionWrapper sessionWrapper, Long nodeInfoId, Integer vlanIfId)
       throws MsfException {
@@ -223,4 +227,44 @@ public abstract class FcAbstractCpRunnerBase extends AbstractCpRunnerBase {
       logger.methodEnd();
     }
   }
+
+  protected NodeReadEcResponseBody getNodeFromEc(SessionWrapper sessionWrapper, Long nodeInfoId) throws MsfException {
+    try {
+      logger.methodStart();
+      FcNodeDao nodeDao = new FcNodeDao();
+      FcNode node = nodeDao.read(sessionWrapper, nodeInfoId);
+
+      String ecNodeId = String.valueOf(node.getEcNodeId());
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.NODE_READ.getHttpMethod(),
+          EcRequestUri.NODE_READ.getUri(ecNodeId), null,
+          FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlAddress(),
+          FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort());
+      NodeReadEcResponseBody body = JsonUtil.fromJson(restResponseBase.getResponseBody(), NodeReadEcResponseBody.class,
+          ErrorCode.EC_CONTROL_ERROR);
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200, body.getErrorCode(),
+          ErrorCode.EC_CONTROL_ERROR);
+      return body;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected NodeReadListEcResponseBody getNodeListFromEc() throws MsfException {
+    try {
+      logger.methodStart();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(EcRequestUri.NODE_READ_LIST.getHttpMethod(),
+          EcRequestUri.NODE_READ_LIST.getUri(), null,
+          FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlAddress(),
+          FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort());
+      NodeReadListEcResponseBody body = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+          NodeReadListEcResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200, body.getErrorCode(),
+          ErrorCode.EC_CONTROL_ERROR);
+      return body;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
 }

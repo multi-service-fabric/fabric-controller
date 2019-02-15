@@ -42,6 +42,9 @@ public class FcSwCluster implements Serializable {
   @Column(name = "inchannel_start_address")
   private String inchannelStartAddress;
 
+  @Column(name = "internal_link_normal_igp_cost")
+  private Integer internalLinkNormalIgpCost;
+
   @Column(name = "leaf_start_pos")
   private Integer leafStartPos;
 
@@ -137,6 +140,14 @@ public class FcSwCluster implements Serializable {
 
   public void setInchannelStartAddress(String inchannelStartAddress) {
     this.inchannelStartAddress = inchannelStartAddress;
+  }
+
+  public Integer getInternalLinkNormalIgpCost() {
+    return this.internalLinkNormalIgpCost;
+  }
+
+  public void setInternalLinkNormalIgpCost(Integer internalLinkNormalIgpCost) {
+    this.internalLinkNormalIgpCost = internalLinkNormalIgpCost;
   }
 
   public Integer getLeafStartPos() {

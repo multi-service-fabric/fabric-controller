@@ -27,9 +27,9 @@ public class MsfLogger {
   }
 
   /**
-   * Return the instance.
+   * Returns the instance.
    * <p>
-   * Return the log management class instance for the specified class in
+   * Returns the log management class instance for the specified class in the
    * argument.
    * </p>
    *
@@ -88,7 +88,7 @@ public class MsfLogger {
    * Execute FATAL log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.fatal("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -96,7 +96,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String fatal(String patternMessage, Object... args) {
@@ -107,7 +107,7 @@ public class MsfLogger {
    * Execute FATAL log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.fatal("input1={0}, input2={1}.", ex, input1, input2);
@@ -121,7 +121,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Output exception information
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String fatal(String patternMessage, Throwable exception, Object... args) {
@@ -170,7 +170,7 @@ public class MsfLogger {
    * Execute ERROR log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.error("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -178,7 +178,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String error(String patternMessage, Object... args) {
@@ -189,7 +189,7 @@ public class MsfLogger {
    * Execute ERROR log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.error("input1={0}, input2={1}.", ex, input1, input2);
@@ -203,7 +203,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable argument
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String error(String patternMessage, Throwable exception, Object... args) {
@@ -251,7 +251,7 @@ public class MsfLogger {
    * Execute WARN log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.warn("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -259,7 +259,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable argument
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String warn(String patternMessage, Object... args) {
@@ -270,7 +270,7 @@ public class MsfLogger {
    * Execute WARN log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.warn("input1={0}, input2={1}.", ex, input1, input2);
@@ -284,7 +284,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String warn(String patternMessage, Throwable exception, Object... args) {
@@ -332,7 +332,7 @@ public class MsfLogger {
    * Execute INFO log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.info("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -340,7 +340,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String info(String patternMessage, Object... args) {
@@ -351,7 +351,7 @@ public class MsfLogger {
    * Execute INFO log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.info("input1={0}, input2={1}.", ex, input1, input2);
@@ -365,7 +365,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String info(String patternMessage, Throwable exception, Object... args) {
@@ -414,7 +414,7 @@ public class MsfLogger {
    * Execute PERFORMANCE log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.performance("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -422,7 +422,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String performance(String patternMessage, Object... args) {
@@ -433,7 +433,7 @@ public class MsfLogger {
    * Execute PERFORMANCE log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.performace("input1={0}, input2={1}.", ex, input1, input2);
@@ -447,7 +447,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String performance(String patternMessage, Throwable exception, Object... args) {
@@ -496,7 +496,7 @@ public class MsfLogger {
    * Execute DEBUG log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.debug("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -504,7 +504,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String debug(String patternMessage, Object... args) {
@@ -515,7 +515,7 @@ public class MsfLogger {
    * Execute DEBUG log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.debug("input1={0}, input2={1}.", ex, input1, input2);
@@ -529,7 +529,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String debug(String patternMessage, Throwable exception, Object... args) {
@@ -578,7 +578,7 @@ public class MsfLogger {
    * Execute TRACE log output.
    *
    * <pre>
-   * Output the Object contents of variable argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments against the formatter string passed in the first argument. Setting null is available to Object.
    *
    * Example) logger.trace("input1={0}, input2={1}.", input1, input2); -> $ input1=abc, input2=null.
    * </pre>
@@ -586,7 +586,7 @@ public class MsfLogger {
    * @param patternMessage
    *          Format specified log contents to be output
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter
    */
   public String trace(String patternMessage, Object... args) {
@@ -597,7 +597,7 @@ public class MsfLogger {
    * Execute TRACE log output.
    *
    * <pre>
-   * Output the Object contents of variable argument following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
+   * Output the Object contents of variable arguments following the third argument against the formatter string passed in the first argument. Setting null is available to Object.
    * Output the contents of printStackTrace against Throwable passed in the second argument.
    *
    * Example) logger.trace("input1={0}, input2={1}.", ex, input1, input2);
@@ -611,7 +611,7 @@ public class MsfLogger {
    * @param exception
    *          Output exception information
    * @param args
-   *          Variable parameter
+   *          Variable arguments
    * @return post-format string with formatter (Throwable won't be set)
    */
   public String trace(String patternMessage, Throwable exception, Object... args) {
@@ -657,7 +657,7 @@ public class MsfLogger {
    * Execute the method start log output (DEBUG level).
    *
    * <pre>
-   * Output the caller method name and string specified in argument.
+   * Output the called method name and string specified in argument.
    *
    * Example) logger.methodStart("your message."); -> $ Start yourCallerMethodName. your message.
    * </pre>

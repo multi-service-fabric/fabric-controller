@@ -26,7 +26,7 @@ import msf.mfcfc.common.log.MsfLogger;
  * @author NTT
  *
  */
-public class FcConfigManager extends ConfigManager {
+public final class FcConfigManager extends ConfigManager {
 
   private static final String SYSTEM_CONFIG_NAME = "fc_system.xml";
 
@@ -64,7 +64,11 @@ public class FcConfigManager extends ConfigManager {
   }
 
   /**
-   * Get the instance of FcConfigManager.
+   * Get the instance of FcConfigManager. This method does not guarantee the
+   * uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return FcConfigManager instance
    */
@@ -118,7 +122,8 @@ public class FcConfigManager extends ConfigManager {
           systemConf.getRest().getClient().getResponseBufferSize(), systemConf.getRest().getJson().isIsPrettyPrinting(),
           systemConf.getRest().getJson().isIsSerializeNulls(), systemConf.getSlice().getL2MaxSlicesNum(),
           systemConf.getSlice().getL3MaxSlicesNum(), systemConf.getSlice().getL2SlicesMagnificationNum(),
-          systemConf.getSlice().getL3SlicesMagnificationNum(),
+          systemConf.getSlice().getL3SlicesMagnificationNum(), systemConf.getIrb().getL3VniVlanIdStartPos(),
+          systemConf.getIrb().getL3VniVlanIdEndPos(),
           developConf.getSystem().getAsyncOperation().getDataRetentionPeriod(),
           developConf.getSystem().getAsyncOperation().getMaxAsyncRunnerThreadNum(),
           developConf.getSystem().getAsyncOperation().getInvokeAllTimout(),
@@ -342,6 +347,14 @@ public class FcConfigManager extends ConfigManager {
         }
       }
 
+      if (systemConf.getIrb().getL3VniVlanIdStartPos() > systemConf.getIrb().getL3VniVlanIdEndPos()) {
+        logger.error("L3VniVlanId Start and End Pos NG : Start Pos = " + systemConf.getIrb().getL3VniVlanIdStartPos()
+            + ", End Pos = " + systemConf.getIrb().getL3VniVlanIdEndPos());
+        return false;
+      } else {
+        logger.debug("L3VniVlanId Start and End Pos OK.");
+      }
+
       return true;
     } finally {
       logger.methodEnd();
@@ -401,5 +414,4 @@ public class FcConfigManager extends ConfigManager {
   public List<String> getQosRemarkMenuList() {
     return systemConf.getQos().getRemarkMenu();
   }
-
 }

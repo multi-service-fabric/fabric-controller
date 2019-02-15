@@ -29,7 +29,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for Lag interface information list acquisition.
+ * Implementation class for the Lag interface information list acquisition.
  *
  * @author NTT
  *

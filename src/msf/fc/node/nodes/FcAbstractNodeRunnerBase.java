@@ -26,6 +26,7 @@ import msf.fc.db.dao.clusters.FcEquipmentDao;
 import msf.fc.db.dao.clusters.FcInternalLinkIfDao;
 import msf.fc.db.dao.clusters.FcLagIfDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.fc.db.dao.clusters.FcPhysicalIfDao;
 import msf.fc.db.dao.common.FcAsyncRequestsDao;
 import msf.fc.rest.ec.node.equipment.data.EquipmentReadEcResponseBody;
@@ -41,6 +42,7 @@ import msf.mfcfc.common.constant.InterfaceType;
 import msf.mfcfc.common.constant.InternalNodeType;
 import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.constant.NodeBootStatus;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeSubStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.exception.MsfException;
@@ -54,8 +56,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of node-related asynchronous
- * processing in configuration management function.
+ * Abstract class to implement the common process of the node-related
+ * asynchronous processing in the configuration management function.
  *
  * @author NTT
  *
@@ -94,7 +96,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
 
         default:
 
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter. nodeType = " + nodeType);
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter. nodeType = " + nodeType);
       }
       return ecNodeId;
     } finally {
@@ -208,7 +210,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
       if (fcPhysicalIf == null) {
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = physicalIf");
+            "target resource is not found. parameters = physicalIf");
       }
       if ((CollectionUtils.isNotEmpty(fcPhysicalIf.getClusterLinkIfs()))
           || (CollectionUtils.isNotEmpty(fcPhysicalIf.getInternalLinkIfs()))
@@ -232,7 +234,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
       if (fcBreakoutIf == null) {
 
         throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = breakoutIf");
+            "target resource is not found. parameters = breakoutIf");
       }
       if ((CollectionUtils.isNotEmpty(fcBreakoutIf.getClusterLinkIfs()))
           || (CollectionUtils.isNotEmpty(fcBreakoutIf.getInternalLinkIfs()))
@@ -265,13 +267,14 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
     try {
       logger.methodStart();
       SessionWrapper sessionWrapper = new SessionWrapper();
+      FcAsyncRequest targetAsyncRequest = null;
       try {
         sessionWrapper.openSession();
         sessionWrapper.beginTransaction();
         FcAsyncRequestsDao fcAsyncRequestsDao = new FcAsyncRequestsDao();
         List<FcAsyncRequest> readListExecNodeInfo = fcAsyncRequestsDao.readListExecNodeInfo(sessionWrapper);
 
-        FcAsyncRequest targetAsyncRequest = getTargetAsyncRequest(readListExecNodeInfo, fcNode);
+        targetAsyncRequest = getTargetAsyncRequest(readListExecNodeInfo, fcNode);
 
         switch (nodeBootStatus) {
           case FAILED:
@@ -285,7 +288,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
             break;
           default:
 
-            throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter. nodeBootStatus = " + nodeBootStatus);
+            throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter. nodeBootStatus = " + nodeBootStatus);
         }
         targetAsyncRequest.setLastUpdateTime(new Timestamp(System.currentTimeMillis()));
 
@@ -294,9 +297,9 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
 
         fcAsyncRequestsDao.update(sessionWrapper, targetAsyncRequest);
 
-        OperationManager.getInstance().releaseOperationId(targetAsyncRequest.getOperationId());
+        FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
 
-        notifyOperationResult(createOperationNotifyBody(targetAsyncRequest.getCommonEntity()));
+        OperationManager.getInstance().releaseOperationId(targetAsyncRequest.getOperationId());
 
         sessionWrapper.commit();
       } catch (MsfException msfException) {
@@ -305,6 +308,14 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
         throw msfException;
       } finally {
         sessionWrapper.closeSession();
+      }
+
+      try {
+
+        notifyOperationResult(createOperationNotifyBody(targetAsyncRequest.getCommonEntity()));
+      } catch (MsfException msfException) {
+        logger.error(msfException.getMessage(), msfException);
+        throw msfException;
       }
 
     } finally {
@@ -623,7 +634,8 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
       }
       if (deleteFcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = fcNode");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcNode");
       }
       return deleteFcNode;
     } finally {
@@ -639,7 +651,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
       if (fcEquipment == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = fcEquipment");
+            "target resource is not found. parameters = fcEquipment");
       }
       return fcEquipment;
     } finally {
@@ -647,11 +659,10 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
     }
   }
 
-  protected ArrayList<String> getPhysicalIfIds(FcEquipment fcEquipment) throws MsfException {
+  protected ArrayList<String> getPhysicalIfIds(EquipmentReadEcResponseBody sendEquipmentRead) {
     try {
-      logger.methodStart(new String[] { "fcEquipment" }, new Object[] { fcEquipment });
+      logger.methodStart(new String[] { "sendEquipmentRead" }, new Object[] { sendEquipmentRead });
       ArrayList<String> physicalIfIds = new ArrayList<>();
-      EquipmentReadEcResponseBody sendEquipmentRead = sendEquipmentRead(fcEquipment);
       for (EquipmentIfEcEntity equipmentIfEcEntity : sendEquipmentRead.getEquipment().getEquipmentIfList()) {
         physicalIfIds.add(equipmentIfEcEntity.getPhysicalIfId());
       }
@@ -662,7 +673,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
     }
   }
 
-  private EquipmentReadEcResponseBody sendEquipmentRead(FcEquipment fcEquipment) throws MsfException {
+  protected EquipmentReadEcResponseBody sendEquipmentRead(FcEquipment fcEquipment) throws MsfException {
     try {
       logger.methodStart(new String[] { "fcEquipment" }, new Object[] { fcEquipment });
 
@@ -687,12 +698,12 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
   }
 
   /**
-   * According to the error code responded from EC as specified in the argument,
-   * get the error code of control error from Enum class.
+   * Get an error code of the occurred control error from enumerated values
+   * corresponding to the error code string responded from the specified EC.
    *
    * @param ecErrorCode
    *          Error code responded from EC
-   * @return EC control error enumeration value
+   * @return EC control error enumeration values
    * @throws MsfException
    *           When the error code (80XXXX) to execute rollback is responded
    *           from EC

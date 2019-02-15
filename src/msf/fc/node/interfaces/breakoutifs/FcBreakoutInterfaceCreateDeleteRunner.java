@@ -40,7 +40,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in breakout interface
+ * Class to implement the asynchronous processing in the breakout interface
  * registration/deletion.
  *
  * @author NTT
@@ -180,7 +180,7 @@ public class FcBreakoutInterfaceCreateDeleteRunner extends FcAbstractBreakoutInt
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType.getCode(), nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {
@@ -409,7 +409,7 @@ public class FcBreakoutInterfaceCreateDeleteRunner extends FcAbstractBreakoutInt
       if (fcBreakoutIf == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = breakoutIf");
+            "target resource is not found. parameters = breakoutIf");
       }
 
       if ((CollectionUtils.isNotEmpty(fcBreakoutIf.getClusterLinkIfs()))

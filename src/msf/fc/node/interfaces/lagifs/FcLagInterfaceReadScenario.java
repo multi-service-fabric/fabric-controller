@@ -20,7 +20,7 @@ import msf.mfcfc.node.interfaces.lagifs.data.LagIfReadResponseBody;
 import msf.mfcfc.node.interfaces.lagifs.data.LagIfRequest;
 
 /**
- * Implementation class for Lag interface information acquisition.
+ * Implementation class for the Lag interface information acquisition.
  *
  * @author NTT
  *
@@ -106,7 +106,8 @@ public class FcLagInterfaceReadScenario extends FcAbstractLagInterfaceScenarioBa
       FcLagIf fcLagIf = fcLagIfDao.read(sessionWrapper, nodeType, nodeId, lagIfId);
       if (fcLagIf == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = fcLagIf");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcLagIf");
       }
       return fcLagIf;
     } finally {

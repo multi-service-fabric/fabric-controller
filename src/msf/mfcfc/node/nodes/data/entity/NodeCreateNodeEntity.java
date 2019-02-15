@@ -56,6 +56,9 @@ public class NodeCreateNodeEntity {
   @SerializedName("vpn")
   private NodeVpnEntity vpn;
 
+  @SerializedName("irb_type")
+  private String irbType;
+
   @SerializedName("cluster_area")
   private String clusterArea;
 
@@ -183,6 +186,14 @@ public class NodeCreateNodeEntity {
 
   public void setVpn(NodeVpnEntity vpn) {
     this.vpn = vpn;
+  }
+
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
   }
 
   public String getClusterArea() {

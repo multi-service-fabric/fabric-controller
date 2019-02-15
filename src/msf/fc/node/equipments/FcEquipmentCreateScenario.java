@@ -17,6 +17,7 @@ import msf.fc.rest.ec.node.equipment.data.entity.EquipmentEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentEgressEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfNameRulesaEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIrbEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentQosEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentRemarkEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentShapingEcEntity;
@@ -42,7 +43,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for device model information registration.
+ * Implementation class for the device model information registration.
  *
  * @author NTT
  *
@@ -234,6 +235,13 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
       capabilities.setL2vpn(equipmentType.getCapability().getVpn().getL2());
       capabilities.setL3vpn(equipmentType.getCapability().getVpn().getL3());
       capabilities.setEvpn(equipmentType.getCapability().getVpn().getL2());
+
+      if (equipmentType.getCapability().getIrb() != null) {
+        EquipmentIrbEcEntity irb = new EquipmentIrbEcEntity();
+        irb.setAsymmetric(equipmentType.getCapability().getIrb().getAsymmetric());
+        irb.setSymmetric(equipmentType.getCapability().getIrb().getSymmetric());
+        capabilities.setIrb(irb);
+      }
       equipmentEc.setCapabilities(capabilities);
 
       EquipmentShapingEcEntity shaping = new EquipmentShapingEcEntity();
@@ -277,6 +285,17 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
         equipmentIfs.add(equipmentIf);
       }
       equipmentEc.setEquipmentIfList(equipmentIfs);
+
+      if (equipmentType.getCapability().getTraffic() != null) {
+        equipmentEc.setSameVlanNumberTrafficTotalValueFlag(
+            equipmentType.getCapability().getTraffic().getSameVlanNumberTrafficTotalValueFlag());
+        equipmentEc.setVlanTrafficCapability(equipmentType.getCapability().getTraffic().getVlanTrafficCapability());
+        equipmentEc.setVlanTrafficCounterNameMibOid(
+            equipmentType.getCapability().getTraffic().getVlanTrafficCounterNameMibOid());
+        equipmentEc.setVlanTrafficCounterValueMibOid(
+            equipmentType.getCapability().getTraffic().getVlanTrafficCounterValueMibOid());
+        equipmentEc.setCliExecPath(equipmentType.getCapability().getTraffic().getCliExecPath());
+      }
 
       return equipmentEc;
     } finally {

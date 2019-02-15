@@ -41,7 +41,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in inter-cluster link
+ * Class to implement the asynchronous processing in the inter-cluster link
  * interface registration.
  *
  * @author NTT
@@ -132,7 +132,7 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
       FcNode fcNode = fcNodeDao.read(sessionWrapper, nodeType.getCode(), nodeId);
       if (fcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
       return fcNode;
     } finally {
@@ -162,7 +162,6 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
       logger.methodStart(new String[] { "fcClusterLinkIfDao", "fcNode" }, new Object[] { fcClusterLinkIfDao, fcNode });
       FcClusterLinkIf fcClusterLinkIf = new FcClusterLinkIf();
       fcClusterLinkIf.setClusterLinkIfId(Long.valueOf(requestBody.getClusterLinkIfId()));
-      OperationAddInterClusterLinkOptionEcEntity linkAddOption = new OperationAddInterClusterLinkOptionEcEntity();
 
       OperationTargetIfEcEntity targetIf = new OperationTargetIfEcEntity();
       targetIf.setNodeId(String.valueOf(fcNode.getEcNodeId()));
@@ -192,6 +191,7 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
       }
       fcClusterLinkIf.setTrafficThreshold(requestBody.getTrafficThreshold());
 
+      OperationAddInterClusterLinkOptionEcEntity linkAddOption = new OperationAddInterClusterLinkOptionEcEntity();
       linkAddOption.setTargetIf(targetIf);
 
       OperationClusterLinkEcEntity clusterLink = new OperationClusterLinkEcEntity();
@@ -216,7 +216,8 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
       FcLagIf fcLagIf = fcLagIfDao.read(sessionWrapper, fcNode.getNodeType(), fcNode.getNodeId(), lagIfId);
       if (fcLagIf == null) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "target resource not found. parameters = lagIf");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = lagIf");
       }
       if ((CollectionUtils.isNotEmpty(fcLagIf.getClusterLinkIfs()))
           || (CollectionUtils.isNotEmpty(fcLagIf.getInternalLinkIfs()))

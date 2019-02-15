@@ -16,6 +16,9 @@ public class EquipmentCapabilitiesEcEntity {
   @SerializedName("evpn")
   private Boolean evpn;
 
+  @SerializedName("irb")
+  private EquipmentIrbEcEntity irb;
+
   public Boolean getL2vpn() {
     return l2vpn;
   }
@@ -38,6 +41,14 @@ public class EquipmentCapabilitiesEcEntity {
 
   public void setEvpn(Boolean evpn) {
     this.evpn = evpn;
+  }
+
+  public EquipmentIrbEcEntity getIrb() {
+    return irb;
+  }
+
+  public void setIrb(EquipmentIrbEcEntity irb) {
+    this.irb = irb;
   }
 
   @Override

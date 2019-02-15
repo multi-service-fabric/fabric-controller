@@ -66,8 +66,8 @@ public class FcL3SliceUpdateScenario extends FcAbstractL3SliceScenarioBase<L3Sli
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       L3SliceUpdateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           L3SliceUpdateRequestBody.class);

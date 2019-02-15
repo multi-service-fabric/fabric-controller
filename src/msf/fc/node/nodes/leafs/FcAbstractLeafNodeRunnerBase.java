@@ -25,8 +25,9 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeOppositeEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodePhysicalLinkEntity;
 
 /**
- * Abstract class to implement the common process of node management
- * (Leaf)-related asynchronous processing in configuration management function.
+ * Abstract class to implement the common process of the node management
+ * (Leaf)-related asynchronous processing in the configuration management
+ * function.
  *
  * @author NTT
  *
@@ -237,7 +238,7 @@ public abstract class FcAbstractLeafNodeRunnerBase extends FcAbstractNodeRunnerB
         if (fcPhysicalIf == null) {
 
           throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR,
-              "target resource not found. parameters = base_physicalIf");
+              "target resource is not found. parameters = base_physicalIf");
         }
       }
       return breakoutIfIds;
@@ -447,7 +448,7 @@ public abstract class FcAbstractLeafNodeRunnerBase extends FcAbstractNodeRunnerB
         if (!physicalIfIds.remove(leafNodeBreakoutIfCreateEntity.getBaseIf().getPhysicalIfId())) {
 
           throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR,
-              "target resource not found. parameters = base_physicalIf");
+              "target resource is not found. parameters = base_physicalIf");
         }
       }
       return breakoutIfIds;

@@ -16,6 +16,10 @@ import msf.mfcfc.common.constant.SliceType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.failure.search.SliceUnitFailureEndPointData;
 
+/**
+ * Class for nodes used by Dijkstra's algorithm with Leaf node information.
+ *
+ */
 public class FcLeafDiNode extends FcNodeDiNode {
 
   protected Map<FcL2Cp, FailureStatus> l2CpMap = new HashMap<>();
@@ -26,6 +30,16 @@ public class FcLeafDiNode extends FcNodeDiNode {
 
   protected boolean isBLeaf = false;
 
+  /**
+   * Constructor.
+   *
+   * @param nodeNo
+   *          Node number.
+   * @param fcNode
+   *          Node information table record
+   * @throws MsfException
+   *           When a DB access error occurs
+   */
   public FcLeafDiNode(int nodeNo, FcNode fcNode) throws MsfException {
     super(nodeNo);
     this.fcNode = fcNode;
@@ -69,6 +83,13 @@ public class FcLeafDiNode extends FcNodeDiNode {
     }
   }
 
+  /**
+   * Returns a list which contains all failure information in of L2CPs, L3CPs
+   * and inter-cluster links.
+   *
+   * @return List of all failure information of L2CPs, L3CPs and inter-cluster
+   *         links.
+   */
   public List<SliceUnitFailureEndPointData> getAllEndPointDataList() {
     List<SliceUnitFailureEndPointData> endPointDataList = new ArrayList<>();
 

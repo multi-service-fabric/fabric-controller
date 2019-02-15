@@ -1,0 +1,15 @@
+{
+	"node_id": "2",
+	"equipment_type_id": "3",
+	"host_name": "QFX5100-48S-22",
+	"mac_address": "9c:cc:83:58:80:61",
+	"username": "nslab",
+	"password": "nslab1",
+	"provisioning": true,
+	"snmp_community": "ntt-msf",
+	"ntp_server_address": "192.168.134.14",
+	"breakout" : null,
+	"internal_links": null,
+	"management_if_address": "192.168.2.102",
+	"management_if_prefix": 16
+}

@@ -31,7 +31,7 @@ import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeForOwnerEntity;
 import msf.mfcfc.node.nodes.leafs.data.entity.LeafNodeForUserEntity;
 
 /**
- * Implementation class for Leaf node information list acquisition.
+ * Implementation class for the Leaf node information list acquisition.
  *
  * @author NTT
  *

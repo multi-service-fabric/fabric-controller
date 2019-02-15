@@ -6,16 +6,20 @@ import msf.mfcfc.common.log.MsfLogger;
 
 /**
  * Class to provide the initialization, living confirmation and termination
- * function of failure management function block.
+ * function of the failure management function block.
  *
  * @author NTT
  *
  */
 public class FailureManager implements FunctionBlockBase {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(FailureManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FailureManager.class);
 
   protected static FailureManager instance = null;
+
+  protected FailureManager() {
+
+  }
 
   /**
    * Get the instance of FailureManager. <br>

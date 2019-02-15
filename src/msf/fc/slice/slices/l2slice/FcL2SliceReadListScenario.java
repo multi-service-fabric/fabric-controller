@@ -22,7 +22,7 @@ import msf.mfcfc.slice.slices.l2slice.data.L2SliceRequest;
 import msf.mfcfc.slice.slices.l2slice.data.entity.L2SliceEntity;
 
 /**
- * Implementation class for L2 slice information list acquisition.
+ * Implementation class for the L2 slice information list acquisition.
  *
  * @author NTT
  *

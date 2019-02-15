@@ -59,7 +59,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 
 /**
  * Class to implement the asynchronous processing in receiving startup
- * completion notification from EC node.
+ * completion notification from the EC node.
  *
  * @author NTT
  *
@@ -188,11 +188,11 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           FcLagIfDao fcLagIfDao = new FcLagIfDao();
           FcBreakoutIfDao fcBreakoutIfDao = new FcBreakoutIfDao();
 
-          TreeMap<Integer, Object> connectionIfMap = createNodeIfs(sessionWrapper, createFcNode, fcPhysicalIfDao,
+          TreeMap<Integer, List<Object>> connectionIfMap = createNodeIfs(sessionWrapper, createFcNode, fcPhysicalIfDao,
               fcLagIfDao, fcBreakoutIfDao);
 
-          TreeMap<Integer, Object> connectionOppositeIfMap = createOppositeNodeIfs(sessionWrapper, oppositeNodeMap,
-              fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao);
+          TreeMap<Integer, List<Object>> connectionOppositeIfMap = createOppositeNodeIfs(sessionWrapper,
+              oppositeNodeMap, fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao);
 
           createInternalLinkIfs(sessionWrapper, connectionIfMap, connectionOppositeIfMap, createFcNode);
 
@@ -203,7 +203,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           break;
         default:
 
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter = " + requestBody.getStatus());
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter = " + requestBody.getStatus());
       }
 
       sessionWrapper.commit();
@@ -262,7 +262,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
         default:
 
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "illegal parameter = " + requestBody.getStatus());
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter = " + requestBody.getStatus());
       }
       return restResponse;
     } finally {
@@ -270,8 +270,8 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
     }
   }
 
-  private void createInternalLinkIfs(SessionWrapper sessionWrapper, TreeMap<Integer, Object> connectionIfMap,
-      TreeMap<Integer, Object> connectionOppositeIfMap, FcNode fcNode) throws MsfException {
+  private void createInternalLinkIfs(SessionWrapper sessionWrapper, TreeMap<Integer, List<Object>> connectionIfMap,
+      TreeMap<Integer, List<Object>> connectionOppositeIfMap, FcNode fcNode) throws MsfException {
     try {
       logger.methodStart(new String[] { "connectionIfMap", "connectionOppositeIfMap" },
           new Object[] { connectionIfMap, connectionOppositeIfMap });
@@ -282,7 +282,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
       Map<String, Double> oppositTrafficThresholdMap = new HashMap<>();
       updateTrafficThresholdMap(sessionWrapper, fcNode, localTrafficThresholdMap, oppositTrafficThresholdMap);
 
-      for (Entry<Integer, Object> connectionIfEntry : connectionIfMap.entrySet()) {
+      for (Entry<Integer, List<Object>> connectionIfEntry : connectionIfMap.entrySet()) {
 
         Double localTrafficThreshold = localTrafficThresholdMap.get(connectionIfEntry.getKey().toString());
         Double oppositeTrafficThreshold = oppositTrafficThresholdMap.get(connectionIfEntry.getKey().toString());
@@ -443,23 +443,28 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
     }
   }
 
-  private FcInternalLinkIf createInternalLinkIf(Integer nextInternalLinkIfId, Object value, Double trafficThreshold) {
+  private FcInternalLinkIf createInternalLinkIf(Integer nextInternalLinkIfId, List<Object> internalLinkInfoList,
+      Double trafficThreshold) {
     try {
       logger.methodStart(new String[] { "nextInternalLinkIfId", "value", "trafficThreshold" },
-          new Object[] { nextInternalLinkIfId, value, trafficThreshold });
+          new Object[] { nextInternalLinkIfId, internalLinkInfoList, trafficThreshold });
       FcInternalLinkIf fcInternalLinkIf = new FcInternalLinkIf();
       fcInternalLinkIf.setInternalLinkIfId(nextInternalLinkIfId);
-      if (value instanceof FcPhysicalIf) {
-        FcPhysicalIf fcPhysicalIf = (FcPhysicalIf) value;
+
+      Object ifType = internalLinkInfoList.get(0);
+      if (ifType instanceof FcPhysicalIf) {
+        FcPhysicalIf fcPhysicalIf = (FcPhysicalIf) ifType;
         fcInternalLinkIf.setPhysicalIf(fcPhysicalIf);
-      } else if (value instanceof FcLagIf) {
-        FcLagIf fcLagIf = (FcLagIf) value;
+      } else if (ifType instanceof FcLagIf) {
+        FcLagIf fcLagIf = (FcLagIf) ifType;
         fcInternalLinkIf.setLagIf(fcLagIf);
       } else {
-        FcBreakoutIf fcBreakoutIf = (FcBreakoutIf) value;
+        FcBreakoutIf fcBreakoutIf = (FcBreakoutIf) ifType;
         fcInternalLinkIf.setBreakoutIf(fcBreakoutIf);
       }
       fcInternalLinkIf.setTrafficThreshold(trafficThreshold);
+
+      fcInternalLinkIf.setIgpCost((int) internalLinkInfoList.get(1));
       return fcInternalLinkIf;
     } finally {
       logger.methodEnd();
@@ -482,7 +487,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
     }
   }
 
-  private TreeMap<Integer, Object> createOppositeNodeIfs(SessionWrapper sessionWrapper,
+  private TreeMap<Integer, List<Object>> createOppositeNodeIfs(SessionWrapper sessionWrapper,
       TreeMap<Integer, FcNode> oppositeNodeMap, FcPhysicalIfDao fcPhysicalIfDao, FcLagIfDao fcLagIfDao,
       FcBreakoutIfDao fcBreakoutIfDao) throws MsfException {
     try {
@@ -490,14 +495,15 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           new Object[] { oppositeNodeMap, fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao });
       List<NodeOppositeNodeEntity> oppositeNodeList = requestBody.getNodeInfo().getCreateNode().getOppositeNodeList();
 
-      TreeMap<Integer, Object> connectionOppositeIfMap = new TreeMap<>();
+      TreeMap<Integer, List<Object>> connectionOppositeIfMap = new TreeMap<>();
 
       if (oppositeNodeList != null) {
         for (NodeOppositeNodeEntity nodeOppositeNodeEntity : oppositeNodeList) {
           FcNode oppositeNode = oppositeNodeMap.get(Integer.valueOf(nodeOppositeNodeEntity.getNodeId()));
           if (oppositeNode == null) {
 
-            throw new MsfException(ErrorCode.UNDEFINED_ERROR, "target resource not found. parameters = opposite node");
+            throw new MsfException(ErrorCode.UNDEFINED_ERROR,
+                "target resource is not found. parameters = opposite node");
           }
 
           ArrayList<String> internalIfForBreakoutIfIds = new ArrayList<>();
@@ -529,7 +535,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
   private void createOppositeInternalInterfaces(SessionWrapper sessionWrapper, FcNode oppositeNode,
       NodeOppositeNodeEntity nodeOppositeNodeEntity, FcPhysicalIfDao fcPhysicalIfDao, FcLagIfDao fcLagIfDao,
-      FcBreakoutIfDao fcBreakoutIfDao, TreeMap<Integer, Object> connectionOppositeIfMap,
+      FcBreakoutIfDao fcBreakoutIfDao, TreeMap<Integer, List<Object>> connectionOppositeIfMap,
       ArrayList<String> internalIfForBreakoutIfIds) throws MsfException {
     try {
       logger.methodStart(
@@ -539,6 +545,11 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
               connectionOppositeIfMap, internalIfForBreakoutIfIds });
       Integer oppositeEcNodeId = oppositeNode.getEcNodeId();
       String ifId = nodeOppositeNodeEntity.getInternalLinkIf().getIfId();
+
+      Integer oppositeCost = nodeOppositeNodeEntity.getInternalLinkIf().getCost();
+
+      List<Object> oppositeInternalInfoList = new ArrayList<>();
+
       switch (InterfaceType.getEnumFromMessage(nodeOppositeNodeEntity.getInternalLinkIf().getIfType())) {
         case PHYSICAL_IF:
           FcPhysicalIf fcPhysicalIf = fcPhysicalIfDao.read(sessionWrapper, oppositeNode.getNodeType(),
@@ -546,10 +557,12 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           if (fcPhysicalIf == null) {
 
             throw new MsfException(ErrorCode.UNDEFINED_ERROR,
-                "target resource not found. parameters = opposite physicalIf");
+                "target resource is not found. parameters = opposite physicalIf");
           }
 
-          connectionOppositeIfMap.put(oppositeEcNodeId, fcPhysicalIf);
+          oppositeInternalInfoList.add(fcPhysicalIf);
+          oppositeInternalInfoList.add(oppositeCost);
+          connectionOppositeIfMap.put(oppositeEcNodeId, oppositeInternalInfoList);
           break;
 
         case LAG_IF:
@@ -559,7 +572,9 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
           fcLagIfDao.create(sessionWrapper, fcLagIf);
 
-          connectionOppositeIfMap.put(oppositeEcNodeId, fcLagIf);
+          oppositeInternalInfoList.add(fcLagIf);
+          oppositeInternalInfoList.add(oppositeCost);
+          connectionOppositeIfMap.put(oppositeEcNodeId, oppositeInternalInfoList);
           break;
 
         case BREAKOUT_IF:
@@ -576,26 +591,28 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
           internalIfForBreakoutIfIds.add(ifId);
 
-          connectionOppositeIfMap.put(oppositeEcNodeId, fcBreakoutIf);
+          oppositeInternalInfoList.add(fcBreakoutIf);
+          oppositeInternalInfoList.add(oppositeCost);
+          connectionOppositeIfMap.put(oppositeEcNodeId, oppositeInternalInfoList);
           break;
 
         default:
 
           throw new MsfException(ErrorCode.UNDEFINED_ERROR,
-              "illegal parameter = " + nodeOppositeNodeEntity.getInternalLinkIf().getIfType());
+              "Illegal parameter = " + nodeOppositeNodeEntity.getInternalLinkIf().getIfType());
       }
     } finally {
       logger.methodEnd();
     }
   }
 
-  private TreeMap<Integer, Object> createNodeIfs(SessionWrapper sessionWrapper, FcNode createFcNode,
+  private TreeMap<Integer, List<Object>> createNodeIfs(SessionWrapper sessionWrapper, FcNode createFcNode,
       FcPhysicalIfDao fcPhysicalIfDao, FcLagIfDao fcLagIfDao, FcBreakoutIfDao fcBreakoutIfDao) throws MsfException {
     try {
       logger.methodStart(new String[] { "createFcNode", "fcPhysicalIfDao", "fcLagIfDao", "fcBreakoutIfDao" },
           new Object[] { createFcNode, fcPhysicalIfDao, fcLagIfDao, fcBreakoutIfDao });
 
-      TreeMap<Integer, Object> connectionIfMap = new TreeMap<>();
+      TreeMap<Integer, List<Object>> connectionIfMap = new TreeMap<>();
 
       ArrayList<String> internalIfForBreakoutIfIds = new ArrayList<>();
 
@@ -643,7 +660,7 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
   private void createInternalInterfaces(SessionWrapper sessionWrapper, FcNode createFcNode,
       FcPhysicalIfDao fcPhysicalIfDao, FcLagIfDao fcLagIfDao, FcBreakoutIfDao fcBreakoutIfDao,
-      NodeCreateNodeIfEntity createNodeIf, TreeMap<Integer, Object> connectionIfMap,
+      NodeCreateNodeIfEntity createNodeIf, TreeMap<Integer, List<Object>> connectionIfMap,
       ArrayList<String> internalIfForBreakoutIfIds) throws MsfException {
     try {
       logger.methodStart(
@@ -657,6 +674,10 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           NodeInternalLinkIfEntity nodeInternalLinkIfEntity = createNodeIf.getInternalLinkIfList().get(i);
           String ifId = nodeInternalLinkIfEntity.getInternalLinkIf().getIfId();
 
+          Integer localCost = nodeInternalLinkIfEntity.getInternalLinkIf().getCost();
+
+          List<Object> localInternalInfoList = new ArrayList<>();
+
           if (oppositeNodeList != null) {
 
             Integer oppositeEcNodeId = Integer.valueOf(oppositeNodeList.get(i).getNodeId());
@@ -668,7 +689,9 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
                 fcPhysicalIfDao.create(sessionWrapper, fcPhysicalIf);
 
-                connectionIfMap.put(oppositeEcNodeId, fcPhysicalIf);
+                localInternalInfoList.add(fcPhysicalIf);
+                localInternalInfoList.add(localCost);
+                connectionIfMap.put(oppositeEcNodeId, localInternalInfoList);
                 break;
 
               case LAG_IF:
@@ -678,7 +701,9 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
                 fcLagIfDao.create(sessionWrapper, fcLagIf);
 
-                connectionIfMap.put(oppositeEcNodeId, fcLagIf);
+                localInternalInfoList.add(fcLagIf);
+                localInternalInfoList.add(localCost);
+                connectionIfMap.put(oppositeEcNodeId, localInternalInfoList);
 
                 for (NodeLagMemberEntity nodeLagMemberEntity : nodeInternalLinkIfEntity.getInternalLinkIf()
                     .getLagMemberList()) {
@@ -700,13 +725,15 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
 
                 internalIfForBreakoutIfIds.add(ifId);
 
-                connectionIfMap.put(oppositeEcNodeId, fcBreakoutIf);
+                localInternalInfoList.add(fcBreakoutIf);
+                localInternalInfoList.add(localCost);
+                connectionIfMap.put(oppositeEcNodeId, localInternalInfoList);
                 break;
 
               default:
 
                 throw new MsfException(ErrorCode.UNDEFINED_ERROR,
-                    "illegal parameter = " + nodeInternalLinkIfEntity.getInternalLinkIf().getIfType());
+                    "Illegal parameter = " + nodeInternalLinkIfEntity.getInternalLinkIf().getIfType());
             }
           }
         }
@@ -790,7 +817,8 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
       }
       if (createFcNode == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = fcNode");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcNode");
       }
       return createFcNode;
     } finally {

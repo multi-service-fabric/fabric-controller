@@ -1,14 +1,22 @@
 
 package msf.mfcfc;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.sql.Timestamp;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.config.ConfigManager;
 import msf.mfcfc.common.constant.AsyncProcessStatus;
 import msf.mfcfc.common.constant.BlockadeStatus;
@@ -62,6 +70,8 @@ public abstract class AbstractMain {
 
   protected boolean isSystemStartUp = false;
 
+  protected String functionalConfigPath = null;
+
   protected AbstractMain() {
   }
 
@@ -106,6 +116,8 @@ public abstract class AbstractMain {
           logger.warn("RestManager stop processing failed.");
         }
       }
+
+      stopExtensionFunctions();
 
       if (this.traffic != null) {
         logger.info("TrafficManager stop.");
@@ -353,4 +365,140 @@ public abstract class AbstractMain {
   }
 
   protected abstract boolean isStartAsMultiCluster();
+
+  protected void setFunctionalConfigPath(String path) {
+    functionalConfigPath = ConfigManager.getInstance().getConfigPath() + path;
+  }
+
+  protected List<String> loadFunctionalConfig() {
+    try {
+      logger.methodStart();
+
+      List<String> resultList = new ArrayList<>();
+      File file = new File(functionalConfigPath);
+
+      if (!file.exists()) {
+
+        logger.error(MessageFormat.format("FunctionalConfig file Not Found ({0}).", functionalConfigPath));
+        return null;
+      }
+      FileReader fileReader = new FileReader(file);
+      BufferedReader bufferedReader = new BufferedReader(fileReader);
+      try {
+        String lineData;
+        while ((lineData = bufferedReader.readLine()) != null) {
+          if (lineData.length() != 0) {
+            resultList.add(lineData);
+          }
+        }
+      } finally {
+
+        bufferedReader.close();
+      }
+      return resultList;
+    } catch (IOException error1) {
+      logger.error("FunctionalConfig file could not read.", error1);
+      return null;
+    }
+  }
+
+  protected FunctionBlockBase makeExtensionFunctionInstance(String className) {
+    try {
+      logger.methodStart();
+
+      Class<?> classObj = Class.forName(className);
+
+      Constructor<?> myConst = classObj.getDeclaredConstructor();
+
+      myConst.setAccessible(true);
+
+      Object myObj = myConst.newInstance();
+
+      Method myMethod = classObj.getMethod("getInstance");
+
+      return (FunctionBlockBase) myMethod.invoke(myObj);
+    } catch (Exception ex1) {
+      logger.error(MessageFormat.format("Cannot make instance. className({0}).", className), ex1);
+      return null;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected boolean initExtensionFunctions() {
+    logger.methodStart();
+
+    if (this.core == null) {
+      logger.error("CoreManager not found.");
+      return false;
+    }
+
+    if (functionalConfigPath == null) {
+      logger.error("FunctionalConfigPath not set.");
+      return false;
+    }
+
+    List<String> lineList = loadFunctionalConfig();
+    if (lineList == null) {
+
+      return false;
+    }
+
+    for (int num = 0; num < lineList.size(); num++) {
+      String extensionFunctionStr = lineList.get(num);
+      if (extensionFunctionStr != null) {
+        FunctionBlockBase extensionFunction = makeExtensionFunctionInstance(extensionFunctionStr);
+        if (extensionFunction != null) {
+
+          this.core.addExtensionFunction(extensionFunction);
+        } else {
+          logger.error(MessageFormat.format("Illegal parameter. extensionFunctionStr({0}).", extensionFunctionStr));
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  protected boolean startExtensionFunctions() {
+    logger.methodStart();
+
+    if (this.core == null) {
+      logger.error("CoreManager not found.");
+      return false;
+    }
+
+    List<FunctionBlockBase> extensionsList = this.core.getExtensionFunctions();
+    for (int num = 0; num < extensionsList.size(); num++) {
+      FunctionBlockBase extensionFunction = extensionsList.get(num);
+
+      if (!extensionFunction.start()) {
+
+        logger.error(MessageFormat.format("ExtensionFunction start processing failed. className({0}).",
+            extensionFunction.getClass().getName()));
+        return false;
+      }
+    }
+    return true;
+  }
+
+  protected void stopExtensionFunctions() {
+    logger.methodStart();
+
+    if (this.core == null) {
+      logger.error("CoreManager not found.");
+      return;
+    }
+    List<FunctionBlockBase> extensionsList = this.core.getExtensionFunctions();
+    for (int num = extensionsList.size() - 1; num >= 0; num--) {
+      FunctionBlockBase extensionFunction = extensionsList.get(num);
+
+      if (!extensionFunction.stop()) {
+
+        logger.error(MessageFormat.format("ExtensionFunction stop processing failed. className({0}).",
+            extensionFunction.getClass().getName()));
+      }
+    }
+  }
+
 }

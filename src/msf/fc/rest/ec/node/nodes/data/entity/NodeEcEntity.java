@@ -37,6 +37,9 @@ public class NodeEcEntity {
   @SerializedName("vpn_type")
   private String vpnType;
 
+  @SerializedName("irb_type")
+  private String irbType;
+
   @SerializedName("username")
   private String username;
 
@@ -127,6 +130,14 @@ public class NodeEcEntity {
 
   public void setVpnType(String vpnType) {
     this.vpnType = vpnType;
+  }
+
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
   }
 
   public String getUsername() {

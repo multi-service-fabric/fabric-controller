@@ -31,7 +31,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Implementation class for Edge-Point interface information acquisition.
+ * Implementation class for the Edge-Point interface information acquisition.
  *
  * @author NTT
  *

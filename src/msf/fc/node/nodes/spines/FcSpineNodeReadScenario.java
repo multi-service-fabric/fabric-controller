@@ -20,7 +20,7 @@ import msf.mfcfc.node.nodes.spines.data.SpineNodeReadOwnerResponseBody;
 import msf.mfcfc.node.nodes.spines.data.SpineNodeRequest;
 
 /**
- * Implementation class for Spine node information acquisition.
+ * Implementation class for the Spine node information acquisition.
  *
  * @author NTT
  *

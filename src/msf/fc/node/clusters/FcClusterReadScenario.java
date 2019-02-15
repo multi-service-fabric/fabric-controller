@@ -18,7 +18,7 @@ import msf.mfcfc.node.clusters.data.SwClusterReadUserResponseBody;
 import msf.mfcfc.node.clusters.data.SwClusterRequest;
 
 /**
- * Implementation class for SW cluster information acquisition.
+ * Implementation class for the SW cluster information acquisition.
  *
  * @author NTT
  *

@@ -22,8 +22,7 @@ import msf.mfcfc.node.interfaces.internalifs.data.InternalIfReadResponseBody;
 import msf.mfcfc.node.interfaces.internalifs.data.InternalIfRequest;
 
 /**
- * Implementation class for intra-cluster link interface information
- * acquisition.
+ * Implementation class for the internal link interface information acquisition.
  *
  * @author NTT
  *
@@ -116,7 +115,7 @@ public class FcInternalInterfaceReadScenario extends FcAbstractInternalInterface
       if (internalLinkIf == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = internalLinkIf");
+            "target resource is not found. parameters = internalLinkIf");
       }
       return internalLinkIf;
     } finally {

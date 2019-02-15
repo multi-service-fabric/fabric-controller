@@ -1,0 +1,14 @@
+[
+    {
+        "op": "add",
+        "path": "anaake_lag",
+        "value": {
+            "action": "discard",
+            "direction": "in",
+            "source_mac_address": "AB:CD:EF:00:11:22/48",
+            "dest_mac_address": "AB:CD:EF:00:11:22/48",
+            "source_ip_address": "192.168.0.4/32",
+            "dest_ip_address": "192.168.0.4/32"
+        }
+    }
+]

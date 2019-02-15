@@ -60,10 +60,6 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
 
   protected AsyncRequest asyncRequestForNotify = null;
 
-  public static final String NOT_NOTIFY_IP_ADDRESS = "-";
-
-  public static final String NOT_NOTIFY_PORT_NUMBER = "-1";
-
   /**
    * Execution of asynchronous request.
    *
@@ -144,8 +140,9 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
   protected void notifyOperationResult(RestRequestBase request) {
     try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
-      if (request.getNotificationAddress().equals(NOT_NOTIFY_IP_ADDRESS)) {
-        logger.info("do not notify operation result.");
+
+      if (request.getNotificationAddress() == null || request.getNotificationPort() == null) {
+        logger.debug("do not notify operation result because not specified ip address or port.");
         return;
       }
 
@@ -502,7 +499,9 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
       RestRequestBase restRequestBase = new RestRequestBase();
       restRequestBase.setRequestBody(JsonUtil.toJson(body));
       restRequestBase.setNotificationAddress(asyncRequest.getNotificationIpAddress());
-      restRequestBase.setNotificationPort(String.valueOf(asyncRequest.getNotificationPortNumber()));
+      if (asyncRequest.getNotificationPortNumber() != null) {
+        restRequestBase.setNotificationPort(String.valueOf(asyncRequest.getNotificationPortNumber()));
+      }
       restRequestBase.setRequestMethodEnum(MfcFcRequestUri.OPERATION_RESULT_NOTIFY.getHttpMethod());
       restRequestBase.setRequestUri(MfcFcRequestUri.OPERATION_RESULT_NOTIFY.getUri(asyncRequest.getOperationId()));
 

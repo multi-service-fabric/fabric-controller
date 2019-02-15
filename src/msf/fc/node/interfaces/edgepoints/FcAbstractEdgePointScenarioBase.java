@@ -29,8 +29,8 @@ import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointSupportProtocol
 import msf.mfcfc.node.interfaces.edgepoints.data.entity.EdgePointSupportProtocolForUserEntity;
 
 /**
- * Abstract class to implement the common process of Edge-Point
- * interface-related processing in configuration management function.
+ * Abstract class to implement the common process of the Edge-Point
+ * interface-related processing in the configuration management function.
  *
  * @author NTT
  *
@@ -51,7 +51,7 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
       if (fcEdgePoint == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = edgePoint");
+            "target resource is not found. parameters = edgePoint");
       }
       return fcEdgePoint;
     } finally {
@@ -198,7 +198,6 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
         qosEntity.setShaping(lagIfQosEcEntity.getShaping());
         qosEntity.setEgressQueueCapabilityList(lagIfQosEcEntity.getEgressMenuList());
       } else {
-
         BreakoutIfQosEcEntity breakoutIfQosEcEntity = (BreakoutIfQosEcEntity) interfaceQosResponseBody;
         qosEntity.setRemark(breakoutIfQosEcEntity.getRemark());
         qosEntity.setRemarkCapabilityList(breakoutIfQosEcEntity.getRemarkMenuList());
@@ -229,7 +228,6 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
         qosEntity.setShaping(lagIfQosEcEntity.getShaping());
         qosEntity.setEgressQueueCapabilityList(lagIfQosEcEntity.getEgressMenuList());
       } else {
-
         BreakoutIfQosEcEntity breakoutIfQosEcEntity = (BreakoutIfQosEcEntity) interfaceQosResponseBody;
         qosEntity.setRemark(breakoutIfQosEcEntity.getRemark());
         qosEntity.setRemarkCapabilityList(breakoutIfQosEcEntity.getRemarkMenuList());

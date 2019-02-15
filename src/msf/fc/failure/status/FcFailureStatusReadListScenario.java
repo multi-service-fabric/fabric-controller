@@ -44,7 +44,7 @@ import msf.mfcfc.failure.status.data.entity.FailureStatusPhysicalUnitEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 
 /**
- * Implementation class for failure information list acquisition.
+ * Implementation class for the failure information list acquisition.
  *
  * @author NTT
  *

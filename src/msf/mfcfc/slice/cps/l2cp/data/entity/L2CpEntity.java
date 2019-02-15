@@ -30,14 +30,14 @@ public class L2CpEntity {
   @SerializedName("port_mode")
   private String portMode;
 
-  @SerializedName("esi")
-  private String esi;
-
-  @SerializedName("lacp_system_id")
-  private String lacpSystemId;
-
   @SerializedName("qos")
   private L2CpQosEntity qos;
+
+  @SerializedName("irb")
+  private L2CpIrbEntity irb;
+
+  @SerializedName("traffic_threshold")
+  private Double trafficThreshold;
 
   public String getCpId() {
     return cpId;
@@ -95,22 +95,6 @@ public class L2CpEntity {
     this.portMode = portMode;
   }
 
-  public String getEsi() {
-    return esi;
-  }
-
-  public void setEsi(String esi) {
-    this.esi = esi;
-  }
-
-  public String getLacpSystemId() {
-    return lacpSystemId;
-  }
-
-  public void setLacpSystemId(String lacpSystemId) {
-    this.lacpSystemId = lacpSystemId;
-  }
-
   public L2CpQosEntity getQos() {
     return qos;
   }
@@ -125,6 +109,22 @@ public class L2CpEntity {
 
   public void setPortModeEnum(PortMode portMode) {
     this.portMode = portMode.getMessage();
+  }
+
+  public L2CpIrbEntity getIrb() {
+    return irb;
+  }
+
+  public void setIrb(L2CpIrbEntity irb) {
+    this.irb = irb;
+  }
+
+  public Double getTrafficThreshold() {
+    return trafficThreshold;
+  }
+
+  public void setTrafficThreshold(Double trafficThreshold) {
+    this.trafficThreshold = trafficThreshold;
   }
 
   @Override

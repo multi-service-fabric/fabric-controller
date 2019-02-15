@@ -16,7 +16,7 @@ import msf.mfcfc.slice.cps.l2cp.data.L2CpCreateDeleteResponseBody;
 import msf.mfcfc.slice.cps.l2cp.data.L2CpRequest;
 
 /**
- * Implementation class for L2CP addition/deletion(/modification).
+ * Implementation class for the L2CP addition/deletion(/modification).
  *
  * @author NTT
  *

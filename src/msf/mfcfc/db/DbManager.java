@@ -32,7 +32,7 @@ import msf.mfcfc.db.dao.slices.VrfIdDao;
  */
 public class DbManager implements FunctionBlockBase {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(DbManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(DbManager.class);
 
   protected static DbManager instance = null;
 

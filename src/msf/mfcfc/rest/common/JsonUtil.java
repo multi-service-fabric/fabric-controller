@@ -15,8 +15,8 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 
 /**
- * Utility class to execute the mutual conversion process between JSON character
- * string and Java object.
+ * Utility class to execute the mutual conversion process between a JSON string
+ * and a Java object.
  *
  * @author NTT
  *
@@ -28,16 +28,16 @@ public class JsonUtil {
   private static Gson gson = null;
 
   /**
-   * Convert the specified Java object to Json string.
+   * Convert the specified Java object to JSON string.
    *
    * @param <T>
    *          Class type of Java object conversion target
    * @param src
    *          Java object instance
-   * @return Json string
+   * @return JSON string
    * @throws JsonIOException
-   *           Input-output exception that occurs when converting to Json
-   *           (RuntimeException)
+   *           Input-output exception that occurs during
+   *           converting(RuntimeException)
    */
   public static <T> String toJson(T src) throws JsonIOException {
     try {
@@ -53,15 +53,15 @@ public class JsonUtil {
   }
 
   /**
-   * Convert the specified Json string to Java object of the specified type.
+   * Convert the specified JSON string to Java object of the specified type.
    *
    * @param <T>
    *          Class type of Java object conversion target
    * @param json
-   *          Json string for Java object conversion target
+   *          JSON string for Java object conversion target
    * @param clazz
    *          Class type of conversion target Java
-   * @return Json string converted Java object instance
+   * @return JSON string converted Java object instance
    * @throws MsfException
    *           If syntax error occurred (the error code is for parameter setting
    *           error)
@@ -71,17 +71,17 @@ public class JsonUtil {
   }
 
   /**
-   * Convert the specified Json string to Java object of the specified type.
+   * Convert the specified JSON string to Java object of the specified type.
    *
    * @param <T>
    *          Class type of Java object conversion target
    * @param json
-   *          Json string for Java object conversion target
+   *          JSON string for Java object conversion target
    * @param clazz
    *          Class type of conversion target Java
    * @param errorCode
    *          Error code to specify for MsfException when an exception occurs
-   * @return Json string converted Java object instance
+   * @return JSON string converted Java object instance
    * @throws MsfException
    *           If syntax error occurred
    */
@@ -107,17 +107,17 @@ public class JsonUtil {
   }
 
   /**
-   * Convert the specified Json string to Java object according to the type
+   * Convert the specified JSON string to Java object according to the type
    * specified by TypeToken. To be used when Class is not available to express,
-   * e.g. in case of converting Json string to List type.
+   * e.g. in case of converting JSON string to List type.
    *
    * @param <T>
    *          Class type of Java object conversion target
    * @param json
-   *          Json string for Java object conversion target
+   *          JSON string for Java object conversion target
    * @param typeToken
    *          Class to get the type of conversion target Java class
-   * @return Json string converted Java object instance
+   * @return JSON string converted Java object instance
    * @throws MsfException
    *           If syntax error occurred (the error code is for parameter setting
    *           error)
@@ -127,19 +127,19 @@ public class JsonUtil {
   }
 
   /**
-   * Convert the specified Json string to Java object according to the type
+   * Convert the specified JSON string to Java object according to the type
    * specified by TypeToken. To be used when Class is not available to express,
-   * e.g., in case of converting Json string to List type.
+   * e.g., in case of converting JSON string to List type.
    *
    * @param <T>
    *          Class type of Java object conversion target
    * @param json
-   *          Json string for Java object conversion target
+   *          JSON string for Java object conversion target
    * @param typeToken
    *          Class to get the type of conversion target Java class
    * @param errorCode
    *          Error code to specify for MsfException when an exception occurs
-   * @return Json string converted Java object instance
+   * @return JSON string converted Java object instance
    * @throws MsfException
    *           If syntax error occurred
    */

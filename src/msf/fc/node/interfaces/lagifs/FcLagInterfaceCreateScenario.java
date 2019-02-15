@@ -18,7 +18,7 @@ import msf.mfcfc.node.interfaces.lagifs.data.LagIfRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for Lag interface addition.
+ * Implementation class for the Lag interface addition.
  *
  * @author NTT
  *
@@ -62,8 +62,8 @@ public class FcLagInterfaceCreateScenario extends FcAbstractLagInterfaceScenario
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, "fabricType = " + request.getFabricType());
       }
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       LagIfCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(), LagIfCreateRequestBody.class);
       requestBody.validate();

@@ -105,6 +105,9 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
 
   @Override
   public void create(SessionWrapper session, FcNode entity) throws MsfException {
+
+    entity.setIsPriorityNodeGroupMember(false);
+
     super.create(session, entity);
 
     FcVlanIfIdDao fcVlanIfIdDao = new FcVlanIfIdDao();

@@ -1,0 +1,272 @@
+﻿{
+    "equipment_type": {
+        "platform": "DellS6000",
+        "os": "Cumulus",
+        "firmware": "3.6.0",
+        "router_type": "normal",
+        "physical_if_name_syntax": null,
+        "breakout_if_name_syntax": null,
+        "breakout_if_name_suffix_list": null,
+        "capability": {
+            "vpn": {
+                "l2": false,
+                "l3": false
+            },
+            "qos": {
+                "remark": false,
+                "remark_capability": null,
+                "remark_default": null,
+                "shaping": false,
+                "egress_queue_capability": null,
+                "egress_queue_default": null
+            }
+        },
+        "dhcp": {
+            "dhcp_template": "/root/setup/dhcp_template/dhcpd.conf.cumulus",
+            "config_template": "/var/lib/tftpboot/cumulus/GS/config/config_template:/var/lib/tftpboot/cumulus/ztp_sh_template",
+            "initial_config": "/var/lib/tftpboot/cumulus/GS/config:/var/lib/tftpboot/cumulus"
+        },
+        "snmp": {
+            "if_name_oid": "1.3.6.1.2.1.31.1.1.1.1",
+            "snmptrap_if_name_oid": "1.3.6.1.2.1.31.1.1.1.1",
+            "max_repetitions": 100
+        },
+        "boot_complete_msg": "ZTP DHCP: Script returned success",
+        "if_definitions": {
+            "ports": [
+                {
+                    "speed": "40g",
+                    "port_prefix": "swp"
+                }
+            ],
+            "lag_prefix": "bond",
+            "unit_connector": "."
+        },
+        "slots": [
+            {
+                "if_id": "1",
+                "if_slot": "1",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "2",
+                "if_slot": "2",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "3",
+                "if_slot": "3",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "4",
+                "if_slot": "4",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "5",
+                "if_slot": "5",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "6",
+                "if_slot": "6",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "7",
+                "if_slot": "7",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "8",
+                "if_slot": "8",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "9",
+                "if_slot": "9",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "10",
+                "if_slot": "10",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "11",
+                "if_slot": "11",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "12",
+                "if_slot": "12",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "13",
+                "if_slot": "13",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "14",
+                "if_slot": "14",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "15",
+                "if_slot": "15",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "16",
+                "if_slot": "16",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "17",
+                "if_slot": "17",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "18",
+                "if_slot": "18",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "19",
+                "if_slot": "19",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "20",
+                "if_slot": "20",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "21",
+                "if_slot": "21",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "22",
+                "if_slot": "22",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "23",
+                "if_slot": "23",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "24",
+                "if_slot": "24",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "25",
+                "if_slot": "25",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "26",
+                "if_slot": "26",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "27",
+                "if_slot": "27",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "28",
+                "if_slot": "28",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "29",
+                "if_slot": "29",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "30",
+                "if_slot": "30",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "31",
+                "if_slot": "31",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            },
+            {
+                "if_id": "32",
+                "if_slot": "32",
+                "speed_capabilities": [
+                    "40g"
+                ]
+            }
+        ]
+    }
+}

@@ -17,7 +17,7 @@ import msf.mfcfc.node.interfaces.clusterlinkifs.data.ClusterLinkIfRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for inter-cluster link interface registration.
+ * Implementation class for the inter-cluster link interface registration.
  *
  * @author NTT
  *
@@ -57,8 +57,8 @@ public class FcClusterLinkInterfaceCreateScenario
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       ClusterLinkIfCreateRequestBody requestBody = JsonUtil.fromJson(request.getRequestBody(),
           ClusterLinkIfCreateRequestBody.class);

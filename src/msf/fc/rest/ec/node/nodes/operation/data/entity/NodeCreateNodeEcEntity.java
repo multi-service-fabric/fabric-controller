@@ -57,6 +57,9 @@ public class NodeCreateNodeEcEntity {
   @SerializedName("cluster_area")
   private String clusterArea;
 
+  @SerializedName("irb_type")
+  private String irbType;
+
   @SerializedName("virtual_link")
   private NodeVirtualLinkEcEntity virtualLink;
 
@@ -205,6 +208,14 @@ public class NodeCreateNodeEcEntity {
 
   public void setRange(NodeRangeEcEntity range) {
     this.range = range;
+  }
+
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
   }
 
   @Override

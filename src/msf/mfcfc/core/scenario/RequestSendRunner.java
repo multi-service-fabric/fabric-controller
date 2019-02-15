@@ -125,7 +125,7 @@ public class RequestSendRunner implements Callable<RestResponseData> {
    * Set the operation ID.
    *
    * @param operationId
-   *          Opeation ID
+   *          Operation ID
    */
   public void setOperationId(String operationId) {
     this.operationId = operationId;

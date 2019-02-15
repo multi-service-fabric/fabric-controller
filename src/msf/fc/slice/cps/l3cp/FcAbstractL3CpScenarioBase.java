@@ -23,8 +23,8 @@ import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteEntity;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpVrrpEntity;
 
 /**
- * Abstract class to implement the common process of L3CP-related processing in
- * slice management function.
+ * Abstract class to implement the common process of the L3CP-related processing
+ * in the slice management function.
  *
  * @author NTT
  *

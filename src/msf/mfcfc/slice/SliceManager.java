@@ -13,7 +13,7 @@ import msf.mfcfc.common.log.MsfLogger;
  */
 public class SliceManager implements FunctionBlockBase {
 
-  protected static final MsfLogger logger = MsfLogger.getInstance(SliceManager.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(SliceManager.class);
 
   protected static SliceManager instance = null;
 
@@ -57,18 +57,18 @@ public class SliceManager implements FunctionBlockBase {
   }
 
   /**
-   * Get the lock object for exclusive control of L2 slice addition.
+   * Get the lock object for exclusive control of the L2 slice addition.
    *
-   * @return the lock object for exclusive control of L2 slice addition
+   * @return the lock object for exclusive control of the L2 slice addition
    */
   public Object getL2SliceCreateLockObject() {
     return l2SliceCreateLockObject;
   }
 
   /**
-   * Get the lock object for exclusive control of L3 slice addition.
+   * Get the lock object for the exclusive control of the L3 slice addition.
    *
-   * @return the lock object for exclusive control of L3 slice addition
+   * @return the lock object for the exclusive control of the L3 slice addition
    */
   public Object getL3SliceCreateLockObject() {
     return l3SliceCreateLockObject;

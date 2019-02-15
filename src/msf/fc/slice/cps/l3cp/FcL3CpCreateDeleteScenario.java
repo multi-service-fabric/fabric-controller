@@ -16,7 +16,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpCreateDeleteResponseBody;
 import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 
 /**
- * Implementation class for L3CP addition/deletion/(modification).
+ * Implementation class for the L3CP addition/deletion/(modification).
  *
  * @author NTT
  *

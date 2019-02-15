@@ -40,6 +40,17 @@ public class FcL2SliceDao extends FcAbstractCommonDao<FcL2Slice, String> {
     }
   }
 
+  public List<FcL2Slice> readListByIrbType(SessionWrapper session, int irbType) throws MsfException {
+    try {
+      logger.methodStart();
+      Criteria criteria = session.getSession().createCriteria(FcL2Slice.class)
+          .add(Restrictions.eqOrIsNull("irbType", irbType));
+      return readListByCriteria(session, criteria);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
   @Override
   public void create(SessionWrapper session, FcL2Slice entity) throws MsfException {
     super.create(session, entity);

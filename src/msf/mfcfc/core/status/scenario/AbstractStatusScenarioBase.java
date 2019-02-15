@@ -54,8 +54,8 @@ import msf.mfcfc.rest.common.AbstractRestHandler;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of system status-related
- * processing in system basic function.
+ * Abstract class to implement the common process of the system status-related
+ * processing in the system basic function.
  *
  * @author NTT
  *
@@ -333,7 +333,7 @@ public abstract class AbstractStatusScenarioBase<T extends RestRequestBase> exte
     List<String> dfResult = new ArrayList<>();
     dfResult = getDfCommandResult(dfResult);
 
-    if (dfResult.size() > 0) {
+    if (!dfResult.isEmpty()) {
       dfResult.remove(0);
     }
     List<SystemStatusDeviceEntity> deviceEntityList = new ArrayList<>();

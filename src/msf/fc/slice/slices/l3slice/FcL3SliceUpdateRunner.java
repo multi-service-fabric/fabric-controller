@@ -27,8 +27,8 @@ import msf.mfcfc.slice.slices.l3slice.data.L3SliceUpdateAsyncResponseBody;
 import msf.mfcfc.slice.slices.l3slice.data.L3SliceUpdateRequestBody;
 
 /**
- * Implementation class for the asynchronous process in L3 slice modification
- * process.
+ * Implementation class for the asynchronous process in L3 the slice
+ * modification process.
  *
  * @author NTT
  *
@@ -44,9 +44,9 @@ public class FcL3SliceUpdateRunner extends FcAbstractL3SliceRunnerBase {
    * Take over the necessary information from scenario
    *
    * @param request
-   *          Request for L3 slice control
+   *          Request for the L3 slice control
    * @param requestBody
-   *          Request Body part for L3 slice modification
+   *          Request Body part for the L3 slice modification
    */
   public FcL3SliceUpdateRunner(L3SliceRequest request, L3SliceUpdateRequestBody requestBody) {
     this.request = request;

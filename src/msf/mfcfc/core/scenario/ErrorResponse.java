@@ -24,7 +24,7 @@ public class ErrorResponse extends RestResponseBase {
 
   /**
    * Constructor for error response generation <br>
-   * Generate an internal or external error response from ErrorCode.
+   * Generates an internal or external error response from ErrorCode.
    *
    * @param errCode
    *          Error code
@@ -32,7 +32,7 @@ public class ErrorResponse extends RestResponseBase {
    *          System interface type
    * @param isConsistencyNotClear
    *          Whether the data consistency status is unclear (e.g., when an
-   *          error occured after sending a request to the lower system)
+   *          error occurred after sending a request to the lower system)
    */
   public ErrorResponse(ErrorCode errCode, SystemInterfaceType systemIfType, boolean isConsistencyNotClear) {
     try {
@@ -69,7 +69,7 @@ public class ErrorResponse extends RestResponseBase {
 
   /**
    * Constructor for error response generation <br>
-   * Generate an error response for internal or external from ErrorCode.
+   * Generates an internal or external error response from ErrorCode.
    *
    * @param errCode
    *          Error code

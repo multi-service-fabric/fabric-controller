@@ -26,7 +26,7 @@ import msf.mfcfc.traffic.traffics.data.IfTrafficRequest;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficEntity;
 
 /**
- * Implementation class for IF traffic information list acquisition.
+ * Implementation class for the IF traffic information list acquisition.
  *
  * @author NTT
  *

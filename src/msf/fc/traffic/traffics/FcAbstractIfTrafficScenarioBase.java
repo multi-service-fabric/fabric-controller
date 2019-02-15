@@ -28,8 +28,8 @@ import msf.mfcfc.traffic.traffics.data.entity.IfTrafficEntity;
 import msf.mfcfc.traffic.traffics.data.entity.IfTrafficValueNodeEntity;
 
 /**
- * Abstract class to implement the common process of IF traffic information
- * acquisition processing in traffic management function.
+ * Abstract class to implement the common process of the IF traffic information
+ * acquisition processing in the traffic management function.
  *
  * @author NTT
  *
@@ -54,7 +54,7 @@ public abstract class FcAbstractIfTrafficScenarioBase<T extends RestRequestBase>
 
       if (fcNode == null) {
 
-        String logMsg = MessageFormat.format("target resource not found. parameters={0}, fabricType={1}, nodeId={2}",
+        String logMsg = MessageFormat.format("target resource is not found. parameters={0}, fabricType={1}, nodeId={2}",
             "node", request.getFabricType(), request.getNodeId());
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
@@ -84,8 +84,9 @@ public abstract class FcAbstractIfTrafficScenarioBase<T extends RestRequestBase>
           responseBody.getErrorCode(), ErrorCode.EC_CONTROL_ERROR);
 
       if (!responseBody.getIsSuccess()) {
-        String logMsg = MessageFormat.format("target resource not found. parameters={0}, ecNodeId={1}, isSuccess={2}",
-            "NodeTraffic", ecNodeId, responseBody.getIsSuccess());
+        String logMsg = MessageFormat.format(
+            "target resource is not found. parameters={0}, ecNodeId={1}, isSuccess={2}", "NodeTraffic", ecNodeId,
+            responseBody.getIsSuccess());
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, logMsg);
       }
 

@@ -35,4 +35,27 @@ public class FcVlanIfDao extends FcAbstractCommonDao<FcVlanIf, FcVlanIfPK> {
         .add(Restrictions.eq("id.vlanIfId", pk.getVlanIfId()));
     return readByCriteria(session, criteria);
   }
+
+  @Override
+  public void create(SessionWrapper session, FcVlanIf entity) throws MsfException {
+
+    if (entity.getIrbInstance() != null) {
+      FcIrbInstanceDao irbInstanceDao = new FcIrbInstanceDao();
+      irbInstanceDao.create(session, entity.getIrbInstance());
+    }
+    super.create(session, entity);
+  }
+
+  @Override
+  public void delete(SessionWrapper session, FcVlanIfPK pk) throws MsfException {
+    FcVlanIfDao vlanIfDao = new FcVlanIfDao();
+    FcVlanIf vlanIf = vlanIfDao.read(session, pk);
+    super.delete(session, pk);
+
+    if (vlanIf.getIrbInstance() != null && vlanIf.getIrbInstance().getVlanIfs().size() == 1) {
+      FcIrbInstanceDao irbInstanceDao = new FcIrbInstanceDao();
+      irbInstanceDao.delete(session, vlanIf.getIrbInstance().getIrbInstanceId());
+    }
+
+  }
 }

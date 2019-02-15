@@ -43,6 +43,8 @@ public class SwCluster {
   protected String aggregationStartAddress;
   @XmlSchemaType(name = "integer")
   protected int aggregationAddressPrefix;
+  @XmlSchemaType(name = "integer")
+  protected int internalLinkNormalIgpCost;
 
   public int getSwClusterId() {
     return swClusterId;
@@ -170,6 +172,14 @@ public class SwCluster {
 
   public void setAggregationAddressPrefix(int value) {
     this.aggregationAddressPrefix = value;
+  }
+
+  public int getInternalLinkNormalIgpCost() {
+    return internalLinkNormalIgpCost;
+  }
+
+  public void setInternalLinkNormalIgpCost(int value) {
+    this.internalLinkNormalIgpCost = value;
   }
 
 }

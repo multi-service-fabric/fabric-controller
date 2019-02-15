@@ -61,6 +61,16 @@ public class FcInternalLinkIfDao extends FcAbstractCommonDao<FcInternalLinkIf, I
     }
   }
 
+  public List<FcInternalLinkIf> readList(SessionWrapper session) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "session" }, new Object[] { session });
+      Criteria criteria = session.getSession().createCriteria(FcInternalLinkIf.class);
+      return readListByCriteria(session, criteria);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
   public FcInternalLinkIf readFromBiggestId(SessionWrapper session) throws MsfException {
     try {
       logger.methodStart(new String[] { "session" }, new Object[] { session });

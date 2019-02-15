@@ -1,0 +1,14 @@
+{
+    "cluster_id" : "1",
+    "edge_point_id" : "14",
+    "vlan_id" : "101",
+    "mtu" : "1500",
+    "cp_id" : "2",
+    "ipv4_address" : "100.101.0.250",
+    "ipv4_prefix" : "24",
+    "vrrp" : {
+      "group_id" : "2",
+      "role" : "master",
+      "virtual_ipv4_address" : "100.101.0.254"
+    }
+}

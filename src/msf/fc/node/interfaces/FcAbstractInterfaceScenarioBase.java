@@ -52,8 +52,8 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Abstract class to implement the common process of interface-related
- * processing in configuration management function.
+ * Abstract class to implement the common process of the interface-related
+ * processing in the configuration management function.
  *
  * @author NTT
  *
@@ -130,12 +130,13 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (lagIfEcList.size() != lagIfEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return lagIfEntities;
     } finally {
@@ -236,12 +237,13 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (physicalIfEcList.size() != physicalIfEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return physicalIfEntities;
     } finally {
@@ -347,12 +349,13 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
         }
         if (!isExist) {
 
-          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the FC system.");
+          throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+              "There is no appropriate data in the EC system.");
         }
       }
       if (breakoutIfEcList.size() != breakoutIfEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is only the data in the EC system.");
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
       }
       return breakoutIfEntities;
     } finally {
@@ -419,7 +422,7 @@ public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
       FcNode node = nodeDao.read(sessionWrapper, nodeType, nodeId);
       if (node == null) {
 
-        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource not found. parameters = node");
+        throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND, "target resource is not found. parameters = node");
       }
     } finally {
       logger.methodEnd();

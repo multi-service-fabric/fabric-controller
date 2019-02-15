@@ -14,8 +14,8 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 import msf.mfcfc.slice.slices.AbstractSliceScenarioBase;
 
 /**
- * Abstract class to implement the common process of L2/L3 slice-related
- * processing in slice management function.
+ * Abstract class to implement the common process of the L2/L3 slice-related
+ * processing in the slice management function.
  *
  * @author NTT
  *

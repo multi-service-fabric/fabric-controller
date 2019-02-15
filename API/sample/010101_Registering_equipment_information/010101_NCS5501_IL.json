@@ -1,0 +1,423 @@
+﻿{
+    "equipment_type": {
+        "platform": "NCS5501-SE(IL)",
+        "os": "iox-lnx-049",
+        "firmware": "Version6.3.1",
+        "router_type": "normal",
+        "physical_if_name_syntax": null,
+        "breakout_if_name_syntax": null,
+        "breakout_if_name_suffix_list": null,
+        "capability": {
+            "vpn": {
+                "l2": false,
+                "l3": true
+            },
+            "qos": {
+                "remark": true,
+                "remark_capability": [
+                    "packet_color",
+                    "af3",
+                    "af2",
+                    "af1",
+                    "be"
+                ],
+                "remark_default": "packet_color",
+                "shaping": true,
+                "egress_queue_capability": [
+                    "pt1",
+                    "pt2",
+                    "pt3"
+                ],
+                "egress_queue_default": "pt1"
+            }
+        },
+        "dhcp": {
+            "dhcp_template": "/root/setup/dhcp_template/dhcpd.conf.ncs5501",
+            "config_template": "/var/www/html/initial-config/cisco/ncs5501_ILeaf_0.8_ztp_init.sh.template",
+            "initial_config": "/var/www/html/initial-config/cisco/ncs5501_ILeaf_0.8_ztp_init.sh"
+        },
+        "snmp": {
+            "if_name_oid": "1.3.6.1.2.1.2.2.1.2",
+            "snmptrap_if_name_oid": "1.3.6.1.2.1.2.2.1.2",
+            "max_repetitions": 75
+        },
+        "boot_complete_msg": "%PLATFORM-DPA-6-INFO : NPU #0 Initialization Completed",
+        "boot_error_msgs": null,
+        "if_definitions": {
+            "ports": [
+                {
+                    "speed": "100g",
+                    "port_prefix": "HundredGigE"
+                },
+                {
+                    "speed": "40g",
+                    "port_prefix": "FortyGigE"
+                },
+                {
+                    "speed": "10g",
+                    "port_prefix": "TenGigE"
+                },
+                {
+                    "speed": "1g",
+                    "port_prefix": "GigabitEthernet"
+                }
+            ],
+            "lag_prefix": "Bundle-Ether",
+            "unit_connector": "."
+        },
+        "slots": [
+            {
+                "if_id": "0",
+                "if_slot": "0/0/0/0",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "1",
+                "if_slot": "0/0/0/1",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "2",
+                "if_slot": "0/0/0/2",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "3",
+                "if_slot": "0/0/0/3",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "4",
+                "if_slot": "0/0/0/4",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "5",
+                "if_slot": "0/0/0/5",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "6",
+                "if_slot": "0/0/0/6",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "7",
+                "if_slot": "0/0/0/7",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "8",
+                "if_slot": "0/0/0/8",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "9",
+                "if_slot": "0/0/0/9",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "10",
+                "if_slot": "0/0/0/10",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "11",
+                "if_slot": "0/0/0/11",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "12",
+                "if_slot": "0/0/0/12",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "13",
+                "if_slot": "0/0/0/13",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "14",
+                "if_slot": "0/0/0/14",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "15",
+                "if_slot": "0/0/0/15",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "16",
+                "if_slot": "0/0/0/16",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "17",
+                "if_slot": "0/0/0/17",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "18",
+                "if_slot": "0/0/0/18",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "19",
+                "if_slot": "0/0/0/19",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "20",
+                "if_slot": "0/0/0/20",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "21",
+                "if_slot": "0/0/0/21",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "22",
+                "if_slot": "0/0/0/22",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "23",
+                "if_slot": "0/0/0/23",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "24",
+                "if_slot": "0/0/0/24",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "25",
+                "if_slot": "0/0/0/25",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "26",
+                "if_slot": "0/0/0/26",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "27",
+                "if_slot": "0/0/0/27",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "28",
+                "if_slot": "0/0/0/28",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "29",
+                "if_slot": "0/0/0/29",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "30",
+                "if_slot": "0/0/0/30",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "31",
+                "if_slot": "0/0/0/31",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "32",
+                "if_slot": "0/0/0/32",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "33",
+                "if_slot": "0/0/0/33",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "34",
+                "if_slot": "0/0/0/34",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "35",
+                "if_slot": "0/0/0/35",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "36",
+                "if_slot": "0/0/0/36",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "37",
+                "if_slot": "0/0/0/37",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "38",
+                "if_slot": "0/0/0/38",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "39",
+                "if_slot": "0/0/0/39",
+                "speed_capabilities": [
+                    "1g",
+                    "10g"
+                ]
+            },
+            {
+                "if_id": "40",
+                "if_slot": "0/0/1/0",
+                "speed_capabilities": [
+                    "40g",
+                    "100g"
+                ]
+            },
+            {
+                "if_id": "41",
+                "if_slot": "0/0/1/1",
+                "speed_capabilities": [
+                    "40g",
+                    "100g"
+                ]
+            },
+            {
+                "if_id": "42",
+                "if_slot": "0/0/1/2",
+                "speed_capabilities": [
+                    "40g",
+                    "100g"
+                ]
+            },
+            {
+                "if_id": "43",
+                "if_slot": "0/0/1/3",
+                "speed_capabilities": [
+                    "40g",
+                    "100g"
+                ]
+            }
+        ]
+    }
+}

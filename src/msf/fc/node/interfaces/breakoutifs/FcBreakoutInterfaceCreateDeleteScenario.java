@@ -24,7 +24,7 @@ import msf.mfcfc.node.interfaces.breakoutifs.data.BreakoutIfRequest;
 import msf.mfcfc.rest.common.JsonUtil;
 
 /**
- * Implementation class for breakout interface registration/deletion.
+ * Implementation class for the breakout interface registration/deletion.
  *
  * @author NTT
  *
@@ -70,8 +70,8 @@ public class FcBreakoutInterfaceCreateDeleteScenario
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, "fabricType = " + request.getFabricType());
       }
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
-      ParameterCheckUtil.checkIpv4Address(request.getNotificationAddress());
-      ParameterCheckUtil.checkPortNumber(request.getNotificationPort());
+      ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),
+          request.getNotificationPort());
 
       List<BreakoutIfCreateDeleteRequestBody> requestBody = (List<BreakoutIfCreateDeleteRequestBody>) JsonUtil
           .fromJson(request.getRequestBody(), new TypeToken<ArrayList<BreakoutIfCreateDeleteRequestBody>>() {

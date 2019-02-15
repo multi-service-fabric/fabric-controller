@@ -19,9 +19,9 @@ import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpStaticRouteValueEntity;
 
 public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValidator {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(L3CpUpdateRequestBody.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(L3CpStaticRouteCreateDeleteRequestBody.class);
 
-  private static final Pattern staticRouteIdPattern = Pattern
+  private static final Pattern STATIC_ROUTE_ID_PATTERN = Pattern
       .compile("/static_routes/ipv[4|6]_([a-fA-F0-9\\.:]+)_[0-9]+_([a-fA-F0-9\\.:]+)$");
 
   @SerializedName("op")
@@ -100,7 +100,7 @@ public class L3CpStaticRouteCreateDeleteRequestBody implements RestRequestValida
 
   private void validateRemoveOp() throws MsfException {
 
-    Matcher matcher = staticRouteIdPattern.matcher(path);
+    Matcher matcher = STATIC_ROUTE_ID_PATTERN.matcher(path);
     if (!matcher.matches()) {
       String logMsg = MessageFormat.format("path param is not match the pattern . path = {0}", path);
       logger.error(logMsg);

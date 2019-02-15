@@ -28,27 +28,53 @@
 
 	<xsd:complexType name="SwCluster">
 		<xsd:all>
-			<xsd:element name="swClusterId" type="tns:sw_cluster_num" minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="maxLeafNum" type="tns:node_num" minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="maxSpineNum" type="tns:node_num" minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="maxRrNum" type="tns:node_num" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="spineStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="leafStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="rrStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="fcStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="ecStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="emStartPos" type="tns:start_pos" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="asNum" type="tns:as_num" minOccurs="1" maxOccurs="1"/>
-			<xsd:element name="ospfArea" type="tns:ospf_area_num" minOccurs="1" maxOccurs="1"></xsd:element>
-			<xsd:element name="inchannelStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
+			<xsd:element name="swClusterId" type="tns:sw_cluster_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="maxLeafNum" type="tns:node_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="maxSpineNum" type="tns:node_num"
+				minOccurs="1" maxOccurs="1" />
+			<xsd:element name="maxRrNum" type="tns:node_num"
+				minOccurs="1" maxOccurs="1">
 			</xsd:element>
-			<xsd:element name="outchannelStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
+			<xsd:element name="spineStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
 			</xsd:element>
-			<xsd:element name="aggregationStartAddress" type="xsd:string" minOccurs="1" maxOccurs="1">
+			<xsd:element name="leafStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
 			</xsd:element>
-			<xsd:element name="aggregationAddressPrefix" type="tns:subnetmask" minOccurs="1" maxOccurs="1"></xsd:element>
-        </xsd:all>
-    </xsd:complexType>
+			<xsd:element name="rrStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="fcStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="ecStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="emStartPos" type="tns:start_pos"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="asNum" type="tns:as_num" minOccurs="1"
+				maxOccurs="1" />
+			<xsd:element name="ospfArea" type="tns:ospf_area_num"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="inchannelStartAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="outchannelStartAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="aggregationStartAddress"
+				type="xsd:string" minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="aggregationAddressPrefix"
+				type="tns:subnetmask" minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="internalLinkNormalIgpCost" type="tns:igp_cost" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:all>
+	</xsd:complexType>
 
     <xsd:complexType name="Rrs">
         <xsd:sequence>
@@ -81,10 +107,10 @@
     </xsd:simpleType>
 
     <xsd:simpleType name="as_num">
-        <xsd:restriction base="xsd:integer">
-            <xsd:minInclusive value="0"/>
-            <xsd:maxInclusive value="65535"/>
-        </xsd:restriction>
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="0" />
+    		<xsd:maxInclusive value="65535" />
+    	</xsd:restriction>
     </xsd:simpleType>
 
     <xsd:simpleType name="subnetmask">
@@ -123,5 +149,12 @@
     		<xsd:element name="leafRrRouterId" type="xsd:string" minOccurs="1" maxOccurs="1"></xsd:element>
     	</xsd:sequence>
     </xsd:complexType>
+
+    <xsd:simpleType name="igp_cost">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="1"></xsd:minInclusive>
+    		<xsd:maxInclusive value="65535"></xsd:maxInclusive>
+    	</xsd:restriction>
+    </xsd:simpleType>
 </xsd:schema>
 

@@ -21,7 +21,7 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 /**
  * Abstract class to implement the common process of operation-related
- * processing in system basic function.
+ * processing in the system basic function.
  *
  * @author NTT
  *

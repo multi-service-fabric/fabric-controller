@@ -43,6 +43,17 @@ public class FcL2CpDao extends FcAbstractCommonDao<FcL2Cp, FcL2CpPK> {
     }
   }
 
+  public List<FcL2Cp> readListByNodeInfo(SessionWrapper session, Long nodeInfoId) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "session", "nodeInfoId" }, new Object[] { session, nodeInfoId });
+      Criteria criteria = session.getSession().createCriteria(FcL2Cp.class)
+          .add(Restrictions.eq("vlanIf.id.nodeInfoId", nodeInfoId.intValue()));
+      return readListByCriteria(session, criteria);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
   public List<FcL2Cp> readListByEdgePoint(SessionWrapper session, String sliceId, int edgePointId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "sliceId", "edgePointId" },
@@ -117,11 +128,17 @@ public class FcL2CpDao extends FcAbstractCommonDao<FcL2Cp, FcL2CpPK> {
 
   @Override
   public void delete(SessionWrapper session, FcL2CpPK primaryKey) throws MsfException {
+    delete(session, primaryKey, false);
+  }
+
+  public void delete(SessionWrapper session, FcL2CpPK primaryKey, boolean isVlanIfRemain) throws MsfException {
     FcVlanIfDao vlanIfDao = new FcVlanIfDao();
     FcL2Cp l2Cp = read(session, primaryKey);
     FcVlanIfPK id = l2Cp.getVlanIf().getId();
     super.delete(session, primaryKey);
 
-    vlanIfDao.delete(session, id);
+    if (!isVlanIfRemain) {
+      vlanIfDao.delete(session, id);
+    }
   }
 }

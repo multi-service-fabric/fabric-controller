@@ -11,6 +11,7 @@ import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcNode;
 import msf.fc.db.FcDbManager;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.fc.node.FcNodeManager;
 import msf.fc.rest.ec.node.nodes.operation.data.NodeCreateDeleteEcRequestBody;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeDeleteEcEntity;
@@ -22,6 +23,7 @@ import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.InternalNodeType;
 import msf.mfcfc.common.constant.LeafType;
 import msf.mfcfc.common.constant.NodeBootStatus;
+import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.exception.MsfException;
@@ -37,7 +39,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in Leaf node deletion.
+ * Class to implement the asynchronous processing in the Leaf node deletion.
  *
  * @author NTT
  *
@@ -131,10 +133,14 @@ public class FcLeafNodeDeleteRunner extends FcAbstractLeafNodeRunnerBase {
           } catch (MsfException msfException) {
             logger.error(msfException.getMessage(), msfException);
             sessionWrapper.rollback();
+
+            FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
             throw msfException;
           } finally {
             sessionWrapper.closeSession();
           }
+
+          FcNodeOperationInfoDao.hasChangeNodeOperationStatus(NodeOperationStatus.WAITING.getCode());
 
           checkNodeDeleteEcError(ecResponseStatus);
 
@@ -209,11 +215,11 @@ public class FcLeafNodeDeleteRunner extends FcAbstractLeafNodeRunnerBase {
         }
       }
 
-      ErrorInternalResponseBody nodeCreateDeleteEcResponceBody = new ErrorInternalResponseBody();
+      ErrorInternalResponseBody nodeCreateDeleteEcResponseBody = new ErrorInternalResponseBody();
 
       if (restResponseBase.getHttpStatusCode() != HttpStatus.NO_CONTENT_204) {
         try {
-          nodeCreateDeleteEcResponceBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+          nodeCreateDeleteEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
               ErrorInternalResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
         } catch (MsfException msfException) {
           logger.warn(msfException.getMessage(), msfException);
@@ -228,10 +234,10 @@ public class FcLeafNodeDeleteRunner extends FcAbstractLeafNodeRunnerBase {
         }
 
         String errorMsg = MessageFormat.format("HttpStatusCode = {0}, ErrorCode = {1}",
-            restResponseBase.getHttpStatusCode(), nodeCreateDeleteEcResponceBody.getErrorCode());
+            restResponseBase.getHttpStatusCode(), nodeCreateDeleteEcResponseBody.getErrorCode());
         logger.error(errorMsg);
 
-        ecResponseStatus = checkEcEmControlErrorCodeAfterNodeDelete(nodeCreateDeleteEcResponceBody.getErrorCode());
+        ecResponseStatus = checkEcEmControlErrorCodeAfterNodeDelete(nodeCreateDeleteEcResponseBody.getErrorCode());
       }
 
       return restResponseBase;

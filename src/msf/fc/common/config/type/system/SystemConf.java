@@ -26,6 +26,8 @@ public class SystemConf {
   protected Traffic traffic;
   @XmlElement(required = true)
   protected Qos qos;
+  @XmlElement(required = true)
+  protected Irb irb;
 
   public Controller getController() {
     return controller;
@@ -89,5 +91,13 @@ public class SystemConf {
 
   public void setQos(Qos value) {
     this.qos = value;
+  }
+
+  public Irb getIrb() {
+    return irb;
+  }
+
+  public void setIrb(Irb value) {
+    this.irb = value;
   }
 }

@@ -18,6 +18,9 @@ public class L2SliceEntity {
   @SerializedName("remark_menu")
   private String remarkMenu;
 
+  @SerializedName("irb_type")
+  private String irbType;
+
   public String getSliceId() {
     return sliceId;
   }
@@ -40,6 +43,14 @@ public class L2SliceEntity {
 
   public void setRemarkMenu(String remarkMenu) {
     this.remarkMenu = remarkMenu;
+  }
+
+  public String getIrbType() {
+    return irbType;
+  }
+
+  public void setIrbType(String irbType) {
+    this.irbType = irbType;
   }
 
   @Override

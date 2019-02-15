@@ -12,7 +12,7 @@ import msf.mfcfc.traffic.TrafficManager;
 import msf.mfcfc.traffic.traffics.data.TrafficCommonData;
 
 /**
- * Class to provide the initialization and termination function of traffic
+ * Class to provide the initialization and termination function of the traffic
  * information management function block.
  *
  * @author NTT
@@ -32,7 +32,11 @@ public final class FcTrafficManager extends TrafficManager {
   }
 
   /**
-   * Return the instance of TrafficManager
+   * Returns the instance of TrafficManager. This method does not guarantee the
+   * uniqueness of the returned instance if it is called by multi-threads
+   * simultaneously on the first call.<br>
+   * Guarantee that this function is called by only one thread simultaneously
+   * when it is called for the first time.
    *
    * @return TrafficManager instance
    */

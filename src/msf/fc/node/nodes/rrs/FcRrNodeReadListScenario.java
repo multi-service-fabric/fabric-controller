@@ -21,7 +21,7 @@ import msf.mfcfc.node.nodes.rrs.data.RrNodeReadListResponseBody;
 import msf.mfcfc.node.nodes.rrs.data.RrNodeRequest;
 
 /**
- * Implementation class for RR node information list acquisition.
+ * Implementation class for the RR node information list acquisition.
  *
  * @author NTT
  *

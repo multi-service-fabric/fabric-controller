@@ -1,0 +1,4 @@
+{
+    "slice_id" : "A",
+    "irb_type" : "asymmetric"
+}

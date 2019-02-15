@@ -23,8 +23,8 @@ import msf.mfcfc.core.scenario.RestResponseBase;
 /**
  * Definition class for error response when an error/exception occurs on the
  * REST server (Jetty). <br>
- * Respond in the "application/json" form since normal ErrorHandler returns an
- * error in the "text/html" format.
+ * Returns in the "application/json” form since normal ErrorHandler returns an
+ * error in the "text/html” format.
  *
  * @author NTT
  *

@@ -5,6 +5,11 @@ import com.google.gson.annotations.SerializedName;
 
 import msf.mfcfc.common.constant.ErrorResponseDataConsistency;
 
+/**
+ * Base class for response body.
+ *
+ * @author NTT
+ */
 public abstract class AbstractResponseBody {
 
   @SerializedName("error_code")

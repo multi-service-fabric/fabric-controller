@@ -40,6 +40,8 @@ public class FabricController extends AbstractMain {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FabricController.class);
 
+  private static final String CONF_FUNCTIONAL_CONFIG_PATH = "services/sys/fc_extensions.cnf";
+
   /**
    * Constructor of FabricController.
    */
@@ -276,9 +278,20 @@ public class FabricController extends AbstractMain {
         return false;
       }
 
+      setFunctionalConfigPath(CONF_FUNCTIONAL_CONFIG_PATH);
+
+      if (!initExtensionFunctions()) {
+        logger.error("ExtensionFunction Initialization processing failed.");
+        return false;
+      }
+
+      if (!startExtensionFunctions()) {
+        return false;
+      }
+
       this.rest = RestManager.getInstance();
 
-      rest.setRestResourcePackage(RestManager.REST_RESOURCE_PACKAGE_FC);
+      rest.setRestResourcePackage(RestManager.REST_RESOURCE_PACKAGE_FC, RestManager.REST_RESOURCE_PACKAGE_FC_SERVICES);
 
       rest.setRestRequestTimeouts(FcConfigManager.getInstance().getSystemConfStatus().getRecvRestRequestUnitTime(),
           FcConfigManager.getInstance().getSystemConfStatus().getSendRestRequestUnitTime());

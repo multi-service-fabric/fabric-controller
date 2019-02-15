@@ -30,7 +30,7 @@ import msf.mfcfc.rest.common.JsonUtil;
 import msf.mfcfc.rest.common.RestClient;
 
 /**
- * Class to implement the asynchronous processing in inter-cluster link
+ * Class to implement the asynchronous processing in the inter-cluster link
  * interface deletion.
  *
  * @author NTT
@@ -114,7 +114,7 @@ public class FcClusterLinkInterfaceDeleteRunner extends FcAbstractClusterLinkInt
       if (fcClusterLinkIf == null) {
 
         throw new MsfException(ErrorCode.TARGET_RESOURCE_NOT_FOUND,
-            "target resource not found. parameters = clusterLinkIf");
+            "target resource is not found. parameters = clusterLinkIf");
       }
       return fcClusterLinkIf;
     } finally {

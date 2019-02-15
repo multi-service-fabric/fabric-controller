@@ -31,7 +31,7 @@ import msf.mfcfc.slice.cps.l3cp.data.L3CpRequest;
 import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpEntity;
 
 /**
- * Implementation class for L3CP information list acquisition.
+ * Implementation class for the L3CP information list acquisition.
  *
  * @author NTT
  *

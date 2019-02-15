@@ -23,7 +23,7 @@ public enum ErrorCode {
 
   DATABASE_TRANSACTION_ERROR("020004", HttpStatus.INTERNAL_SERVER_ERROR_500, "Database transaction error.", DataConsistency.CONSISTENT),
 
-  TARGET_RESOURCE_NOT_FOUND("030001", HttpStatus.NOT_FOUND_404, "Target resource not found.", DataConsistency.CONSISTENT),
+  TARGET_RESOURCE_NOT_FOUND("030001", HttpStatus.NOT_FOUND_404, "Target resource is not found.", DataConsistency.CONSISTENT),
 
   TARGET_RESOURCE_ALREADY_EXIST("030002", HttpStatus.CONFLICT_409, "Target resource already exist.", DataConsistency.CONSISTENT),
 

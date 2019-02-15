@@ -1,7 +1,7 @@
 # Fabric Controller User Guide for Startup/Stop
-Version 2.0
+Version 2.1
 
-April 12, 2018
+December.07.2018
 
 Copyright (c) 2018 NTT corp. All Rights Reserved.
 
@@ -10,8 +10,7 @@ Copyright (c) 2018 NTT corp. All Rights Reserved.
 FC server startup/shutdown is executed by FC startup/shutdown script.
 
 ## 1. Startup
-(1) Change FC Config (FC initial setting Config, FC system setting
-    Config, and Hibernate Config) appropriately.
+(1) Change FC Configs appropriately.
 
 (2) Execute the following command after changing to the directory where
     FC startup/shutdown script resides.
@@ -92,20 +91,20 @@ $ sh fc_ctl.sh status
 
 FC startup status can be determined based on the result of the above
 command (standard output log). The standard output logs are summarized
-in the Table 3-1.
+in the table 3-1.
 
 **Table 3-1 FC startup status**
 
 |FC startup status |Standard output log|Remarks|
 |:-----------------|:------------------|:------|
 |Running (normal)  |INFO. FabricController\[pid=PID\] is running.|PID shows actual pid of FC.|
-|Running (abnormal: double startup)|WARN. FabricController is running (two or more applications are running).|More than or equal to 2 FCs are running. In order to get back normal condition, it is necessary to shutdown the FC that started up by mistake.In this case, since it is not possible to shutdown FC with FC startup/shutdown script, kill command is required to shutdown the FC.|
+|Running (abnormal: double startup)|WARN. FabricController is running (two or more applications are running).|More than or equal to 2 FCs are running. In order to get back normal condition, it is necessary to shutdown the FC that started up by mistake. In this case, since it is not possible to shutdown FC with FC startup/shutdown script, kill command is required to shutdown the FC.|
 |Not running       |INFO. FabricController is not running.|-|
 
-### 3.3.2 FC status confirmation (normal/abnormal)
+### 3.2. FC status confirmation (normal/abnormal)
 
 This section describes how to validate FC status.
-In order to validate FC status, the REST message in Table 3-2 needs to
+In order to validate FC status, the REST message in the table 3-2 needs to
 be sent to management address of the FC.
 
 **Table 3-2 REST request for status confirmation**
@@ -127,7 +126,7 @@ Table 3-3 summarizes response codes.
 |500          |abnormal    |
 
 When the response code is 200, relevant body field of its response
-consists of the following information shown in Table 3-4.
+consists of the following information shown in the table 3-4.
 
 **Table 3-4 Response body field of status confirmation**
 

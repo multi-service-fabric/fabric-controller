@@ -23,7 +23,7 @@ import msf.mfcfc.node.interfaces.internalifs.data.InternalIfReadListResponseBody
 import msf.mfcfc.node.interfaces.internalifs.data.InternalIfRequest;
 
 /**
- * Implementation class for intra-cluster link interface information list
+ * Implementation class for the internal link interface information list
  * acquisition.
  *
  * @author NTT

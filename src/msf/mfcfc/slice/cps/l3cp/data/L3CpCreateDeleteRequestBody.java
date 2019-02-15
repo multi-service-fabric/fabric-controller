@@ -160,7 +160,7 @@ public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
       validateBgp();
     }
 
-    if (value.getStaticRouteList() != null && value.getStaticRouteList().size() > 0) {
+    if (value.getStaticRouteList() != null && !value.getStaticRouteList().isEmpty()) {
       validateStaticRouteList();
     }
 

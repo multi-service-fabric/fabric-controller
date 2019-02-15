@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -13,6 +16,7 @@ import javax.persistence.Table;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
 import msf.mfcfc.common.exception.MsfException;
+import msf.mfcfc.db.SessionWrapper;
 
 @Entity
 @Table(name = "vlan_ifs")
@@ -28,6 +32,10 @@ public class FcVlanIf implements Serializable {
 
   @OneToMany(mappedBy = "vlanIf")
   private List<FcL3Cp> l3Cps;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "irb_instance_id")
+  private FcIrbInstance irbInstance;
 
   public FcVlanIf() {
   }
@@ -84,9 +92,18 @@ public class FcVlanIf implements Serializable {
     return l3Cp;
   }
 
+  public FcIrbInstance getIrbInstance() throws MsfException {
+    return SessionWrapper.getLazyLoadData(this.irbInstance);
+  }
+
+  public void setIrbInstance(FcIrbInstance irbInstance) {
+    this.irbInstance = irbInstance;
+  }
+
   @Override
   public String toString() {
-    return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "l2Cps", "l3Cps" }).toString();
+    return new ReflectionToStringBuilder(this).setExcludeFieldNames(new String[] { "l2Cps", "l3Cps", "irbInstance" })
+        .toString();
   }
 
 }

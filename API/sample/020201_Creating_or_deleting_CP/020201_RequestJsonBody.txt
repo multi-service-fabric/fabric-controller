@@ -1,0 +1,42 @@
+[
+    {
+        "op": "add",
+        "path": "/11",
+        "value": {
+            "cluster_id": "1",
+            "edge_point_id": "11",
+            "port_mode": "trunk",
+            "vlan_id": 100,
+            "traffic_threshold": 0.005,
+            "qos": {
+                "ingress_shaping_rate": 1.0,
+                "egress_shaping_rate": 1.0
+            },
+            "irb": {
+                "irb_ipv4_address": "100.1.0.250",
+                "vga_ipv4_address": "100.1.0.254",
+                "ipv4_address_prefix": 24
+            }
+        }
+    },
+    {
+        "op": "add",
+        "path": "/14",
+        "value": {
+            "cluster_id": "1",
+            "edge_point_id": "7",
+            "port_mode": "trunk",
+            "vlan_id": 200,
+            "traffic_threshold": 0.005,
+            "qos": {
+                "ingress_shaping_rate": 1.0,
+                "egress_shaping_rate": 1.0
+            },
+            "irb": {
+                "irb_ipv4_address": "100.2.0.251",
+                "vga_ipv4_address": "100.2.0.254",
+                "ipv4_address_prefix": 24
+            }
+        }
+    }
+]

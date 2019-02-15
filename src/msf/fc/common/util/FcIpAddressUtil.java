@@ -23,7 +23,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   private static int nintrai;
 
   /**
-   * Calculate IP addresses of Leaf (n) and Spine (m) on the intra-cluster link.
+   * Calculates IP addresses of Leaf (n) and Spine (m) on the internal link.
    *
    * @param leafId
    *          Leaf ID
@@ -64,7 +64,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate IP address of Leaf and RR on the intra-cluster link.
+   * Calculates IP addresses of Leaf and RR on the internal link.
    *
    * @param rrId
    *          RR ID
@@ -106,7 +106,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return the number of intra-cluster link IP addresses.
+   * Returns the number of internal link IP addresses.
    *
    * @return the number of internal IP addresses
    */
@@ -135,7 +135,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return Leaf loopback address.
+   * Returns the Leaf loopback address.
    *
    * @param leafId
    *          Leaf ID
@@ -163,7 +163,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return Spine loopback address
+   * Returns the Spine loopback address
    *
    * @param spineId
    *          Spine ID
@@ -196,7 +196,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return RR loopback address
+   * Returns the RR loopback address
    *
    * @param rrId
    *          RR ID
@@ -229,7 +229,7 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Return the aggregate address.
+   * Returns the aggregate address.
    *
    * @return aggregate address
    */
@@ -261,69 +261,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate FC address of inchannel.
-   *
-   * @param type
-   *          FC controller type
-   * @return FC inchannel address of specified type
-   * @throws MsfException
-   *           If value can't be acquired from config
-   */
-  public static String getX0fcinii(ConIp type) throws MsfException {
-    try {
-      logger.methodStart(new String[] { "type" }, new Object[] { type });
-
-      SwCluster swCluster = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster();
-
-      String x0rioi = getXrlloi(0);
-
-      int x0rioii = convertIpAddressToIntFromStr(x0rioi);
-
-      int nri = swCluster.getMaxRrNum();
-
-      double log2 = Math.log(nri) / Math.log(2);
-
-      int nrloi = (int) Math.pow(2, Math.ceil(log2));
-
-      int x0fcini = x0rioii + nrloi + type.getType();
-
-      return convertIpAddressToStrFromInt(x0fcini);
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  /**
-   * Calculate EC address of inchannel.
-   *
-   * @param type
-   *          EC controller type
-   * @return EC inchannel address of specified type
-   * @throws MsfException
-   *           If value can't be acquired from config
-   */
-  public static String getX0ecinii(ConIp type) throws MsfException {
-    try {
-      logger.methodStart(new String[] { "type" }, new Object[] { type });
-
-      String x0fcini = getX0fcinii(ConIp.CTL_0);
-
-      int x0fcinii = convertIpAddressToIntFromStr(x0fcini);
-
-      int x0ecinii = x0fcinii + N_FCINI + type.getType();
-
-      return convertIpAddressToStrFromInt(x0ecinii);
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  /**
-   * Caluculate the outchannel Leaf address of the specified ID.
+   * Calculates the out-channel Leaf address of the specified ID.
    *
    * @param id
    *          ID
-   * @return outchannel Leaf address
+   * @return out-channel Leaf address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -339,11 +281,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Caluculate the outchannel Spine address of the specified ID.
+   * Calculates the out-channel Spine address of the specified ID.
    *
    * @param id
    *          ID
-   * @return outchannel Spine address
+   * @return out-channel Spine address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -359,11 +301,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate the outchannel RR address of specified ID.
+   * Calculates the out-channel RR address of specified ID.
    *
    * @param id
    *          ID
-   * @return outchannel RR address
+   * @return out-channel RR address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -379,11 +321,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate the outchannel FC address of the specified ID.
+   * Calculates the out-channel FC address of the specified type.
    *
    * @param type
    *          Controller type
-   * @return outchannel FC address
+   * @return out-channel FC address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -399,11 +341,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate the outchannel EC address of specified type.
+   * Calculates the out-channel EC address of specified type.
    *
    * @param type
    *          Controller type
-   * @return outchannel EC address
+   * @return out-channel EC address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -419,11 +361,11 @@ public class FcIpAddressUtil extends IpAddressUtil {
   }
 
   /**
-   * Calculate the outchannel EM address of the specified type.
+   * Calculates the out-channel EM address of the specified type.
    *
    * @param type
    *          Controller type
-   * @return outchannel EM address
+   * @return out-channel EM address
    * @throws MsfException
    *           If value can't be acquired from config
    */
@@ -451,6 +393,104 @@ public class FcIpAddressUtil extends IpAddressUtil {
       int ips = x0i + start + id;
 
       return convertIpAddressToStrFromInt(ips);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private static String getX0peersi() throws MsfException {
+    try {
+      logger.methodStart();
+
+      String xrlloi = getXrlloi(0);
+
+      int xrlloii = convertIpAddressToIntFromStr(xrlloi);
+
+      int nri = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getMaxRrNum();
+
+      double log2 = Math.log(nri) / Math.log(2);
+
+      int nrloi = (int) Math.pow(2, Math.ceil(log2));
+
+      int x0peersii = xrlloii + nrloi;
+
+      return convertIpAddressToStrFromInt(x0peersii);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private static int getX0peerdi(int leafId, boolean isCeil) {
+    try {
+      logger.methodStart(new String[] { "leafId", "isCeil" }, new Object[] { leafId, isCeil });
+      if (isCeil) {
+        return 4 * ((leafId / 2) + (leafId % 2) - 1) + 1 + ((leafId + 1) % 2);
+      } else {
+        return 4 * ((leafId / 2) - 1) + 1 + ((leafId + 1) % 2);
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Calculate the peer interface address.
+   *
+   * @param leafId
+   *          Leaf ID
+   * @return peer interface address
+   * @throws MsfException
+   *           If value can’t be acquired from config
+   */
+  public static String getX0peer(int leafId) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "leafId" }, new Object[] { leafId });
+
+      String x0peersi = getX0peersi();
+
+      int x0peerdi = getX0peerdi(leafId, true);
+
+      int x0peersii = convertIpAddressToIntFromStr(x0peersi);
+
+      int x0peeri = x0peersii + x0peerdi;
+
+      return convertIpAddressToStrFromInt(x0peeri);
+
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Calculates the anycast address.
+   *
+   * @param leafId
+   *          Leaf ID
+   * @return anycast address
+   * @throws MsfException
+   *           If value can’t be acquired from config
+   */
+  public static String getX0any(int leafId) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "leafId" }, new Object[] { leafId });
+
+      String x0peersi = getX0peersi();
+      int x0peersii = convertIpAddressToIntFromStr(x0peersi);
+
+      int nli = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getMaxLeafNum();
+
+      int x0peermdi = getX0peerdi(nli, false);
+
+      double log2 = Math.log(x0peermdi) / Math.log(2);
+
+      int x0peerseg = (int) Math.pow(2, Math.ceil(log2));
+
+      int x0anysii = x0peersii + x0peerseg;
+
+      int x0anyi = x0anysii + ((leafId / 2) + (leafId % 2));
+
+      return convertIpAddressToStrFromInt(x0anyi);
+
     } finally {
       logger.methodEnd();
     }

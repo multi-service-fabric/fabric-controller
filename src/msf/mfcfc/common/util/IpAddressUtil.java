@@ -29,6 +29,10 @@ public class IpAddressUtil {
   public static final String SPINE = "SPINE";
   public static final String RR = "RR";
 
+  private static final int IPV4_BIT_SIZE = 32;
+
+  private static final int IPV6_BIT_SIZE = 128;
+
   /**
    * Enum on the IP address relative position for each service of controller.
    *
@@ -60,10 +64,10 @@ public class IpAddressUtil {
    * Convert IP address of the specified string to the int-type number.
    *
    * @param ipAddress
-   *          IP address string to convert
+   *          An IP address string to convert
    * @return digitized IP address
    * @throws MsfException
-   *           Exception
+   *           If the IP address conversion fails
    */
   public static int convertIpAddressToIntFromStr(String ipAddress) throws MsfException {
     try {
@@ -72,7 +76,6 @@ public class IpAddressUtil {
       return ByteBuffer.wrap(inetAddress.getAddress()).getInt();
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("failed to convert ip address {0}", ipAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -84,9 +87,9 @@ public class IpAddressUtil {
    *
    * @param ipAddress
    *          digitized IP address
-   * @return IP address converted to string
+   * @return An IP address converted to string
    * @throws MsfException
-   *           Exception
+   *           If the IP address conversion fails
    */
   public static String convertIpAddressToStrFromInt(int ipAddress) throws MsfException {
     try {
@@ -96,7 +99,6 @@ public class IpAddressUtil {
       return inetAddress.getHostAddress();
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("failed to parse ip address {0}", ipAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
     } finally {
       logger.methodEnd();
@@ -112,30 +114,40 @@ public class IpAddressUtil {
    *          Subnet value of IP address to check
    * @return true for broadcast address, false for non-broadcast address
    * @throws MsfException
-   *           Occurs when IP address conversion fails
+   *           If the IP address conversion fails
    */
   public static boolean isNetworkAddress(String ipAddress, int subnet) throws MsfException {
     try {
       logger.methodStart(new String[] { "ipAddress", "subnet" }, new Object[] { ipAddress, subnet });
       InetAddress inetAddress = InetAddress.getByName(ipAddress);
+      String networkAddress = getNetworkAddress(inetAddress.getHostAddress(), subnet);
+      return inetAddress.getHostAddress().equals(networkAddress);
+    } catch (UnknownHostException exp) {
+      String logMsg = MessageFormat.format("failed to parse ip address {0}", ipAddress);
+      throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Convert an IP address to a Network address.
+   *
+   * @param ipAddress
+   *          IP address string to check (IPv4 / IPv6 can be specified)
+   * @param subnet
+   *          Subnet value.
+   * @return network address
+   * @throws MsfException
+   *           If the IP address conversion fails
+   */
+  public static String getNetworkAddress(String ipAddress, int subnet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "ipAddress", "subnet" }, new Object[] { ipAddress, subnet });
+      InetAddress inetAddress = InetAddress.getByName(ipAddress);
       byte[] bytes = inetAddress.getAddress();
 
-      int bitSize = 0;
-      if (bytes.length == 16) {
-        bitSize = 128;
-        if (subnet < 1 || subnet > 128) {
-          String logMsg = MessageFormat.format("illegal range of subnet(1-128) : {0}", subnet);
-          logger.error(logMsg);
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
-        }
-      } else {
-        bitSize = 32;
-        if (subnet < 1 || subnet > 32) {
-          String logMsg = MessageFormat.format("illegal range of subnet(1-32) : {0}", subnet);
-          logger.error(logMsg);
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
-        }
-      }
+      int bitSize = getBitSize(bytes, subnet);
 
       BigInteger ipb = new BigInteger(bytes);
       BigInteger ipbr = ipb.shiftRight(bitSize - subnet);
@@ -143,7 +155,7 @@ public class IpAddressUtil {
 
       InetAddress networkAddress;
       if (ipN.equals(BigInteger.ZERO)) {
-        if (bitSize == 128) {
+        if (bitSize == IPV6_BIT_SIZE) {
           networkAddress = InetAddress.getByName("0::0");
         } else {
           networkAddress = InetAddress.getByName("0.0.0.0");
@@ -152,15 +164,156 @@ public class IpAddressUtil {
         networkAddress = InetAddress.getByAddress(ipN.toByteArray());
       }
 
-      return inetAddress.equals(networkAddress);
-
+      return networkAddress.getHostAddress();
     } catch (UnknownHostException exp) {
       String logMsg = MessageFormat.format("failed to convert ip address {0}", ipAddress);
-      logger.error(logMsg, exp);
       throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
     } finally {
       logger.methodEnd();
     }
   }
 
+  /**
+   * Get an IP address resulting from adding the specified number of bits to the
+   * specified IP address.
+   *
+   * @param ipAddress
+   *          Target IP address
+   * @param bits
+   *          Number of bits to add
+   * @return An IP address resulting from adding the specified number of bits
+   * @throws MsfException
+   *           If the IP address conversion fails
+   */
+  public static String getBitsAddedIpAddress(String ipAddress, int bits) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "ipAddress", "bits" }, new Object[] { ipAddress, bits });
+      InetAddress inetAddress = InetAddress.getByName(ipAddress);
+      byte[] bytes = inetAddress.getAddress();
+      BigInteger ipb = new BigInteger(bytes);
+      ipb = ipb.add(new BigInteger("" + bits));
+      return InetAddress.getByAddress(ipb.toByteArray()).getHostAddress();
+    } catch (UnknownHostException exp) {
+      String logMsg = MessageFormat.format("failed to convert ip address {0}", ipAddress);
+      throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Get the last available host address on the network specified with an IP
+   * address and a subnet mask.
+   *
+   * @param ipAddress
+   *          IP address string to check (IPv4 / IPv6 can be specified)
+   * @param subnet
+   *          Subnet mask
+   * @return the last host address of the subnet
+   * @throws MsfException
+   *           If the IP address conversion fails, or there can be no host
+   *           address on the network.
+   */
+  public static String getMaxHostAddress(String ipAddress, int subnet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "ipAddress", "subnet" }, new Object[] { ipAddress, subnet });
+
+      String networkAddress = getNetworkAddress(ipAddress, subnet);
+
+      InetAddress inetAddress = InetAddress.getByName(networkAddress);
+      byte[] bytes = inetAddress.getAddress();
+      BigInteger ipb = new BigInteger(bytes);
+
+      int bitSize = getBitSize(bytes, subnet);
+      checkExistHostAddress(subnet, bitSize == IPV4_BIT_SIZE);
+
+      Double hostAllOne = Math.pow((double) 2, (double) (bitSize - subnet)) - 2;
+      logger.debug("hostAllOne=" + hostAllOne);
+      BigInteger hostAllOneBig = new BigInteger("" + hostAllOne.longValue());
+      ipb = ipb.add(hostAllOneBig);
+
+      return InetAddress.getByAddress(ipb.toByteArray()).getHostAddress();
+    } catch (UnknownHostException exp) {
+      String logMsg = MessageFormat.format("failed to convert ip address {0}", ipAddress);
+      logger.error(exp);
+      throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Get the first available host address on the network specified with an IP
+   * address and a subnet mask.
+   *
+   * @param ipAddress
+   *          IP address string to check (IPv4 / IPv6 can be specified)
+   * @param subnet
+   *          Subnet mask
+   * @return the first host address of the subnet
+   * @throws MsfException
+   *           If the IP address conversion fails, or there can be no host
+   *           address on the network.
+   */
+  public static String getMinHostAddress(String ipAddress, int subnet) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "ipAddress", "subnet" }, new Object[] { ipAddress, subnet });
+
+      String networkAddress = getNetworkAddress(ipAddress, subnet);
+
+      InetAddress inetAddress = InetAddress.getByName(networkAddress);
+      byte[] bytes = inetAddress.getAddress();
+
+      int bitSize = getBitSize(bytes, subnet);
+      checkExistHostAddress(subnet, bitSize == IPV4_BIT_SIZE);
+
+      BigInteger ipb = new BigInteger(bytes);
+      ipb = ipb.add(new BigInteger("1"));
+      return InetAddress.getByAddress(ipb.toByteArray()).getHostAddress();
+    } catch (UnknownHostException exp) {
+      String logMsg = MessageFormat.format("failed to convert ip address {0}", ipAddress);
+      throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private static void checkExistHostAddress(int subnet, boolean isIpv4) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "subnet", "isIpv4" }, new Object[] { subnet, isIpv4 });
+      if (isIpv4) {
+        if (subnet > IPV4_BIT_SIZE - 2) {
+          String logMsg = MessageFormat.format("this network is without host address. subnet={0}", subnet);
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+        }
+      } else {
+        if (subnet > IPV6_BIT_SIZE - 2) {
+          String logMsg = MessageFormat.format("this network is without host address. subnet={0}", subnet);
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+        }
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private static int getBitSize(byte[] ipAddressBytes, int subnet) throws MsfException {
+    try {
+      logger.methodStart();
+      int bitSize = 0;
+      if (ipAddressBytes.length == 16) {
+        bitSize = IPV6_BIT_SIZE;
+      } else {
+        bitSize = IPV4_BIT_SIZE;
+      }
+
+      if (subnet < 1 || subnet > bitSize) {
+        String logMsg = MessageFormat.format("illegal range of subnet(1-{0}) : {1}", bitSize, subnet);
+        throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
+      }
+      return bitSize;
+    } finally {
+      logger.methodEnd();
+    }
+  }
 }

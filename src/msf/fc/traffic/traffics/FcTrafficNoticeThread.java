@@ -25,6 +25,7 @@ import msf.fc.db.dao.clusters.FcClusterLinkIfDao;
 import msf.fc.db.dao.clusters.FcEdgePointDao;
 import msf.fc.db.dao.clusters.FcInternalLinkIfDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
+import msf.fc.db.dao.slices.FcL2CpDao;
 import msf.fc.db.dao.slices.FcL3CpDao;
 import msf.fc.rest.ec.traffic.data.TrafficInfoCollectAllTrafficEcResponseBody;
 import msf.fc.rest.ec.traffic.data.entity.TrafficInfoSwitchTrafficCollectAllEcEntity;
@@ -78,9 +79,9 @@ public class FcTrafficNoticeThread extends Thread {
   private boolean isInternal = true;
 
   /**
-   * Return execution of traffic information notification
+   * Returns execution of the traffic information notification
    *
-   * @return whether or not execution of traffic information notification
+   * @return whether or not execution of the traffic information notification
    */
   public boolean isRunning() {
     return isRunning;
@@ -114,7 +115,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Execution of traffic information notification.
+   * Execution of the traffic information notification.
    */
   @Override
   public void run() {
@@ -151,7 +152,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Execution of traffic information notification.
+   * Execution of the traffic information notification.
    *
    * @throws MsfException
    *           Exception
@@ -270,8 +271,8 @@ public class FcTrafficNoticeThread extends Thread {
       FcEdgePoint trafficEdgePoint = getEdgePoint(session, ifType, ecNodeId, ifId);
       if (trafficEdgePoint != null) {
 
-        getIfTrafficNotifyEdgePoint(trafficEdgePoint, trafficValue, isSlice, clusterId, nodeId, fabricType,
-            physicalUnitList, clusterUnitList, sliceUnitList);
+        getIfTrafficNotifyEdgePoint(trafficEdgePoint, trafficValue, clusterId, nodeId, fabricType, physicalUnitList,
+            clusterUnitList);
         continue;
       }
 
@@ -324,7 +325,7 @@ public class FcTrafficNoticeThread extends Thread {
     if (sliceMap.get(sliceId) == null) {
       sliceMap.put(sliceId, new ArrayList<String>());
     }
-    sliceMap.get(sliceId).add(cpIds.get(0));
+    sliceMap.get(sliceId).addAll(cpIds);
   }
 
   private List<IfTrafficSliceEntity> getSliceUnitGroup(Map<String, List<String>> sliceMap, SliceType sliceType) {
@@ -345,39 +346,46 @@ public class FcTrafficNoticeThread extends Thread {
 
     if (isSlice) {
 
-      FcL3CpDao fcL3CpDao = new FcL3CpDao();
-      FcL3Cp fcL3Cp = fcL3CpDao.read(session, ecNodeId, ifId);
+      FcL2CpDao fcL2CpDao = new FcL2CpDao();
+      FcL2Cp fcL2Cp = fcL2CpDao.read(session, ecNodeId, ifId);
 
-      if (fcL3Cp == null) {
-        logger.info("Traffic notify skipped(Slice Unit:L3Cp). Target L3Cp not found. ecNodeId={0}, ifId={1}.", ecNodeId,
-            ifId);
-        return;
-      }
-      if (isOverThrethold(fcL3Cp.getTrafficThreshold(), trafficValue.getReceiveRate(), trafficValue.getSendRate())) {
-        sliceUnitList.add(getIfTrafficSliceEntity(fcL3Cp));
+      if (fcL2Cp == null) {
+
+        FcL3CpDao fcL3CpDao = new FcL3CpDao();
+        FcL3Cp fcL3Cp = fcL3CpDao.read(session, ecNodeId, ifId);
+
+        if (fcL3Cp == null) {
+          logger.info(
+              "Traffic notify skipped(Slice Unit:L2Cp/L3Cp). Target L2Cp/L3Cp not found. ecNodeId={0}, ifId={1}.",
+              ecNodeId, ifId);
+          return;
+        } else {
+
+          if (isOverThreshold(fcL3Cp.getTrafficThreshold(), trafficValue.getReceiveRate(),
+              trafficValue.getSendRate())) {
+            sliceUnitList.add(getIfTrafficSliceEntity(fcL3Cp));
+          }
+        }
+      } else {
+
+        if (isOverThreshold(fcL2Cp.getTrafficThreshold(), trafficValue.getReceiveRate(), trafficValue.getSendRate())) {
+          sliceUnitList.add(getIfTrafficSliceEntity(fcL2Cp));
+        }
       }
     }
   }
 
   private void getIfTrafficNotifyEdgePoint(FcEdgePoint edgePoint, TrafficInfoTrafficValueEcEntity trafficValue,
-      boolean isSlice, int clusterId, Integer nodeId, NodeType fabricType, List<IfTrafficNotifyEntity> physicalUnitList,
-      List<IfTrafficClusterEntity> clusterUnitList, List<IfTrafficSliceEntity> sliceUnitList) throws MsfException {
+      int clusterId, Integer nodeId, NodeType fabricType, List<IfTrafficNotifyEntity> physicalUnitList,
+      List<IfTrafficClusterEntity> clusterUnitList) throws MsfException {
 
-    if (isOverThrethold(edgePoint.getTrafficThreshold(), trafficValue.getReceiveRate(), trafficValue.getSendRate())) {
+    if (isOverThreshold(edgePoint.getTrafficThreshold(), trafficValue.getReceiveRate(), trafficValue.getSendRate())) {
 
       physicalUnitList.add(getIfTrafficNotifyEntity(trafficValue, clusterId, nodeId, fabricType));
 
       clusterUnitList.add(
           getIfTrafficClusterEntity(clusterId, ClusterType.EDGE_POINT, String.valueOf(edgePoint.getEdgePointId())));
 
-      if (isSlice) {
-        List<FcL2Cp> fcL2Cps = edgePoint.getL2Cps();
-
-        if (fcL2Cps != null) {
-
-          sliceUnitList.addAll(getIfTrafficSliceEntity(fcL2Cps));
-        }
-      }
     }
   }
 
@@ -385,7 +393,7 @@ public class FcTrafficNoticeThread extends Thread {
       TrafficInfoTrafficValueEcEntity trafficValue, int clusterId, Integer nodeId, NodeType fabricType,
       List<IfTrafficNotifyEntity> physicalUnitList, List<IfTrafficClusterEntity> clusterUnitList) {
 
-    if (isOverThrethold(internalLinkIf.getTrafficThreshold(), trafficValue.getReceiveRate(),
+    if (isOverThreshold(internalLinkIf.getTrafficThreshold(), trafficValue.getReceiveRate(),
         trafficValue.getSendRate())) {
 
       physicalUnitList.add(getIfTrafficNotifyEntity(trafficValue, clusterId, nodeId, fabricType));
@@ -402,7 +410,7 @@ public class FcTrafficNoticeThread extends Thread {
       TrafficInfoTrafficValueEcEntity trafficValue, int clusterId, Integer nodeId, NodeType fabricType,
       List<IfTrafficNotifyEntity> physicalUnitList, List<IfTrafficClusterEntity> clusterUnitList) {
 
-    if (isOverThrethold(clusterLinkIf.getTrafficThreshold(), trafficValue.getReceiveRate(),
+    if (isOverThreshold(clusterLinkIf.getTrafficThreshold(), trafficValue.getReceiveRate(),
         trafficValue.getSendRate())) {
 
       physicalUnitList.add(getIfTrafficNotifyEntity(trafficValue, clusterId, nodeId, fabricType));
@@ -478,22 +486,15 @@ public class FcTrafficNoticeThread extends Thread {
     return ifTrafficClusterEntity;
   }
 
-  private List<IfTrafficSliceEntity> getIfTrafficSliceEntity(List<FcL2Cp> l2Cps) {
+  private IfTrafficSliceEntity getIfTrafficSliceEntity(FcL2Cp l2Cp) {
 
-    List<IfTrafficSliceEntity> ifTrafficSliceEntityList = new ArrayList<>();
-
-    for (FcL2Cp fcL2Cp : l2Cps) {
-      IfTrafficSliceEntity ifTrafficSliceEntity = new IfTrafficSliceEntity();
-      ifTrafficSliceEntity.setSliceType(SliceType.L2_SLICE.getMessage());
-      ifTrafficSliceEntity.setSliceId(fcL2Cp.getId().getSliceId());
-
-      List<String> cpIdList = new ArrayList<>();
-      cpIdList.add(fcL2Cp.getId().getCpId());
-      ifTrafficSliceEntity.setCpIdList(cpIdList);
-
-      ifTrafficSliceEntityList.add(ifTrafficSliceEntity);
-    }
-    return ifTrafficSliceEntityList;
+    IfTrafficSliceEntity ifTraffic = new IfTrafficSliceEntity();
+    ifTraffic.setSliceType(SliceType.L2_SLICE.getMessage());
+    ifTraffic.setSliceId(l2Cp.getId().getSliceId());
+    List<String> cpIdList = new ArrayList<>();
+    cpIdList.add(l2Cp.getId().getCpId());
+    ifTraffic.setCpIdList(cpIdList);
+    return ifTraffic;
   }
 
   private IfTrafficSliceEntity getIfTrafficSliceEntity(FcL3Cp l3Cp) {
@@ -558,7 +559,7 @@ public class FcTrafficNoticeThread extends Thread {
     }
   }
 
-  private boolean isOverThrethold(Double threshold, Double receiveRate, Double sendRate) {
+  private boolean isOverThreshold(Double threshold, Double receiveRate, Double sendRate) {
 
     if (threshold == null) {
 
@@ -626,7 +627,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Return the start time of traffic information notification.
+   * Returns the start time of the traffic information notification.
    *
    * @return traffic information notification start time
    */
@@ -635,7 +636,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Set the start time of traffic information notification.
+   * Set the start time of the traffic information notification.
    *
    * @param startTime
    *          Start time
@@ -648,7 +649,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Return the previous start time of traffic information notification.
+   * Returns the previous start time of the traffic information notification.
    *
    * @return traffic information notification start time
    */
@@ -657,7 +658,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Set the previous start time of traffic information notification.
+   * Set the previous start time of the traffic information notification.
    *
    * @param lastStartTime
    *          Start time
@@ -667,7 +668,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Return the end time of traffic information notification.
+   * Returns the end time of the traffic information notification.
    *
    * @return traffic information notification end time
    */
@@ -676,7 +677,7 @@ public class FcTrafficNoticeThread extends Thread {
   }
 
   /**
-   * Set the end time of traffic information notification.
+   * Set the end time of the traffic information notification.
    *
    * @param endTime
    *          Time
