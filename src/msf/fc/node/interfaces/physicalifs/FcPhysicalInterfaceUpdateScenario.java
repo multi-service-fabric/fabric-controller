@@ -74,7 +74,8 @@ public class FcPhysicalInterfaceUpdateScenario extends FcAbstractPhysicalInterfa
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
-      if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {
+      if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))
+          && !NodeType.SPINE.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {
         throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, "fabricType = " + request.getFabricType());
       }
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
@@ -107,12 +108,31 @@ public class FcPhysicalInterfaceUpdateScenario extends FcAbstractPhysicalInterfa
         FcNode fcNode = getNode(sessionWrapper, fcNodeDao, request.getFabricTypeEnum().getCode(),
             Integer.parseInt(request.getNodeId()));
 
-        logger.performance("start get leaf resources lock.");
-        sessionWrapper.beginTransaction();
-        List<FcNode> fcNodes = new ArrayList<>();
-        fcNodes.add(fcNode);
-        FcDbManager.getInstance().getLeafsLock(fcNodes, sessionWrapper);
-        logger.performance("end get leaf resources lock.");
+        List<FcNode> nodes = new ArrayList<>();
+        switch (NodeType.getEnumFromCode(fcNode.getNodeType())) {
+          case LEAF:
+
+            logger.performance("start get leaf resources lock.");
+            sessionWrapper.beginTransaction();
+            nodes.add(fcNode);
+            FcDbManager.getInstance().getLeafsLock(nodes, sessionWrapper);
+            logger.performance("end get leaf resources lock.");
+            break;
+
+          case SPINE:
+
+            logger.performance("start get spine resources lock.");
+            sessionWrapper.beginTransaction();
+            nodes.add(fcNode);
+            FcDbManager.getInstance().getSpinesLock(nodes, sessionWrapper);
+            logger.performance("end get spine resources lock.");
+            break;
+
+          default:
+
+            throw new MsfException(ErrorCode.UNDEFINED_ERROR,
+                "NodeType = " + NodeType.getEnumFromCode(fcNode.getNodeType()).getSingularMessage());
+        }
 
         FcPhysicalIfDao fcPhysicalIfDao = new FcPhysicalIfDao();
         FcPhysicalIf fcPhysicalIf = getPhysicalInterface(sessionWrapper, fcPhysicalIfDao,

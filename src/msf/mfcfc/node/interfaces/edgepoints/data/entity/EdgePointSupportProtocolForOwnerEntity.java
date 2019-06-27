@@ -12,6 +12,9 @@ public class EdgePointSupportProtocolForOwnerEntity {
   @SerializedName("L2")
   private Boolean l2;
 
+  @SerializedName("q_in_q_type")
+  private String qInQType;
+
   @SerializedName("L3")
   private Boolean l3;
 
@@ -24,6 +27,14 @@ public class EdgePointSupportProtocolForOwnerEntity {
 
   public void setL2(Boolean l2) {
     this.l2 = l2;
+  }
+
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
   }
 
   public Boolean getL3() {

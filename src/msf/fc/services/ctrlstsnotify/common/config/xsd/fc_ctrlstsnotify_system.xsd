@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://fc.msf/services/ctrlstsnotify/common/config/type/system"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://fc.msf/services/ctrlstsnotify/common/config/type/system">
+
+	<xsd:element name="systemConf" type="tns:SystemConf" />
+
+	<xsd:complexType name="SystemConf">
+		<xsd:all>
+			<xsd:element name="logNotification" type="tns:LogNotification"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="controllerFailureNotification" type="tns:ControllerFailureNotification"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+		</xsd:all>
+	</xsd:complexType>
+
+	<xsd:complexType name="LogNotification">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfoLog"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ControllerFailureNotification">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfoCtlFailure"
+				minOccurs="0" maxOccurs="unbounded">
+			</xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="monitoringPeriod" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfoLog">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticePort" type="tns:port" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+			<xsd:element name="logLevel" type="tns:LogLevel" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfoCtlFailure">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="noticePort" type="tns:port" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+			<xsd:element name="monitored" type="tns:Monitored" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="LogLevel">
+		<xsd:sequence>
+			<xsd:element name="info" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="warning" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="error" type="xsd:boolean"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Monitored">
+		<xsd:sequence>
+			<xsd:element name="os" type="tns:Os" minOccurs="1"
+				maxOccurs="1"></xsd:element>
+			<xsd:element name="controllerProcess" type="tns:ControllerProcess"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Os">
+		<xsd:sequence>
+			<xsd:element name="cpuUseRateThreshold" type="tns:cpu_num"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="memoryUsageThreshold" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="disk" type="tns:DiskOs"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="ControllerProcess">
+		<xsd:sequence>
+			<xsd:element name="cpuUseRateThreshold" type="tns:cpu_num"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="memoryUsageThreshold" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="disk" type="tns:DiskProcess"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="DiskOs">
+		<xsd:sequence>
+			<xsd:element name="devices" type="tns:Device"
+				minOccurs="0" maxOccurs="unbounded"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="DiskProcess">
+		<xsd:sequence>
+			<xsd:element name="usageThreshold" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:complexType name="Device">
+		<xsd:sequence>
+			<xsd:element name="fileSystem" type="xsd:string"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="usageThreshold" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="port">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="65535" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="integer_of_0_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="cpu_num">
+		<xsd:restriction base="xsd:float">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="100" />
+		</xsd:restriction>
+	</xsd:simpleType>
+</xsd:schema>
+

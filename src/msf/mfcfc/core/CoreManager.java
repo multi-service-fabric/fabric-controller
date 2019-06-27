@@ -7,6 +7,7 @@ import java.util.List;
 import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.common.reservation.ReservationBlockBase;
 import msf.mfcfc.core.async.AsyncExecutor;
 import msf.mfcfc.core.async.SendRequestExecutor;
 import msf.mfcfc.core.operation.OperationManager;
@@ -25,7 +26,9 @@ public final class CoreManager implements FunctionBlockBase {
 
   private static final CoreManager instance = new CoreManager();
 
-  private static List<FunctionBlockBase> extensionsList = new ArrayList<FunctionBlockBase>();
+  private List<FunctionBlockBase> extensionsList = new ArrayList<FunctionBlockBase>();
+
+  private List<ReservationBlockBase> reservationsList = new ArrayList<ReservationBlockBase>();
 
   private CoreManager() {
   }
@@ -128,4 +131,26 @@ public final class CoreManager implements FunctionBlockBase {
     return extensionsList;
   }
 
+  /**
+   * Registers an instance of a function that has reservation processing.
+   *
+   * @param reservationFunction
+   *          An instance of a function that has reservation processing
+   *
+   */
+  public void addReservationFunction(ReservationBlockBase reservationFunction) {
+
+    reservationsList.add(reservationFunction);
+  }
+
+  /**
+   * Get an instance list of a functions that have reservation processing.
+   *
+   * @return An instance list of functions that have reservation processing.
+   */
+  public List<ReservationBlockBase> getReservationFunctions() {
+
+    return reservationsList;
+
+  }
 }

@@ -9,16 +9,6 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class PhysicalIfFilterRequest extends RestRequestBase {
 
-  public PhysicalIfFilterRequest(String requestBody, String notificationAddress, String notificationPort,
-      String clusterId, String fabricType, String nodeId, String ifId, String format) {
-    super(requestBody, notificationAddress, notificationPort);
-    this.clusterId = clusterId;
-    this.fabricType = fabricType;
-    this.nodeId = nodeId;
-    this.ifId = ifId;
-    this.format = format;
-  }
-
   private String clusterId;
 
   private String fabricType;
@@ -28,6 +18,16 @@ public class PhysicalIfFilterRequest extends RestRequestBase {
   private String ifId;
 
   private String format;
+
+  public PhysicalIfFilterRequest(String requestBody, String notificationAddress, String notificationPort,
+      String clusterId, String fabricType, String nodeId, String ifId, String format) {
+    super(requestBody, notificationAddress, notificationPort);
+    this.clusterId = clusterId;
+    this.fabricType = fabricType;
+    this.nodeId = nodeId;
+    this.ifId = ifId;
+    this.format = format;
+  }
 
   public String getClusterId() {
     return clusterId;

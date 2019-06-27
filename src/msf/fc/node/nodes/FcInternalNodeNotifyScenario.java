@@ -4,6 +4,7 @@ package msf.fc.node.nodes;
 import org.eclipse.jetty.http.HttpStatus;
 
 import msf.mfcfc.common.constant.OperationType;
+import msf.mfcfc.common.constant.SpecialOperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.exception.MsfException;
@@ -46,6 +47,7 @@ public class FcInternalNodeNotifyScenario extends FcAbstractNodeScenarioBase<Int
     this.systemIfType = systemInterfaceType;
 
     this.syncType = SynchronousType.ASYNC;
+    this.specialOperationType = SpecialOperationType.SPECIALOPERATION;
   }
 
   @Override

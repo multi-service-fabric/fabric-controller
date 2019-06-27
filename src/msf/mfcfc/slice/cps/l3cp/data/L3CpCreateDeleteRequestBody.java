@@ -19,7 +19,7 @@ import msf.mfcfc.slice.cps.l3cp.data.entity.L3CpValueEntity;
 
 public class L3CpCreateDeleteRequestBody implements RestRequestValidator {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(L3CpCreateDeleteAsyncResponseBody.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(L3CpCreateDeleteRequestBody.class);
 
   @SerializedName("op")
   private String op;

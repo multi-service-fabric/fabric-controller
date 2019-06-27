@@ -12,7 +12,7 @@ public class FcVlanIfPK implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Column(name = "node_info_id")
-  private Integer nodeInfoId;
+  private Long nodeInfoId;
 
   @Column(name = "vlan_if_id")
   private Integer vlanIfId;
@@ -20,11 +20,11 @@ public class FcVlanIfPK implements Serializable {
   public FcVlanIfPK() {
   }
 
-  public Integer getNodeInfoId() {
+  public Long getNodeInfoId() {
     return this.nodeInfoId;
   }
 
-  public void setNodeInfoId(Integer nodeInfoId) {
+  public void setNodeInfoId(Long nodeInfoId) {
     this.nodeInfoId = nodeInfoId;
   }
 

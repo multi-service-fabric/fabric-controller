@@ -1,6 +1,8 @@
 
 package msf.fc.rest.ec.node.recovernode.data.entity;
 
+import java.util.List;
+
 import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
@@ -18,6 +20,12 @@ public class RecoverNodeEcEntity {
 
   @SerializedName("mac_addr")
   private String macAddr;
+
+  @SerializedName("node_upgrade")
+  private Boolean nodeUpgrade;
+
+  @SerializedName("internal_link_ifs")
+  private List<RecoverInternalLinkIfListEcEntity> internalLinkIfList;
 
   public String getNodeType() {
     return nodeType;
@@ -49,6 +57,22 @@ public class RecoverNodeEcEntity {
 
   public void setMacAddr(String macAddr) {
     this.macAddr = macAddr;
+  }
+
+  public Boolean getNodeUpgrade() {
+    return nodeUpgrade;
+  }
+
+  public void setNodeUpgrade(Boolean nodeUpgrade) {
+    this.nodeUpgrade = nodeUpgrade;
+  }
+
+  public List<RecoverInternalLinkIfListEcEntity> getInternalLinkIfList() {
+    return internalLinkIfList;
+  }
+
+  public void setInternalLinkIfList(List<RecoverInternalLinkIfListEcEntity> internalLinkIfList) {
+    this.internalLinkIfList = internalLinkIfList;
   }
 
   @Override

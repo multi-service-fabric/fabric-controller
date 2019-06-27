@@ -95,6 +95,8 @@ public abstract class FcAbstractL2CpScenarioBase<T extends RestRequestBase> exte
       }
       l2CpEntity.setTrafficThreshold(l2Cp.getTrafficThreshold());
 
+      l2CpEntity.setQInQEnable(l2Cp.getL2Slice().getQInQEnable());
+
       return l2CpEntity;
     } finally {
       logger.methodEnd();

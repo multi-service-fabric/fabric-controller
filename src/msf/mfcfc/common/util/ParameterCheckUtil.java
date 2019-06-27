@@ -23,6 +23,7 @@ import msf.mfcfc.common.constant.GetInfo;
 import msf.mfcfc.common.constant.LogLevel;
 import msf.mfcfc.common.constant.LogType;
 import msf.mfcfc.common.constant.MergeType;
+import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.constant.PatchOperation;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -51,9 +52,13 @@ public class ParameterCheckUtil {
 
   private static final Pattern PATH_PARAMETER_PATTERN = Pattern.compile("^/(.*)$");
 
-  private static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
+  public static final String DATE_FORMAT = "yyyyMMdd_HHmmss";
 
-  private static final FastDateFormat dateFormat = FastDateFormat.getInstance(DATE_FORMAT);
+  public static final FastDateFormat dateFormat = FastDateFormat.getInstance(DATE_FORMAT);
+
+  public static final Integer EC_LEAF_NODE_START_ID = 0;
+  public static final Integer EC_SPINE_NODE_START_ID = 1000;
+  public static final Integer EC_RR_NODE_START_ID = 2000;
 
   /**
    * Check that the specified parameter is not NULL.
@@ -481,7 +486,7 @@ public class ParameterCheckUtil {
     }
     if (existAdd && existRemove) {
       String logMsg = "patch operation 'add' and 'remove' are mixed.";
-      throw new MsfException(ErrorCode.PARAMETER_FORMAT_ERROR, logMsg);
+      throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
     }
   }
 
@@ -794,6 +799,50 @@ public class ParameterCheckUtil {
       if (checkTargetPort != null) {
         ParameterCheckUtil.checkPortNumber(checkTargetPort);
       }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Get the Node ID for EC.<br>
+   * <br>
+   * When distributing node IDs to EC, node IDs converted by FC according to the
+   * following calculation are distributed.<br>
+   * In case of the Leaf node: same as the Node ID<br>
+   * In case of the Spine node: Node ID + 1000<br>
+   * In case of the RR node: Node ID + 2000<br>
+   *
+   * @param nodeId
+   *          Node ID
+   * @param nodeType
+   *          Node type
+   * @return EC node ID
+   * @throws MsfException
+   *           When an unexpected node type is specified.
+   */
+  public static Integer getEcNodeId(Integer nodeId, NodeType nodeType) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "nodeId", "nodeType" }, new Object[] { nodeId, nodeType });
+      Integer ecNodeId = null;
+      switch (nodeType) {
+        case LEAF:
+          ecNodeId = nodeId + EC_LEAF_NODE_START_ID;
+          break;
+
+        case SPINE:
+          ecNodeId = nodeId + EC_SPINE_NODE_START_ID;
+          break;
+
+        case RR:
+          ecNodeId = nodeId + EC_RR_NODE_START_ID;
+          break;
+
+        default:
+
+          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter. nodeType = " + nodeType);
+      }
+      return ecNodeId;
     } finally {
       logger.methodEnd();
     }

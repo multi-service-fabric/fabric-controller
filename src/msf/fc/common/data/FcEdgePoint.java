@@ -37,7 +37,7 @@ public class FcEdgePoint implements Serializable {
   private FcBreakoutIf breakoutIf;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lag_if_id")
+  @JoinColumn(name = "lag_if_info_id")
   private FcLagIf lagIf;
 
   @ManyToOne(fetch = FetchType.LAZY)

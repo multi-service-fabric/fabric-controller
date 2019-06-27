@@ -220,7 +220,7 @@ public final class FcConfigManager extends ConfigManager {
 
       if (systemConf.getSwClustersData().getSwClusterData().getSwCluster().getSwClusterId() != dataConf
           .getSwClustersData().getSwClusterData().getSwCluster().getSwClusterId()) {
-        logger.error("SW Cluster ID(Config) is wrong.");
+        logger.error("SwClusterId(SystemConf) and SwClusterId(DataConf) are NG because two IDs do not match.");
         return false;
       }
 
@@ -228,12 +228,12 @@ public final class FcConfigManager extends ConfigManager {
           IpAddressType.IPV4V6FQDN);
 
       if (checkAddress == null) {
-        logger.error("Ec Control Address NG :"
+        logger.error("EcControlAddress is NG because the format is invalid.:"
             + systemConf.getSwClustersData().getSwClusterData().getSwCluster().getEcControlAddress());
         return false;
 
       } else {
-        logger.debug("Ec Control Address OK.");
+        logger.debug("EcControlAddress is OK.");
 
         systemConf.getSwClustersData().getSwClusterData().getSwCluster().setEcControlAddress(checkAddress);
       }
@@ -243,12 +243,12 @@ public final class FcConfigManager extends ConfigManager {
           IpAddressType.IPV4);
 
       if (checkAddress == null) {
-        logger.error("Inchannel Start Address NG :"
+        logger.error("InchannelStartAddress is NG because the format is invalid.:"
             + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getInchannelStartAddress());
         return false;
 
       } else {
-        logger.debug("Inchannel Start Address OK.");
+        logger.debug("InchannelStartAddress is OK.");
 
         dataConf.getSwClustersData().getSwClusterData().getSwCluster().setInchannelStartAddress(checkAddress);
       }
@@ -258,12 +258,12 @@ public final class FcConfigManager extends ConfigManager {
           IpAddressType.IPV4);
 
       if (checkAddress == null) {
-        logger.error("Outchannel Start Address NG :"
+        logger.error("OutchannelStartAddress is NG because the format is invalid.:"
             + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getOutchannelStartAddress());
         return false;
 
       } else {
-        logger.debug("Outchannel Start Address OK.");
+        logger.debug("OutchannelStartAddress is OK.");
 
         dataConf.getSwClustersData().getSwClusterData().getSwCluster().setOutchannelStartAddress(checkAddress);
       }
@@ -273,12 +273,12 @@ public final class FcConfigManager extends ConfigManager {
           IpAddressType.IPV4);
 
       if (checkAddress == null) {
-        logger.error("Aggregation Start Address NG :"
+        logger.error("AggregationStartAddress is NG because the format is invalid.:"
             + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getAggregationStartAddress());
         return false;
 
       } else {
-        logger.debug("Aggregation Start Address OK.");
+        logger.debug("AggregationStartAddress is OK.");
 
         dataConf.getSwClustersData().getSwClusterData().getSwCluster().setAggregationStartAddress(checkAddress);
       }
@@ -287,11 +287,11 @@ public final class FcConfigManager extends ConfigManager {
         checkAddress = checkHost(rr.getRrRouterId(), IpAddressType.IPV4);
 
         if (checkAddress == null) {
-          logger.error("Rr Router Id NG :" + rr.getRrRouterId());
+          logger.error("RrRouterId is NG because the format is invalid.:" + rr.getRrRouterId());
           return false;
 
         } else {
-          logger.debug("Rr Router Id OK.");
+          logger.debug("RrRouterId is OK.");
 
           rr.setRrRouterId(checkAddress);
         }
@@ -301,11 +301,11 @@ public final class FcConfigManager extends ConfigManager {
         checkAddress = checkHost(leafRr.getLeafRrRouterId(), IpAddressType.IPV4);
 
         if (checkAddress == null) {
-          logger.error("Leaf Rr Router Id NG :" + leafRr.getLeafRrNodeId());
+          logger.error("LeafRrRouterId is NG because the format is invalid.:" + leafRr.getLeafRrNodeId());
           return false;
 
         } else {
-          logger.debug("Leaf Rr Router Id OK.");
+          logger.debug("LeafRrRouterId is OK.");
 
           leafRr.setLeafRrRouterId(checkAddress);
         }
@@ -314,10 +314,10 @@ public final class FcConfigManager extends ConfigManager {
       for (NoticeDestInfoStatus status : systemConf.getStatus().getNoticeDestInfo()) {
         checkAddress = checkHost(status.getNoticeAddress(), IpAddressType.IPV4);
         if (checkAddress == null) {
-          logger.error("Status Notice Address NG :" + status.getNoticeAddress());
+          logger.error("StatusNoticeAddress is NG because the format is invalid.:" + status.getNoticeAddress());
           return false;
         } else {
-          logger.debug("Status Notice Address OK.");
+          logger.debug("StatusNoticeAddress is OK.");
 
           status.setNoticeAddress(checkAddress);
         }
@@ -326,10 +326,10 @@ public final class FcConfigManager extends ConfigManager {
       for (NoticeDestInfoFailure failure : systemConf.getFailure().getNoticeDestInfo()) {
         checkAddress = checkHost(failure.getNoticeAddress(), IpAddressType.IPV4);
         if (checkAddress == null) {
-          logger.error("Failure Notice Address NG :" + failure.getNoticeAddress());
+          logger.error("FailureNoticeAddress is NG because the format is invalid.:" + failure.getNoticeAddress());
           return false;
         } else {
-          logger.debug("Failure Notice Address OK.");
+          logger.debug("FailureNoticeAddress is OK.");
 
           failure.setNoticeAddress(checkAddress);
         }
@@ -338,21 +338,32 @@ public final class FcConfigManager extends ConfigManager {
       for (NoticeDestInfoTraffic traffic : systemConf.getTraffic().getNoticeDestInfo()) {
         checkAddress = checkHost(traffic.getNoticeAddress(), IpAddressType.IPV4);
         if (checkAddress == null) {
-          logger.error("Traffic Notice Address NG :" + traffic.getNoticeAddress());
+          logger.error("TrafficNoticeAddress is NG because the format is invalid.:" + traffic.getNoticeAddress());
           return false;
         } else {
-          logger.debug("Traffic Notice Address OK.");
+          logger.debug("TrafficNoticeAddress is OK.");
 
           traffic.setNoticeAddress(checkAddress);
         }
       }
 
       if (systemConf.getIrb().getL3VniVlanIdStartPos() > systemConf.getIrb().getL3VniVlanIdEndPos()) {
-        logger.error("L3VniVlanId Start and End Pos NG : Start Pos = " + systemConf.getIrb().getL3VniVlanIdStartPos()
-            + ", End Pos = " + systemConf.getIrb().getL3VniVlanIdEndPos());
+        logger.error("L3VniVlanIdStartPos and L3VniVlanIdEndPos are NG because StartPos is greater than EndPos.:"
+            + " L3VniVlanIdStartPos = " + systemConf.getIrb().getL3VniVlanIdStartPos() + ", L3VniVlanIdEndPos = "
+            + systemConf.getIrb().getL3VniVlanIdEndPos());
         return false;
       } else {
-        logger.debug("L3VniVlanId Start and End Pos OK.");
+        logger.debug("L3VniVlanIdStartPos and L3VniVlanIdEndPos are OK.");
+      }
+
+      if (systemConf.getNode().getLagIfIdStartPos() <= dataConf.getSwClustersData().getSwClusterData().getSwCluster()
+          .getMaxSpineNum()) {
+        logger.error("LagIfIdStartPos is NG because LagIfIdStartPos is less than or equal to MaxSpineNum.:"
+            + " LagIfIdStartPos = " + systemConf.getNode().getLagIfIdStartPos() + ", MaxSpineNum = "
+            + dataConf.getSwClustersData().getSwClusterData().getSwCluster().getMaxSpineNum());
+        return false;
+      } else {
+        logger.debug("LagIfIdStartPos is OK.");
       }
 
       return true;
@@ -413,5 +424,14 @@ public final class FcConfigManager extends ConfigManager {
    */
   public List<String> getQosRemarkMenuList() {
     return systemConf.getQos().getRemarkMenu();
+  }
+
+  /**
+   * Get the start point LagIF ID of the system config.
+   *
+   * @return Start point LagIF ID
+   */
+  public int getLagIfIdStartPos() {
+    return systemConf.getNode().getLagIfIdStartPos();
   }
 }

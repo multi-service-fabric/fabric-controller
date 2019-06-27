@@ -349,10 +349,8 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
    * Procedures to return the date of the day.
    *
    * @return the date of the day
-   * @throws MsfException
-   *           If parameter check is of NG
    */
-  public static String getDefaultDate() throws MsfException {
+  public static String getDefaultDate() {
     try {
       logger.methodStart();
       Date date = new Date();
@@ -564,9 +562,6 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     return logLevels;
   }
 
-  /**
-   * Sort the controller logs in order of MFC, FC, EC and EM.
-   */
   protected static final Comparator<LogDataEntity> COMPARATOR_LOGCONTROLLER = new Comparator<LogDataEntity>() {
     @Override
     public int compare(LogDataEntity o1, LogDataEntity o2) {
@@ -577,9 +572,6 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     }
   };
 
-  /**
-   * Sort the controller logs in order of MFC, FC, EC and EM.
-   */
   protected static final Comparator<LogMergedDataEntity> COMPARATOR_LOGDATA_LOGCONTROLLER = new Comparator<LogMergedDataEntity>() {
     @Override
     public int compare(LogMergedDataEntity o1, LogMergedDataEntity o2) {
@@ -590,10 +582,6 @@ public abstract class AbstractLogScenarioBase<T extends RestRequestBase> extends
     }
   };
 
-  /**
-   * Sort the controller logs in order of ClusterID. In MFC, treat the cluster
-   * ID as -1 since it has no cluster ID.
-   */
   protected static final Comparator<LogMergedDataEntity> COMPARATOR_LOGDATA_CLUSTERID = new Comparator<LogMergedDataEntity>() {
     @Override
     public int compare(LogMergedDataEntity o1, LogMergedDataEntity o2) {

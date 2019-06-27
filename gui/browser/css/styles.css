@@ -1,0 +1,182 @@
+@charset "utf-8";
+/* フォント指定 */
+* {
+    font-family: "Helvetica Neue" , Helvetica , Arial;
+    /* font-size: 0.98em; */
+    font-size: 14px; /* fieldsetの入れ子でフォントが小さくなるので絶対値指定に変更 */
+}
+
+/* float設定はdivごとにクリア */
+div:after {
+    content: "";
+    clear: both;
+    display: block;
+}
+
+/* 高さについて画面いっぱいを100%とする！ */
+html {
+    height: 100%;
+}
+
+body {
+    height: calc(100% - 8px);
+    margin: 4px;
+}
+
+/* 基本デザインをフラット化 */
+input {
+    border: none;
+    text-decoration: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+fieldset {
+    border: none;
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    -webkit-padding-before: 0;
+    -webkit-padding-start: 0;
+    -webkit-padding-end: 0;
+    -webkit-padding-after: 0;
+}
+fieldset fieldset {
+    font-size: 100%;
+}
+
+/* ボタン */
+button,
+input[type="button"] {
+    border: solid 1px #618dc3;
+    background-color: #dce6f2;
+    color: #618dc3;
+    box-shadow: 0 2px 0 #95C0F4;
+    outline: none;
+    -webkit-border-radius: 1px;
+    border-radius: 1px;
+    height: 23px;
+    line-height: 23px;
+    padding: 0 6px 0;
+    margin-bottom: 2px;
+    cursor: pointer;
+}
+
+/* 押した状態のボタン */
+button:active,
+input[type="button"]:active {
+    box-shadow: none;
+    transform: translate3d(0, 2px, 0);
+}
+
+
+/* 選択系 */
+input[type="radio"],
+input[type="checkbox"] {
+    display: none;
+}
+
+/* 入力系 */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="date"],
+input[type="time"] {
+    padding : 2px 5px;
+    border: solid 1px lightgrey;
+    background-color: white;
+    height: 20px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+}
+
+input[type="text"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border: solid 1px #618dc3;
+    -webkit-box-shadow: 0 0 0 2px #dce6f2;
+    box-shadow: 0 0 0 2px #dce6f2;
+}
+
+/* ラジオ/チェックボタンのグループ(トグルボタン風) */
+.radioGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+.radioGroup input:checked + label,
+.radioGroup input:active {
+    background: #dce6f2;
+}
+
+.radioGroup input,
+.radioGroup input + label {
+    display: inline-block;
+    border: solid 1px #618dc3;
+    background: white;
+    color: #618dc3;
+}
+
+.radioGroup input {
+    display: none;
+}
+
+.radioGroup input+label {
+    display: inline-block;
+    border: 1px solid #618dc3;
+    border-right: 0;
+    padding: 10px 10px 10px 10px;
+    margin: 0;
+    width: auto;
+    min-width: 30px;
+    text-align: center;
+}
+
+.radioGroup input+label:first-of-type {
+    border-radius: 3px 0 0 3px;
+}
+
+.radioGroup input+label:last-of-type {
+    border-right: 1px solid #618dc3;
+    border-radius: 0 3px 3px 0;
+}
+
+.centering {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.centering > * {
+    margin-left: 15px;
+}
+
+.centering > *:first-child {
+    margin-left: 0;
+}
+
+/* デバッグ用設定 */
+.debug {
+    opacity: 0.3;
+}
+
+
+/* ---------------------- */
+/*   ブラウザ依存の設定   */
+/* ---------------------- */
+*::-webkit-scrollbar { /*スクロールバーの太さ*/
+    height: 10px;
+    width: 10px;
+}
+*::-webkit-scrollbar-track { /*スクロールバーの背景色*/
+    background-color: whitesmoke;
+}
+*::-webkit-scrollbar-thumb {  /*スクロールバーの前景色*/
+    background-color: #dce6f2;
+    margin-left: 1px;
+    margin-right: 1px;
+    padding: 1px;
+}

@@ -7,12 +7,12 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class InternalNodeRequest extends RestRequestBase {
 
+  private String nodeId;
+
   public InternalNodeRequest(String requestBody, String notificationAddress, String notificationPort, String nodeId) {
     super(requestBody, notificationAddress, notificationPort);
     this.nodeId = nodeId;
   }
-
-  private String nodeId;
 
   public String getNodeId() {
     return nodeId;

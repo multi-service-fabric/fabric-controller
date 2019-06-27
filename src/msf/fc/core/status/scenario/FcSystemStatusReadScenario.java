@@ -30,6 +30,8 @@ import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.common.util.CommandUtil;
+import msf.mfcfc.common.util.ControllerStatusUtil;
 import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.core.status.scenario.AbstractStatusScenarioBase;
@@ -124,11 +126,10 @@ public class FcSystemStatusReadScenario extends AbstractStatusScenarioBase<Syste
       }
 
       if (controllers.contains(ControllerType.FC)) {
-        String pid = getProcessId();
+        String pid = ControllerStatusUtil.getProcessId();
         ProcessBuilder hostNameCommand = new ProcessBuilder("env", "LANG=C", "hostname");
-        List<String> hostnameResult = new ArrayList<>();
-        String hostName = getCommand(hostNameCommand, hostnameResult).get(0);
-        if (String.valueOf(GET_FAILED).equals(hostName)) {
+        String hostName = CommandUtil.getCommand(hostNameCommand).get(0);
+        if (String.valueOf(CommandUtil.GET_FAILED).equals(hostName)) {
           String logMsg = MessageFormat.format("failed command. command = {0}", "hostname");
           logger.error(logMsg);
           throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);

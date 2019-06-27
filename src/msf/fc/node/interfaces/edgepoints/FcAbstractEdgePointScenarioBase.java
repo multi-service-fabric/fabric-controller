@@ -15,6 +15,7 @@ import msf.fc.rest.ec.node.interfaces.physical.data.entity.PhysicalIfQosEcEntity
 import msf.fc.rest.ec.node.nodes.data.entity.NodeEcEntity;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.L3ProtocolType;
+import msf.mfcfc.common.constant.QInQType;
 import msf.mfcfc.common.constant.VpnType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -120,7 +121,7 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
   }
 
   private EdgePointSupportProtocolForOwnerEntity getSupportProtocolForOwner(FcEdgePoint fcEdgePoint,
-      SessionWrapper sessionWrapper, NodeEcEntity nodeEcEntity) throws MsfException {
+      SessionWrapper sessionWrapper, NodeEcEntity nodeEcEntity) {
     try {
       logger.methodStart(new String[] { "fcEdgePoint" }, new Object[] { fcEdgePoint });
       EdgePointSupportProtocolForOwnerEntity supportProtocol = new EdgePointSupportProtocolForOwnerEntity();
@@ -136,6 +137,13 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
       supportProtocol.setL2(isL2Vpn);
       supportProtocol.setL3(isL3Vpn);
       supportProtocol.setL3ProtocolList(getL3Protocols(isL3Vpn));
+      if (isL2Vpn) {
+        if (nodeEcEntity.getQInQType() != null) {
+          supportProtocol.setQInQType(nodeEcEntity.getQInQType());
+        } else {
+          supportProtocol.setQInQType(QInQType.Q_IN_Q_UNSUPPORT.getMessage());
+        }
+      }
       return supportProtocol;
     } finally {
       logger.methodEnd();
@@ -143,7 +151,7 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
   }
 
   private EdgePointSupportProtocolForUserEntity getSupportProtocolForUser(FcEdgePoint fcEdgePoint,
-      SessionWrapper sessionWrapper, NodeEcEntity nodeEcEntity) throws MsfException {
+      SessionWrapper sessionWrapper, NodeEcEntity nodeEcEntity) {
     try {
       logger.methodStart(new String[] { "fcEdgePoint" }, new Object[] { fcEdgePoint });
       EdgePointSupportProtocolForUserEntity supportProtocol = new EdgePointSupportProtocolForUserEntity();
@@ -159,6 +167,13 @@ public abstract class FcAbstractEdgePointScenarioBase<T extends RestRequestBase>
       supportProtocol.setL2(isL2Vpn);
       supportProtocol.setL3(isL3Vpn);
       supportProtocol.setL3ProtocolList(getL3Protocols(isL3Vpn));
+      if (isL2Vpn) {
+        if (nodeEcEntity.getQInQType() != null) {
+          supportProtocol.setQInQType(nodeEcEntity.getQInQType());
+        } else {
+          supportProtocol.setQInQType(QInQType.Q_IN_Q_UNSUPPORT.getMessage());
+        }
+      }
       return supportProtocol;
     } finally {
       logger.methodEnd();

@@ -9,14 +9,6 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class L2CpRequest extends RestRequestBase {
 
-  public L2CpRequest(String requestBody, String notificationAddress, String notificationPort, String sliceId,
-      String cpId, String format) {
-    super(requestBody, notificationAddress, notificationPort);
-    this.sliceId = sliceId;
-    this.cpId = cpId;
-    this.format = format;
-  }
-
   private String sliceType = SliceType.L2_SLICE.getMessage();
 
   private String sliceId;
@@ -24,6 +16,14 @@ public class L2CpRequest extends RestRequestBase {
   private String cpId;
 
   private String format;
+
+  public L2CpRequest(String requestBody, String notificationAddress, String notificationPort, String sliceId,
+      String cpId, String format) {
+    super(requestBody, notificationAddress, notificationPort);
+    this.sliceId = sliceId;
+    this.cpId = cpId;
+    this.format = format;
+  }
 
   public String getSliceType() {
     return sliceType;

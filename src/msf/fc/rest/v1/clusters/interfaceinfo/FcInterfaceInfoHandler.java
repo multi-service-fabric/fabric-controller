@@ -33,7 +33,7 @@ public class FcInterfaceInfoHandler extends AbstractRestHandler {
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
-   * @param fabricType
+   * @param fablicType
    *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID

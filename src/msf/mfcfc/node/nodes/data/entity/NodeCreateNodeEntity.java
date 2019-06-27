@@ -8,6 +8,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.google.gson.annotations.SerializedName;
 
 import msf.mfcfc.common.constant.InternalNodeType;
+import msf.mfcfc.common.constant.IrbType;
+import msf.mfcfc.common.constant.QInQType;
 
 public class NodeCreateNodeEntity {
 
@@ -58,6 +60,9 @@ public class NodeCreateNodeEntity {
 
   @SerializedName("irb_type")
   private String irbType;
+
+  @SerializedName("q_in_q_type")
+  private String qInQType;
 
   @SerializedName("cluster_area")
   private String clusterArea;
@@ -196,6 +201,14 @@ public class NodeCreateNodeEntity {
     this.irbType = irbType;
   }
 
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
+  }
+
   public String getClusterArea() {
     return clusterArea;
   }
@@ -226,6 +239,22 @@ public class NodeCreateNodeEntity {
 
   public void setNodeTypeEnum(InternalNodeType internalNodeType) {
     this.nodeType = internalNodeType.getMessage();
+  }
+
+  public IrbType getIrbTypeEnum() {
+    return IrbType.getEnumFromMessage(irbType);
+  }
+
+  public void setIrbTypeEnum(IrbType irbType) {
+    this.irbType = irbType.getMessage();
+  }
+
+  public QInQType getQInQTypeEnum() {
+    return QInQType.getEnumFromMessage(qInQType);
+  }
+
+  public void setQInQTypeEnum(QInQType qInQType) {
+    this.qInQType = qInQType.getMessage();
   }
 
   @Override

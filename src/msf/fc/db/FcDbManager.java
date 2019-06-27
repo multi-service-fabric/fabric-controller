@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.HibernateException;
@@ -35,7 +36,6 @@ import msf.fc.common.data.FcL3Slice;
 import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcLagIfFilterInfo;
 import msf.fc.common.data.FcLagIfFilterInfoPK;
-import msf.fc.common.data.FcLagIfId;
 import msf.fc.common.data.FcLeafNode;
 import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcNodeOperationInfo;
@@ -108,6 +108,13 @@ public final class FcDbManager extends DbManager {
     @Override
     public int compare(FcNode o1, FcNode o2) {
       return o1.getNodeId() - o2.getNodeId();
+    }
+  };
+
+  private static final Comparator<FcAsyncRequest> COMPARATOR_ASYNC_REQUEST = new Comparator<FcAsyncRequest>() {
+    @Override
+    public int compare(FcAsyncRequest o1, FcAsyncRequest o2) {
+      return o1.getOperationId().compareTo(o2.getOperationId());
     }
   };
 
@@ -352,7 +359,6 @@ public final class FcDbManager extends DbManager {
       configuration.addAnnotatedClass(FcL3CpPK.class);
       configuration.addAnnotatedClass(FcL3Slice.class);
       configuration.addAnnotatedClass(FcLagIf.class);
-      configuration.addAnnotatedClass(FcLagIfId.class);
       configuration.addAnnotatedClass(FcLeafNode.class);
       configuration.addAnnotatedClass(FcNode.class);
       configuration.addAnnotatedClass(FcPhysicalIf.class);
@@ -428,6 +434,11 @@ public final class FcDbManager extends DbManager {
       @Override
       public void delete(SessionWrapper session, Timestamp targetTime) throws MsfException {
         dao.delete(session, targetTime);
+      }
+
+      @Override
+      public boolean hasNoRunningOperation(Map<String, Object> assignedOperationIdMap) throws MsfException {
+        return dao.hasNoRunningOperation(assignedOperationIdMap);
       }
     };
   }
@@ -579,7 +590,7 @@ public final class FcDbManager extends DbManager {
       }
 
       @Override
-      public VlanIfId read(SessionWrapper session, Integer pk) throws MsfException {
+      public VlanIfId read(SessionWrapper session, Long pk) throws MsfException {
         FcVlanIfId entity = dao.read(session, pk);
         if (entity != null) {
           return entity.getCommonEntity();
@@ -596,7 +607,7 @@ public final class FcDbManager extends DbManager {
       }
 
       @Override
-      public void delete(SessionWrapper session, Integer pk) throws MsfException {
+      public void delete(SessionWrapper session, Long pk) throws MsfException {
         dao.delete(session, pk);
       }
     };
@@ -635,4 +646,36 @@ public final class FcDbManager extends DbManager {
       }
     };
   }
+
+  /**
+   * Get the asynchronous request information record lock.<br>
+   * <br>
+   * Lock a record of entity list until transaction completes.
+   *
+   * @param asyncRequests
+   *          {@link FcAsyncRequest} entity list
+   * @param sessionWrapper
+   *          Session
+   * @throws MsfException
+   *           DB exclusive control error
+   */
+  public void getAsyncRequeststLock(List<FcAsyncRequest> asyncRequests, SessionWrapper sessionWrapper)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "asyncRequests", "sessionWrapper" },
+          new Object[] { asyncRequests, sessionWrapper });
+      if (CollectionUtils.isEmpty(asyncRequests)) {
+        throw new IllegalArgumentException("asyncRequests is empty.");
+      }
+      asyncRequests.sort(COMPARATOR_ASYNC_REQUEST);
+      Session session = sessionWrapper.getSession();
+
+      for (FcAsyncRequest asyncRequest : new LinkedHashSet<>(asyncRequests)) {
+        getLock(FcAsyncRequest.class, asyncRequest.getOperationId(), session);
+      }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
 }

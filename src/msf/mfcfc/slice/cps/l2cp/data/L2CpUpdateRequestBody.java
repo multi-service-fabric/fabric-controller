@@ -70,7 +70,7 @@ public class L2CpUpdateRequestBody implements RestRequestValidator {
     }
   }
 
-  private void validateUpdateOption() throws MsfException {
+  private void validateUpdateOption() {
 
   }
 

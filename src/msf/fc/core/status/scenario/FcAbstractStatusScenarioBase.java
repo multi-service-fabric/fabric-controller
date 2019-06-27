@@ -22,6 +22,7 @@ public abstract class FcAbstractStatusScenarioBase<T extends RestRequestBase> ex
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractStatusScenarioBase.class);
 
+  @Override
   protected RestResponseBase createRestResponse(AbstractResponseBody body, int statusCode) {
 
     try {

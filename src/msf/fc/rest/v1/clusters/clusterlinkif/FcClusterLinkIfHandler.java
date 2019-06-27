@@ -3,6 +3,7 @@ package msf.fc.rest.v1.clusters.clusterlinkif;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Response;
 
 import msf.fc.node.interfaces.clusterlinkifs.FcClusterLinkInterfaceCreateScenario;
 import msf.fc.node.interfaces.clusterlinkifs.FcClusterLinkInterfaceDeleteScenario;
+import msf.fc.node.interfaces.clusterlinkifs.FcClusterLinkInterfaceReadListScenario;
+import msf.fc.node.interfaces.clusterlinkifs.FcClusterLinkInterfaceReadScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -68,6 +71,72 @@ public class FcClusterLinkIfHandler extends AbstractRestHandler {
     } finally {
       logger.methodEnd();
     }
+  }
+
+  /**
+   * Get the inter-cluster link IF information list.
+   *
+   * @param clusterId
+   *          Cluster ID (URI parameter)
+   * @param format
+   *          Information type to acquire (optional parameter)
+   * @return response data
+   */
+  @GET
+  @Path("/{cluster_id}/interfaces/cluster-link-ifs")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response readList(@PathParam("cluster_id") String clusterId, @QueryParam("format") String format) {
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+
+      ClusterLinkIfRequest request = new ClusterLinkIfRequest(null, null, null, clusterId, null, format);
+
+      setCommonData(request);
+
+      FcClusterLinkInterfaceReadListScenario scenario = new FcClusterLinkInterfaceReadListScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Get the inter-cluster link IF information.
+   *
+   * @param clusterId
+   *          Cluster ID (URI parameter)
+   * @param clusterLinkIfId
+   *          inter-cluster link IF ID (URI parameter)
+   * @return response data
+   */
+  @GET
+  @Path("/{cluster_id}/interfaces/cluster-link-ifs/{cluster_link_if_id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response read(@PathParam("cluster_id") String clusterId,
+      @PathParam("cluster_link_if_id") String clusterLinkIfId) {
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+
+      ClusterLinkIfRequest request = new ClusterLinkIfRequest(null, null, null, clusterId, clusterLinkIfId, null);
+
+      setCommonData(request);
+
+      FcClusterLinkInterfaceReadScenario scenario = new FcClusterLinkInterfaceReadScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+
+    } finally {
+      logger.methodEnd();
+    }
+
   }
 
   /**

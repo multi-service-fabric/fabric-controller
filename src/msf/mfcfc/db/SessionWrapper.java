@@ -63,10 +63,8 @@ public class SessionWrapper {
    * Use this method only in {@link DbManager} class or each DAO class.
    *
    * @return session
-   * @throws MsfException
-   *           DB access error
    */
-  public Session getSession() throws MsfException {
+  public Session getSession() {
     try {
       logger.methodStart();
       Objects.requireNonNull(currentSession, "Session is null.");

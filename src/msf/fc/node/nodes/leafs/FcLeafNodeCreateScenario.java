@@ -3,6 +3,7 @@ package msf.fc.node.nodes.leafs;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.common.config.FcConfigManager;
 import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeOperationStatus;
@@ -69,6 +70,9 @@ public class FcLeafNodeCreateScenario extends FcAbstractLeafNodeScenarioBase<Lea
       requestBody.validate();
 
       logger.debug("requestBody=" + request.getRequestBody());
+
+      int maxLeafNum = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getMaxLeafNum();
+      ParameterCheckUtil.checkNumberRange(Integer.parseInt(requestBody.getNodeId()), 1, maxLeafNum);
 
       this.request = request;
       this.requestBody = requestBody;

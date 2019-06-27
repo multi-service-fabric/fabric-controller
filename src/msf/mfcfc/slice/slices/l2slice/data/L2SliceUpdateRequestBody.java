@@ -13,7 +13,7 @@ import msf.mfcfc.rest.common.RestRequestValidator;
 
 public class L2SliceUpdateRequestBody implements RestRequestValidator {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(L2SliceCreateRequestBody.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(L2SliceUpdateRequestBody.class);
 
   @SerializedName("action")
   private String action;

@@ -35,6 +35,8 @@ public class FcNode implements Serializable {
   @Column(name = "node_info_id")
   private Long nodeInfoId;
 
+  private Boolean detoured;
+
   @Column(name = "ec_node_id")
   private Integer ecNodeId;
 
@@ -72,6 +74,14 @@ public class FcNode implements Serializable {
 
   public void setNodeInfoId(Long nodeInfoId) {
     this.nodeInfoId = nodeInfoId;
+  }
+
+  public Boolean getDetoured() {
+    return this.detoured;
+  }
+
+  public void setDetoured(Boolean detoured) {
+    this.detoured = detoured;
   }
 
   public Integer getEcNodeId() {

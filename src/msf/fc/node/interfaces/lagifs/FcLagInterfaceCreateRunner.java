@@ -3,9 +3,8 @@ package msf.fc.node.interfaces.lagifs;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.eclipse.jetty.http.HttpStatus;
@@ -13,16 +12,13 @@ import org.eclipse.jetty.http.HttpStatus;
 import msf.fc.common.config.FcConfigManager;
 import msf.fc.common.data.FcBreakoutIf;
 import msf.fc.common.data.FcLagIf;
-import msf.fc.common.data.FcLagIfId;
 import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.db.FcDbManager;
 import msf.fc.db.dao.clusters.FcBreakoutIfDao;
 import msf.fc.db.dao.clusters.FcLagIfDao;
-import msf.fc.db.dao.clusters.FcLagIfIdDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.db.dao.clusters.FcPhysicalIfDao;
-import msf.fc.node.FcNodeManager;
 import msf.fc.rest.ec.node.interfaces.lag.data.LagIfCreateEcRequestBody;
 import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfCreateEcEntity;
 import msf.fc.rest.ec.node.interfaces.lag.data.entity.LagIfPhysicalIfCreateEcEntity;
@@ -92,36 +88,20 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
       try {
         sessionWrapper.openSession();
 
-        fcNode = getNode(sessionWrapper, fcNodeDao, request.getFabricTypeEnum(), Integer.valueOf(request.getNodeId()));
-
-        sessionWrapper.beginTransaction();
-
-        List<FcLagIf> fcLagIfs = fcLagIfDao.readList(sessionWrapper);
-        Set<Integer> lagIfIdSet = createLagIfIdSet(fcLagIfs);
-        lagInterfaceId = getNextLagInterfaceId(sessionWrapper, lagIfIdSet);
-
-        sessionWrapper.commit();
-      } catch (MsfException msfException) {
-        logger.error(msfException.getMessage(), msfException);
-        sessionWrapper.rollback();
-        throw msfException;
-      } finally {
-        sessionWrapper.closeSession();
-      }
-
-      sessionWrapper = new SessionWrapper();
-
-      try {
-        sessionWrapper.openSession();
-
-        logger.performance("start get leaf resources lock.");
-        sessionWrapper.beginTransaction();
         List<FcNode> fcNodes = new ArrayList<>();
 
         fcNode = getNode(sessionWrapper, fcNodeDao, request.getFabricTypeEnum(), Integer.valueOf(request.getNodeId()));
         fcNodes.add(fcNode);
+        sessionWrapper.beginTransaction();
+
+        logger.performance("start get leaf resources lock.");
         FcDbManager.getInstance().getLeafsLock(fcNodes, sessionWrapper);
         logger.performance("end get leaf resources lock.");
+
+        List<FcLagIf> fcLagIfs = fcLagIfDao.readList(sessionWrapper, request.getFabricTypeEnum().getCode(),
+            Integer.valueOf(request.getNodeId()));
+        TreeSet<Integer> lagIfIdSet = createLagIfIdSet(fcLagIfs);
+        lagInterfaceId = getNextLagIfId(lagIfIdSet);
 
         FcPhysicalIfDao fcPhysicalIfDao = new FcPhysicalIfDao();
         List<FcPhysicalIf> fcPhysicalIfs = checkForPhysicalInterface(sessionWrapper, fcPhysicalIfDao,
@@ -224,10 +204,10 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  private Set<Integer> createLagIfIdSet(List<FcLagIf> fcLagIfs) {
+  private TreeSet<Integer> createLagIfIdSet(List<FcLagIf> fcLagIfs) {
     try {
       logger.methodStart(new String[] { "fcLagIfs" }, new Object[] { fcLagIfs });
-      Set<Integer> lagIfIdSet = new HashSet<>();
+      TreeSet<Integer> lagIfIdSet = new TreeSet<>();
       for (FcLagIf fcLagIf : fcLagIfs) {
         lagIfIdSet.add(fcLagIf.getLagIfId());
       }
@@ -237,73 +217,21 @@ public class FcLagInterfaceCreateRunner extends FcAbstractLagInterfaceRunnerBase
     }
   }
 
-  private Integer getNextLagInterfaceId(SessionWrapper sessionWrapper, Set<Integer> lagIfIdSet) throws MsfException {
+  private Integer getNextLagIfId(TreeSet<Integer> lagIfIdSet) {
     try {
       logger.methodStart();
-      FcLagIfIdDao fcLagIfIdDao = new FcLagIfIdDao();
-      List<FcLagIfId> lagIfIdList = fcLagIfIdDao.readList(sessionWrapper);
+      Integer targetNextId = FcConfigManager.getInstance().getLagIfIdStartPos();
 
-      int firstNextId = lagIfIdList.get(0).getNextId();
-
-      int targetNextId = firstNextId;
       logger.performance("start get available lag interface id.");
       do {
         if (lagIfIdSet.contains(targetNextId)) {
 
           targetNextId++;
-
-          if (!checkLagInterfaceIdRange(targetNextId)) {
-
-            targetNextId = FcNodeManager.FC_LAG_IF_START_ID;
-          }
         } else {
 
-          updateLagInterfaceId(sessionWrapper, fcLagIfIdDao, targetNextId + 1, firstNextId);
-          logger.performance("end get available lag interface id.");
           return targetNextId;
         }
-
-      } while (targetNextId != firstNextId);
-      logger.performance("end get available cp id.");
-
-      String logMsg = MessageFormat.format("threre is no available lag interface id. firstCheckId = {0}", firstNextId);
-      logger.error(logMsg);
-      throw new MsfException(ErrorCode.TARGET_RESOURCE_ALREADY_EXIST, logMsg);
-
-    } finally {
-      logger.methodEnd();
-    }
-  }
-
-  private void updateLagInterfaceId(SessionWrapper sessionWrapper, FcLagIfIdDao fcLagIfIdDao, int nextId,
-      int firstNextId) throws MsfException {
-    try {
-      logger.methodStart(new String[] { "sessionWrapper", "fcLagIfIdDao", "nextId" },
-          new Object[] { sessionWrapper, fcLagIfIdDao, nextId });
-
-      if (!checkLagInterfaceIdRange(nextId)) {
-
-        nextId = FcNodeManager.FC_LAG_IF_START_ID;
-      }
-
-      FcLagIfId fcLagIfId = new FcLagIfId();
-      fcLagIfId.setNextId(nextId);
-      fcLagIfIdDao.create(sessionWrapper, fcLagIfId);
-      fcLagIfIdDao.delete(sessionWrapper, firstNextId);
-    } finally {
-      logger.methodEnd();
-    }
-
-  }
-
-  private boolean checkLagInterfaceIdRange(int checkTargetId) {
-    try {
-      logger.methodStart(new String[] { "checkTargetId" }, new Object[] { checkTargetId });
-      if (checkTargetId >= 0 && checkTargetId < Integer.MAX_VALUE) {
-        return true;
-      } else {
-        return false;
-      }
+      } while (true);
     } finally {
       logger.methodEnd();
     }

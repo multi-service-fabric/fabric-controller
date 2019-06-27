@@ -22,8 +22,10 @@ import msf.mfcfc.common.constant.LowerOperationStatus;
 import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.constant.OperationExecutionStatus;
 import msf.mfcfc.common.constant.OperationType;
+import msf.mfcfc.common.constant.ReservationRequestType;
 import msf.mfcfc.common.constant.RestRequestType;
 import msf.mfcfc.common.constant.RollbackResult;
+import msf.mfcfc.common.constant.SpecialOperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.data.AsyncRequest;
@@ -83,18 +85,21 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
 
   protected void setScenarioType(SynchronousType syncType, OperationType operationType,
       SystemInterfaceType systemIfType, SynchronousType lowerSystemSyncType, RestRequestType restRequestType,
-      String operationId) {
+      String operationId, ReservationRequestType reservationRequestType, SpecialOperationType specialOperationType) {
     try {
       logger.methodStart(
           new String[] { "syncType", "operationType", "systemIfType", "lowerSystemSyncType", "restRequestType",
-              "operationId" },
-          new Object[] { syncType, operationType, systemIfType, lowerSystemSyncType, restRequestType, operationId });
+              "operationId", "reservationRequestType", "specialOperationType" },
+          new Object[] { syncType, operationType, systemIfType, lowerSystemSyncType, restRequestType, operationId,
+              reservationRequestType, specialOperationType });
       this.syncType = syncType;
       this.operationType = operationType;
       this.systemIfType = systemIfType;
       this.lowerSystemSyncType = lowerSystemSyncType;
       this.restRequestType = restRequestType;
       this.operationId = operationId;
+      this.reservationRequestType = reservationRequestType;
+      this.specialOperationType = specialOperationType;
     } finally {
       logger.methodEnd();
     }
@@ -114,7 +119,8 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
         throw new MsfException(ErrorCode.UNDEFINED_ERROR, errorMessage);
       }
 
-      OperationExecutionStatus oeStatus = OperationManager.getInstance().getOperationExecutionStatus(operationType);
+      OperationExecutionStatus oeStatus = OperationManager.getInstance().getOperationExecutionStatus(operationType,
+          specialOperationType);
 
       if (oeStatus == OperationExecutionStatus.NOT_ALLOWED) {
         throw new MsfException(ErrorCode.SYSTEM_STATUS_ERROR, "System can not accept a request.");
@@ -138,7 +144,11 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
   }
 
   protected void notifyOperationResult(RestRequestBase request) {
-    try {
+        notifyOperationResult(request, operationId);
+  }
+
+  protected void notifyOperationResult(RestRequestBase request, String targetOperationId) {
+  	try {
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
       if (request.getNotificationAddress() == null || request.getNotificationPort() == null) {
@@ -152,7 +162,7 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
       while (true) {
         try {
           HttpMethod httpMethod = MfcFcRequestUri.OPERATION_RESULT_NOTIFY.getHttpMethod();
-          String targetUriPath = MfcFcRequestUri.OPERATION_RESULT_NOTIFY.getUri(operationId);
+          String targetUriPath = MfcFcRequestUri.OPERATION_RESULT_NOTIFY.getUri(targetOperationId);
 
           RestResponseBase response = RestClient.sendRequest(httpMethod, targetUriPath, request,
               request.getNotificationAddress(), Integer.valueOf(request.getNotificationPort()));
@@ -473,6 +483,12 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
       OperationNotifyRequestBody body = new OperationNotifyRequestBody();
       body.setLastUpdateTime(writeDateFormat.format(asyncRequest.getLastUpdateTime()));
       body.setOccurredTime(writeDateFormat.format(asyncRequest.getOccurredTime()));
+      if (asyncRequest.getReservationTime() != null) {
+        body.setReservationTime(writeDateFormat.format(asyncRequest.getReservationTime()));
+      }
+      if (asyncRequest.getStartTime() != null) {
+        body.setStartTime(writeDateFormat.format(asyncRequest.getStartTime()));
+      }
       body.setOperationId(asyncRequest.getOperationId());
       body.setStatusEnum(asyncRequest.getStatusEnum());
       body.setSubStatus(asyncRequest.getSubStatus());
@@ -747,7 +763,8 @@ public abstract class AbstractAsyncRunner extends AbstractScenarioBase implement
         return updateRecord.getStatusEnum();
       }
 
-      if (restRequestType.equals(RestRequestType.NORMAL)) {
+      if (restRequestType.equals(RestRequestType.NORMAL)
+          && this.reservationRequestType.equals(ReservationRequestType.NORMAL)) {
 
         logger.debug("scenario initialize success.");
         updateRecord = updateAsyncRequest(AsyncProcessStatus.RUNNING);

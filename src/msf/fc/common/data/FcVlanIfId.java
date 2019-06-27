@@ -21,7 +21,7 @@ public class FcVlanIfId implements Serializable {
 
   @Id
   @Column(name = "node_info_id")
-  private Integer nodeInfoId;
+  private Long nodeInfoId;
 
   @Column(name = "next_id")
   private Integer nextId;
@@ -33,11 +33,11 @@ public class FcVlanIfId implements Serializable {
     setCommonEntity(vlanIfId);
   }
 
-  public Integer getNodeInfoId() {
+  public Long getNodeInfoId() {
     return this.nodeInfoId;
   }
 
-  public void setNodeInfoId(Integer nodeInfoId) {
+  public void setNodeInfoId(Long nodeInfoId) {
     this.nodeInfoId = nodeInfoId;
   }
 

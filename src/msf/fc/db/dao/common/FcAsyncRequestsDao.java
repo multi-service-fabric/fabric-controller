@@ -3,7 +3,11 @@ package msf.fc.db.dao.common;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Criteria;
@@ -103,6 +107,10 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
           new Object[] { session, beforeStatus, afterStatus, afterSubStatus });
       String sql = "update FcAsyncRequest set status = :afterStatus , subStatus = :afterSubStatus "
           + "where status = :beforeStatus";
+      if (AsyncProcessStatus.WAITING.getCode() == beforeStatus) {
+
+        sql = sql + " and reservation_time IS NULL";
+      }
       Query query = session.getSession().createQuery(sql).setParameter("beforeStatus", beforeStatus)
           .setParameter("afterStatus", afterStatus).setParameter("afterSubStatus", afterSubStatus);
       updateByQuery(session, query);
@@ -114,9 +122,94 @@ public class FcAsyncRequestsDao extends FcAbstractCommonDao<FcAsyncRequest, Stri
   public void delete(SessionWrapper session, Timestamp targetTime) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "targetTime" }, new Object[] { session, targetTime });
-      String sql = "delete FcAsyncRequest where occurredTime < :targetTime";
-      Query query = session.getSession().createQuery(sql).setTimestamp("targetTime", targetTime);
-      deleteByQuery(session, query);
+      Criteria criteria = session.getSession().createCriteria(FcAsyncRequest.class)
+
+          .add(Restrictions.lt("occurredTime", targetTime))
+
+          .add(Restrictions.ge("status", AsyncProcessStatus.COMPLETED.getCode()));
+      deleteByCriteria(session, criteria);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  public List<FcAsyncRequest> readListReservationInfo(SessionWrapper session, List<Pattern> uriPatternList)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "session", "uriPatternList" }, new Object[] { session, uriPatternList });
+
+      Criteria criteria = session.getSession().createCriteria(FcAsyncRequest.class)
+          .add(Restrictions.eq("status", AsyncProcessStatus.WAITING.getCode()))
+          .add(Restrictions.isNotNull("reservationTime"));
+
+      List<FcAsyncRequest> readListReservationInfo = readListByCriteria(session, criteria);
+
+      if (CollectionUtils.isEmpty(readListReservationInfo)) {
+        return new ArrayList<>();
+      }
+
+      List<FcAsyncRequest> targetReservationInfo = new ArrayList<>();
+      for (Pattern uriPattern : uriPatternList) {
+        for (FcAsyncRequest fcReservationAsyncRequest : readListReservationInfo) {
+          if (uriPattern.matcher(fcReservationAsyncRequest.getRequestUri()).matches()) {
+
+            targetReservationInfo.add(fcReservationAsyncRequest);
+          }
+        }
+      }
+
+      if (CollectionUtils.isNotEmpty(targetReservationInfo)) {
+
+        targetReservationInfo.sort(COMPARATOR_ASYNC_REQUEST_FOR_RESERVATION_TIME);
+      }
+
+      return targetReservationInfo;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private static final Comparator<FcAsyncRequest> COMPARATOR_ASYNC_REQUEST_FOR_RESERVATION_TIME = new Comparator<FcAsyncRequest>() {
+    @Override
+    public int compare(FcAsyncRequest o1, FcAsyncRequest o2) {
+      return o1.getReservationTime().compareTo(o2.getReservationTime());
+    }
+  };
+
+  public boolean hasNoRunningOperation(Map<String, Object> assignedOperationIdMap) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "assignedOperationIdMap" }, new Object[] { assignedOperationIdMap });
+
+      Set<String> operationIds = assignedOperationIdMap.keySet();
+      if (CollectionUtils.isEmpty(operationIds)) {
+
+        return true;
+      }
+
+      SessionWrapper sessionWrapper = new SessionWrapper();
+      try {
+        sessionWrapper.openSession();
+        Criteria criteria = sessionWrapper.getSession().createCriteria(FcAsyncRequest.class)
+
+            .add(Restrictions.in("operationId", operationIds))
+
+            .add(Restrictions.or(Restrictions.isNull("reservationTime"),
+                Restrictions.eq("status", AsyncProcessStatus.RUNNING.getCode())));
+
+        List<FcAsyncRequest> readLisRunningOperationInfo = readListByCriteria(sessionWrapper, criteria);
+        if (CollectionUtils.isNotEmpty(readLisRunningOperationInfo)) {
+
+          return false;
+        } else {
+
+          return true;
+        }
+      } catch (MsfException msfException) {
+        logger.error(msfException.getMessage(), msfException);
+        throw msfException;
+      } finally {
+        sessionWrapper.closeSession();
+      }
     } finally {
       logger.methodEnd();
     }

@@ -17,6 +17,7 @@ import msf.fc.node.interfaces.lagifs.FcLagInterfaceCreateScenario;
 import msf.fc.node.interfaces.lagifs.FcLagInterfaceDeleteScenario;
 import msf.fc.node.interfaces.lagifs.FcLagInterfaceReadListScenario;
 import msf.fc.node.interfaces.lagifs.FcLagInterfaceReadScenario;
+import msf.fc.node.interfaces.lagifs.FcLagInterfaceUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -125,7 +126,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
-   *          LagIF ID (URI parameter)
+   *          LagIF ID(URI parameter)
    * @return response data
    */
   @GET
@@ -162,7 +163,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
-   *          LagIF ID (URI parameter)
+   *          LagIF ID(URI parameter)
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort
@@ -179,7 +180,23 @@ public class FcLagIfHandler extends AbstractRestHandler {
       @PathParam("node_id") String nodeId, @PathParam("lag_if_id") String lagIfId,
       @QueryParam("notification_address") String notificationAddress,
       @QueryParam("notification_port") String notificationPort, String requestBody) {
-    return Response.status(Response.Status.NOT_FOUND).build();
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      loggingRequestJsonBody(requestBody);
+
+      LagIfRequest request = new LagIfRequest(requestBody, notificationAddress, notificationPort, clusterId, fabricType,
+          nodeId, lagIfId, null);
+
+      setCommonData(request);
+
+      FcLagInterfaceUpdateScenario scenario = new FcLagInterfaceUpdateScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
+    } finally {
+      logger.methodEnd();
+    }
   }
 
   /**
@@ -192,7 +209,7 @@ public class FcLagIfHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
-   *          LagIF ID (URI parameter)
+   *          LagIF ID(URI parameter)
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort

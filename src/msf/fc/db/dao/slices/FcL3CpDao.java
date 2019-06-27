@@ -66,7 +66,7 @@ public class FcL3CpDao extends FcAbstractCommonDao<FcL3Cp, FcL3CpPK> {
 
       FcVlanIfDao fcVlanIfDao = new FcVlanIfDao();
       FcVlanIfPK fcVlanIfPk = new FcVlanIfPK();
-      fcVlanIfPk.setNodeInfoId(fcNode.getNodeInfoId().intValue());
+      fcVlanIfPk.setNodeInfoId(fcNode.getNodeInfoId());
       fcVlanIfPk.setVlanIfId(Integer.valueOf(vlanIfId));
       FcVlanIf fcVlanIf = fcVlanIfDao.read(session, fcVlanIfPk);
       if (fcVlanIf == null) {

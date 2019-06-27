@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.text.MessageFormat;
 
 import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.constant.IpAddressType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 
@@ -312,6 +313,82 @@ public class IpAddressUtil {
         throw new MsfException(ErrorCode.UNDEFINED_ERROR, logMsg);
       }
       return bitSize;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Check the format of Host address.
+   *
+   * @param host
+   *          Host address to check
+   * @param ipAddressType
+   *          Type of IP address to check
+   * @return Formatted address (but if the parameter is FQDN, it won't be
+   *         reformatted).
+   */
+  public static String checkHost(String host, IpAddressType ipAddressType) {
+    try {
+      logger.methodStart();
+      String resultString;
+
+      switch (ipAddressType) {
+        case IPV4:
+
+          try {
+
+            resultString = ParameterCheckUtil.checkIpv4Address(host);
+
+          } catch (MsfException error1) {
+            logger.warn(host + " is not IPv4.");
+            resultString = null;
+
+          }
+          return resultString;
+
+        case IPV4V6:
+
+          try {
+
+            resultString = ParameterCheckUtil.checkIpAddress(host);
+
+          } catch (MsfException error1) {
+            logger.warn(host + " is not IPv4/IPv6.");
+            resultString = null;
+
+          }
+          return resultString;
+
+        case IPV4V6FQDN:
+
+          try {
+
+            resultString = ParameterCheckUtil.checkIpAddress(host);
+            return resultString;
+
+          } catch (MsfException error1) {
+
+          }
+
+          try {
+
+            ParameterCheckUtil.checkIdSpecifiedByUri(host);
+            return host;
+
+          } catch (MsfException error1) {
+            logger.warn(host + " is not IPv4/IPv6/FQDN.");
+            resultString = null;
+            return resultString;
+          }
+
+        default:
+
+          resultString = null;
+          logger.warn("IP address type parameter is incorrect.");
+      }
+
+      return resultString;
     } finally {
       logger.methodEnd();
     }

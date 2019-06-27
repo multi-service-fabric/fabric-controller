@@ -5,8 +5,6 @@ import java.sql.Timestamp;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 
-import msf.mfcfc.common.exception.MsfException;
-
 public class AsyncRequestsForLower {
 
   private AsyncRequestsForLowerPK id;
@@ -104,7 +102,7 @@ public class AsyncRequestsForLower {
     this.asyncRequest = asyncRequest;
   }
 
-  public AsyncRequestsForLowerRollback getAsyncRequestsForLowerRollback() throws MsfException {
+  public AsyncRequestsForLowerRollback getAsyncRequestsForLowerRollback() {
     return asyncRequestsForLowerRollback;
   }
 

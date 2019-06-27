@@ -60,6 +60,12 @@ public abstract class AbstractOperationScenarioBase<T extends RestRequestBase> e
       operationReadResponseBody.setOperationId(asyncRequest.getOperationId());
       operationReadResponseBody.setOccurredTime(writeDateFormat.format(asyncRequest.getOccurredTime()));
       operationReadResponseBody.setLastUpdateTime(writeDateFormat.format(asyncRequest.getLastUpdateTime()));
+      if (asyncRequest.getReservationTime() != null) {
+        operationReadResponseBody.setReservationTime(writeDateFormat.format(asyncRequest.getReservationTime()));
+      }
+      if (asyncRequest.getStartTime() != null) {
+        operationReadResponseBody.setStartTime(writeDateFormat.format(asyncRequest.getStartTime()));
+      }
       operationReadResponseBody.setStatusEnum(asyncRequest.getStatusEnum());
 
       operationReadResponseBody.setSubStatus(asyncRequest.getSubStatus());
@@ -115,6 +121,12 @@ public abstract class AbstractOperationScenarioBase<T extends RestRequestBase> e
       operationDetailEntity.setOperationId(asyncRequest.getOperationId());
       operationDetailEntity.setOccurredTime(writeDateFormat.format(asyncRequest.getOccurredTime()));
       operationDetailEntity.setLastUpdateTime(writeDateFormat.format(asyncRequest.getLastUpdateTime()));
+      if (asyncRequest.getReservationTime() != null) {
+        operationDetailEntity.setReservationTime(writeDateFormat.format(asyncRequest.getReservationTime()));
+      }
+      if (asyncRequest.getStartTime() != null) {
+        operationDetailEntity.setStartTime(writeDateFormat.format(asyncRequest.getStartTime()));
+      }
       operationDetailEntity.setStatusEnum(asyncRequest.getStatusEnum());
 
       operationDetailEntity.setSubStatus(asyncRequest.getSubStatus());

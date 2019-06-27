@@ -73,12 +73,12 @@ public class FcSpineNodeDeleteRunner extends FcAbstractSpineNodeRunnerBase {
     try {
       logger.methodStart();
 
-      logger.performance("start wait to node increasing/decreasing process.");
+      logger.performance("start wait for node increasing/decreasing process.");
       synchronized (FcNodeManager.getInstance().getFcNodeCreateAndDeleteLockObject()) {
-        logger.performance("end wait to node increasing/decreasing process.");
-        logger.performance("start wait to node update process.");
+        logger.performance("end wait for node increasing/decreasing process.");
+        logger.performance("start wait for node update process.");
         synchronized (FcNodeManager.getInstance().getFcNodeUpdateLockObject()) {
-          logger.performance("end wait to node update process.");
+          logger.performance("end wait for node update process.");
 
           RestResponseBase responseBase = null;
           SessionWrapper sessionWrapper = new SessionWrapper();

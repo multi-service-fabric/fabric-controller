@@ -28,7 +28,7 @@ import msf.mfcfc.node.nodes.spines.data.SpineNodeRequest;
 public class FcSpineNodeReadScenario extends FcAbstractSpineNodeScenarioBase<SpineNodeRequest> {
 
   private SpineNodeRequest request;
-  private static final MsfLogger logger = MsfLogger.getInstance(FcSpineNodeReadListScenario.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FcSpineNodeReadScenario.class);
 
   /**
    * Constructor.

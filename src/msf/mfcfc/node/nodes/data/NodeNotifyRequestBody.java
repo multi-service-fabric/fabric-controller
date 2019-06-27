@@ -155,6 +155,15 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
         ParameterCheckUtil.checkNotNullAndLength(nodeInfo.getCreateNode().getPlane());
 
         ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode().getVpn());
+        if (nodeInfo.getCreateNode().getIrbType() != null) {
+
+          ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode().getIrbTypeEnum());
+        }
+
+        if (nodeInfo.getCreateNode().getQInQType() != null) {
+
+          ParameterCheckUtil.checkNotNull(nodeInfo.getCreateNode().getQInQTypeEnum());
+        }
 
         validateLeafVpn(nodeInfo.getCreateNode().getVpn());
         break;
@@ -454,6 +463,8 @@ public class NodeNotifyRequestBody implements RestRequestValidator {
 
     ParameterCheckUtil.checkNotNull(internalLinkIf.getPrefix());
     ParameterCheckUtil.checkNumberRange(internalLinkIf.getPrefix(), 30, 30);
+
+    ParameterCheckUtil.checkNotNull(internalLinkIf.getCost());
 
     if (internalLinkIf.getLagMemberList() != null) {
       validateLagMember(internalLinkIf.getLagMemberList());

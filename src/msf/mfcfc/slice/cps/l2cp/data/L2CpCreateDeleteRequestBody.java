@@ -18,7 +18,7 @@ import msf.mfcfc.slice.cps.l2cp.data.entity.L2CpValueEntity;
 
 public class L2CpCreateDeleteRequestBody implements RestRequestValidator {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(L2CpCreateDeleteAsyncResponseBody.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(L2CpCreateDeleteRequestBody.class);
 
   @SerializedName("op")
   private String op;

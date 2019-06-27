@@ -33,7 +33,7 @@ public class FcIrbInstance implements Serializable {
   private Long irbInstanceId;
 
   @Column(name = "node_info_id")
-  private Integer nodeInfoId;
+  private Long nodeInfoId;
 
   @Column(name = "vlan_id")
   private Integer vlanId;
@@ -58,11 +58,11 @@ public class FcIrbInstance implements Serializable {
     this.irbInstanceId = irbInstanceId;
   }
 
-  public Integer getNodeInfoId() {
+  public Long getNodeInfoId() {
     return this.nodeInfoId;
   }
 
-  public void setNodeInfoId(Integer nodeInfoId) {
+  public void setNodeInfoId(Long nodeInfoId) {
     this.nodeInfoId = nodeInfoId;
   }
 

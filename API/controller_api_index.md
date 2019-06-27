@@ -85,6 +85,15 @@
 |:----|:----|:----|:----|:----|:----|
 |Failure detection|Getting list of failures|050101|GET|/v1/failures/failure_status|/v1/failures/failure_status|
 
+### Priority route Management API
+|group|Interface(API) description|Identification ID|Method|URI|URI example|
+|:----|:----|:----|:----|:----|:----|
+|Internal-link priority|Changing internal-link interface priority|060101|PUT|/v1/priority_routes/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/internal-link-ifs/{internal_link_if_id}|/v1/priority_routes/clusters/1/nodes/leafs/1/interfaces/internal-link-ifs/1|
+||Getting information of internal-link interface priority|060102|GET|/v1/priority_routes/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/internal-link-ifs/{internal_link_if_id}|/v1/priority_routes/clusters/1/nodes/leafs/1/interfaces/internal-link-ifs/1|
+||Getting list of internal-link interface priority|060103|GET|/v1/priority_routes/clusters/{cluster_id}/nodes|/v1/priority_routes/clusters/1/nodes|
+|Switch priority|Adding or deleting switch to preffered switch group|060201|PATCH|/v1/priority_routes/clusters/{cluster_id}/priority_node_group|/v1/priority_routes/clusters/1/priority_node_group|
+||Getting information of preffered switch group|060202|GET|/v1/priority_routes/clusters/{cluster_id}/priority_node_group|/v1/priority_routes/clusters/1/priority_node_group|
+
 ### Filter Management API
 |group|Interface(API) description|Identification ID|Method|URI|URI example|
 |:----|:----|:----|:----|:----|:----|
@@ -94,3 +103,20 @@
 ||Creating or Deleting filter by Link-aggregation interface|070107|PACTH|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|
 ||Getting list of filter by Link-aggregation interface|0700108|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs|
 ||Getting information of filter by Link-aggregation interface|070109|GET|/v1/filter/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}/interfaces/lag-ifs/{lag_if_id}|/v1/filter/clusters/1/nodes/leafs/1/interfaces/lag-ifs/1|
+
+### Switch software Upgrade API
+|group|Interface(API) description|Identification ID|Method|URI|URI example|
+|:----|:----|:----|:----|:----|:----|
+|Bypass traffic to switch|Bypass traffic to switch|080101|PUT|/v1/detour/clusters/{cluster_id}/nodes/{fabric_type}/{node_id}|/v1/detour/clusters/1/nodes/spine/1|
+||Getting information of switch whose traffic is diverted|080102|GET|/v1/detour/clusters/{cluster_id}/nodes|/v1/detour/clusters/1/nodes|
+|Execute Switch OS upgrade|Execute Switch OS upgrade|080201|POST|/v1/upgrade_operations/|/v1/upgrade_operations/|
+||Cancel Switch OS upgrade|080202|PUT|/v1/upgrade_operations/{operation_id}|/v1/operations/1234567890123|
+
+### Controller software Upgrade API
+|group|Interface(API) description|Identification ID|Method|URI|URI example|
+|:----|:----|:----|:----|:----|:----|
+|Software upgrade status check|Execute controller construction|090101|PUT|/v1/manage/renewal|/v1/manage/renewal|
+||Controller construction exe status acquisition|090102|GET|/v1/manage/renewal|/v1/manage/renewal|
+||Controller system switchover|090103|POST|/v1/manage/switchover|/v1/manage/switchover|
+
+

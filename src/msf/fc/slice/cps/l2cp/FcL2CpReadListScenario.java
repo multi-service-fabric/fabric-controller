@@ -129,14 +129,14 @@ public class FcL2CpReadListScenario extends FcAbstractL2CpScenarioBase<L2CpReque
       logger.methodStart(new String[] { "l2CpList" }, new Object[] { l2CpList });
       List<L2CpEntity> l2CpEntityList = new ArrayList<>();
 
-      Set<Integer> nodeInfoIdSet = new HashSet<>();
-      Map<Integer, VlanIfReadListEcResponseBody> vlanIfListMap = new HashMap<>();
+      Set<Long> nodeInfoIdSet = new HashSet<>();
+      Map<Long, VlanIfReadListEcResponseBody> vlanIfListMap = new HashMap<>();
       for (FcL2Cp l2Cp : l2CpList) {
         nodeInfoIdSet.add(l2Cp.getVlanIf().getId().getNodeInfoId());
       }
-      for (Integer nodeInfoId : nodeInfoIdSet) {
+      for (Long nodeInfoId : nodeInfoIdSet) {
 
-        VlanIfReadListEcResponseBody vlanIfResponseBody = getVlanIfList(sessionWrapper, nodeInfoId.longValue());
+        VlanIfReadListEcResponseBody vlanIfResponseBody = getVlanIfList(sessionWrapper, nodeInfoId);
         vlanIfListMap.put(nodeInfoId, vlanIfResponseBody);
       }
       for (FcL2Cp l2Cp : l2CpList) {

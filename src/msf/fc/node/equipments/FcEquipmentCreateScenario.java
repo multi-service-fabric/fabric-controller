@@ -18,6 +18,7 @@ import msf.fc.rest.ec.node.equipment.data.entity.EquipmentEgressEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIfNameRulesaEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentIrbEcEntity;
+import msf.fc.rest.ec.node.equipment.data.entity.EquipmentQInQEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentQosEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentRemarkEcEntity;
 import msf.fc.rest.ec.node.equipment.data.entity.EquipmentShapingEcEntity;
@@ -99,9 +100,9 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
     try {
       logger.methodStart();
 
-      logger.performance("start wait to equipment increasing process.");
+      logger.performance("start wait for equipment increasing process.");
       synchronized (FcNodeManager.getInstance().getFcEquipmentCreateLockObject()) {
-        logger.performance("end wait to equipment increasing process.");
+        logger.performance("end wait for equipment increasing process.");
         RestResponseBase responseBase = null;
         SessionWrapper sessionWrapper = new SessionWrapper();
         try {
@@ -177,6 +178,7 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
       EquipmentCreateEcRequestBody equipmentCreateEcRequestBody = new EquipmentCreateEcRequestBody();
 
       equipmentCreateEcRequestBody.setEquipment(setEquimpmentCreateEcData(fcEquipment));
+
       RestRequestBase restRequest = new RestRequestBase();
 
       restRequest.setRequestBody(JsonUtil.toJson(equipmentCreateEcRequestBody));
@@ -242,6 +244,14 @@ public class FcEquipmentCreateScenario extends FcAbstractEquipmentScenarioBase<E
         irb.setSymmetric(equipmentType.getCapability().getIrb().getSymmetric());
         capabilities.setIrb(irb);
       }
+
+      if (equipmentType.getCapability().getQInQ() != null) {
+        EquipmentQInQEcEntity qinQ = new EquipmentQInQEcEntity();
+        qinQ.setSelectableByVlanIf(equipmentType.getCapability().getQInQ().getSelectableByCp());
+        qinQ.setSelectableByNode(equipmentType.getCapability().getQInQ().getSelectableByNode());
+        capabilities.setQInQ(qinQ);
+      }
+
       equipmentEc.setCapabilities(capabilities);
 
       EquipmentShapingEcEntity shaping = new EquipmentShapingEcEntity();

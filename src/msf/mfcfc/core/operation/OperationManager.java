@@ -11,11 +11,15 @@ import msf.mfcfc.common.constant.BlockadeStatus;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.OperationExecutionStatus;
 import msf.mfcfc.common.constant.OperationType;
+import msf.mfcfc.common.constant.RenewalStatusType;
 import msf.mfcfc.common.constant.ServiceStatus;
+import msf.mfcfc.common.constant.SpecialOperationType;
 import msf.mfcfc.common.data.SystemStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.core.status.SystemStatusManager;
+import msf.mfcfc.db.DbManager;
+import msf.mfcfc.db.dao.common.AsyncRequestsDao;
 
 /**
  * Based on MFC / FC system status, provide the execution propriety decision of
@@ -94,6 +98,31 @@ public final class OperationManager {
   }
 
   /**
+   * Register the operation ID of the reservation execution request with the
+   * running operation Map.
+   *
+   * @param reservationId
+   *          The operation ID of the reservation execution request that has
+   *          been already assigned.
+   * @throws MsfException
+   *           If request is unacceptable (stopped)
+   */
+  public void assignOperationId(String reservationId) throws MsfException {
+    try {
+      logger.methodStart();
+      if (isStopPhase) {
+        logger.debug("isStopPhase is true.");
+        throw new MsfException(ErrorCode.SYSTEM_STATUS_ERROR, "Failed to assign operation id.");
+      }
+
+      assignedOperationIdMap.put(reservationId, new Object());
+      logger.debug("Operation id is assigned.(ope_id=" + reservationId + ")");
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
    * Release the operation ID.
    *
    * @param operationId
@@ -128,11 +157,14 @@ public final class OperationManager {
    *
    * @param operationType
    *          Operation type
+   * @param specialOperationType
+   *          Special operation type
    * @return execution propriety of operation
    *
    */
-  public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType) {
-    return getOperationExecutionStatus(operationType, false);
+  public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType,
+      SpecialOperationType specialOperationType) {
+    return getOperationExecutionStatus(operationType, false, specialOperationType);
   }
 
   /**
@@ -142,9 +174,12 @@ public final class OperationManager {
    *          Operation type
    * @param isGetRequest
    *          Whether the request is of information acquisition or not
+   * @param specialOperationType
+   *          Special operation type
    * @return execution propriety of operation
    */
-  public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType, boolean isGetRequest) {
+  public OperationExecutionStatus getOperationExecutionStatus(OperationType operationType, boolean isGetRequest,
+      SpecialOperationType specialOperationType) {
     try {
       logger.methodStart(new String[] { "operationType" }, new Object[] { operationType });
 
@@ -156,9 +191,27 @@ public final class OperationManager {
       switch (operationType) {
         case NORMAL:
 
-          if (sysStatus.getServiceStatusEnum() == ServiceStatus.STARTED) {
-            if (sysStatus.getBlockadeStatusEnum() == BlockadeStatus.NONE || isGetRequest) {
-              ret = OperationExecutionStatus.ALLOWED;
+          if ((sysStatus.getBlockadeStatusEnum() == BlockadeStatus.NONE
+              && sysStatus.getRenewalStatusEnum() == RenewalStatusType.NONE) || isGetRequest) {
+            switch (specialOperationType) {
+              case NORMAL:
+
+                if (sysStatus.getServiceStatusEnum() == ServiceStatus.STARTED) {
+                  ret = OperationExecutionStatus.ALLOWED;
+                }
+                break;
+
+              case SPECIALOPERATION:
+
+                if ((sysStatus.getServiceStatusEnum() == ServiceStatus.STARTED)
+                    || (sysStatus.getServiceStatusEnum() == ServiceStatus.FINALIZING)
+                    || (sysStatus.getServiceStatusEnum() == ServiceStatus.SWITCHING)) {
+                  ret = OperationExecutionStatus.ALLOWED;
+                }
+                break;
+              default:
+                String message = logger.debug("Unexpected argument.(arg={0})", specialOperationType);
+                throw new IllegalArgumentException(message);
             }
           }
           break;
@@ -172,7 +225,6 @@ public final class OperationManager {
           String message = logger.debug("Unexpected argument.(arg={0})", operationType);
           throw new IllegalArgumentException(message);
       }
-
       logger.debug("result = " + ret);
       return ret;
     } finally {
@@ -181,23 +233,27 @@ public final class OperationManager {
   }
 
   /**
-   * Confirm the existence of running operations. <br>
+   * Confirm the existence of running operations.<br>
    * If the blocking execution flag is true, wait until the number of running
    * operations becomes 0.
    *
    * @param blocking
    *          Blocking execution flag
    * @return presence/absence of running operations
+   * @throws MsfException
+   *           SQL execution error
    */
-  public boolean hasNoExecutingOperations(boolean blocking) {
+  public boolean hasNoExecutingOperations(boolean blocking) throws MsfException {
     try {
       logger.methodStart(new String[] { "blocking" }, new Object[] { blocking });
 
       boolean ret = false;
 
+      AsyncRequestsDao createAsyncRequestsDao = DbManager.getInstance().createAsyncRequestsDao();
+
       if (!blocking) {
         synchronized (this) {
-          if (assignedOperationIdMap.size() == 0) {
+          if (createAsyncRequestsDao.hasNoRunningOperation(assignedOperationIdMap)) {
             isStopPhase = true;
             logger.methodEnd(new String[] { "result" }, new Object[] { ret });
             ret = true;
@@ -212,7 +268,7 @@ public final class OperationManager {
         int interval = ConfigManager.getInstance().getExecutingOperationCheckCycle();
         for (;;) {
           synchronized (this) {
-            if (assignedOperationIdMap.size() == 0) {
+            if (createAsyncRequestsDao.hasNoRunningOperation(assignedOperationIdMap)) {
               logger.info("Assigned operation id num=0.");
 
               isStopPhase = true;

@@ -267,6 +267,8 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
       leaf.setIrbType(nodeEcEntity.getIrbType());
 
+      leaf.setQInQType(nodeEcEntity.getQInQType());
+
       return leaf;
     } finally {
       logger.methodEnd();
@@ -855,6 +857,8 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
 
       leaf.setIrbType(nodeEcEntity.getIrbType());
 
+      leaf.setQInQType(nodeEcEntity.getQInQType());
+
       return leaf;
     } finally {
       logger.methodEnd();
@@ -902,7 +906,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       }
       if (physicalIfEcList.size() != leafNodePhysicalIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodePhysicalIfForUserEntities;
     } finally {
@@ -961,7 +965,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       }
       if (lagIfEcList.size() != leafNodeLagIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodeLagIfForUserEntities;
     } finally {
@@ -1008,7 +1012,7 @@ public abstract class FcAbstractNodeScenarioBase<T extends RestRequestBase> exte
       }
       if (breakoutIfEcList.size() != leafNodeBreakoutIfForUserEntities.size()) {
 
-        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND, "There is no appropriate data in the FC system.");
+        logger.warn("There is no appropriate data in the FC system. It sometimes occurs during node addition.");
       }
       return leafNodeBreakoutIfForUserEntities;
     } finally {

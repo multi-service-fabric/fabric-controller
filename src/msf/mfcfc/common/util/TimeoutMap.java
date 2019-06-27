@@ -36,6 +36,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
    *
    * @return the first key
    */
+  @Override
   public K firstKey() {
     timeCheck();
     return super.firstKey();
@@ -46,19 +47,21 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
    *
    * @return the last key
    */
+  @Override
   public K lastKey() {
     timeCheck();
     return super.lastKey();
   }
 
   /**
-   * Returns the value of the specified key. Returns null if the specified key
-   * is timed out.
+   * Returns the value for the specified key. It returns null if the result
+   * means timeout.
    *
    * @param key
    *          Key
    * @return value for the specified key
    */
+  @Override
   public V get(Object key) {
     timeCheck();
     return super.get(key);
@@ -72,8 +75,8 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
    * @param value
    *          Value
    * @return the registered value
-   *
    */
+  @Override
   public V put(K key, V value) {
     timeCheck();
     timeMap.put(key, System.currentTimeMillis());
@@ -87,6 +90,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
    *          Key
    * @return value
    */
+  @Override
   public V remove(Object key) {
     timeCheck();
     timeMap.remove(key);
@@ -98,6 +102,7 @@ public class TimeoutMap<K, V> extends TreeMap<K, V> {
    *
    * @return size
    */
+  @Override
   public int size() {
     timeCheck();
     return super.size();

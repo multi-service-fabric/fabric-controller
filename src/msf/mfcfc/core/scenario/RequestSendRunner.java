@@ -37,7 +37,7 @@ import msf.mfcfc.rest.common.RestClient;
  */
 public class RequestSendRunner implements Callable<RestResponseData> {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(AbstractScenario.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(RequestSendRunner.class);
 
   private RestRequestData restRequestData;
 

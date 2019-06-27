@@ -1,0 +1,36 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+public class InternalLinkIfPriorityLinkIfsSpinesEntity {
+
+  @SerializedName("internal_link_if_id")
+  private String internalLinkIfId;
+
+  @SerializedName("igp_cost")
+  private Integer igpCost;
+
+  public String getInternalLinkIfId() {
+    return internalLinkIfId;
+  }
+
+  public void setInternalLinkIfId(String internalLinkIfId) {
+    this.internalLinkIfId = internalLinkIfId;
+  }
+
+  public Integer getIgpCost() {
+    return igpCost;
+  }
+
+  public void setIgpCost(Integer igpCost) {
+    this.igpCost = igpCost;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

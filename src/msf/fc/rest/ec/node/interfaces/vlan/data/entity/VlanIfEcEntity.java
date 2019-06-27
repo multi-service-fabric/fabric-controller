@@ -57,6 +57,9 @@ public class VlanIfEcEntity {
   @SerializedName("irb")
   private VlanIfIrbEcEntity irb;
 
+  @SerializedName("q_in_q")
+  private Boolean qInQ;
+
   public String getVlanIfId() {
     return vlanIfId;
   }
@@ -183,6 +186,14 @@ public class VlanIfEcEntity {
 
   public void setIrb(VlanIfIrbEcEntity irb) {
     this.irb = irb;
+  }
+
+  public Boolean getQInQ() {
+    return qInQ;
+  }
+
+  public void setQInQ(Boolean qInQ) {
+    this.qInQ = qInQ;
   }
 
   public int getVlanIdInt() {

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<systemConf xmlns="http://fc.msf/services/ctrlstsnotify/common/config/type/system">
+    <logNotification>
+        <noticeDestInfo>
+            <!-- IP address of notification destination -->
+            <noticeAddress>1.1.1.1</noticeAddress>
+            <!-- Port number of notification destination -->
+            <noticePort>0</noticePort>
+            <logLevel>
+                <!-- Do or don't notify information log. -->
+                <info>false</info>
+                <!-- Do or don't notify warning log -->
+                <warning>true</warning>
+                <!-- Do or don't notify error log -->
+                <error>true</error>
+            </logLevel>
+        </noticeDestInfo>
+        <!-- Number of notification retry (times) -->
+        <noticeRetryNum>5</noticeRetryNum>
+        <!-- Interval of notification retry (millisecond) -->
+        <noticeTimeout>500</noticeTimeout>
+    </logNotification>
+    <controllerFailureNotification>
+        <noticeDestInfo>
+            <!-- IP address of notification destination -->
+            <noticeAddress>1.1.1.1</noticeAddress>
+            <!-- Port number of notification destination -->
+            <noticePort>0</noticePort>
+            <monitored>
+                <os>
+                    <!-- Threshold of CPU usage -->
+                    <cpuUseRateThreshold>0</cpuUseRateThreshold>
+                    <!-- Threshold of memory in use -->
+                    <memoryUsageThreshold>0</memoryUsageThreshold>
+                    <!-- Information of disk used space -->
+                    <disk>
+                        <!-- Device information -->
+                        <devices>
+                            <!-- Target file system -->
+                            <fileSystem>/tmp</fileSystem>
+                            <!-- Threshold of disk used space -->
+                            <usageThreshold>0</usageThreshold>
+                        </devices>
+                    </disk>
+                </os>
+                <controllerProcess>
+                    <!-- Threshold of CPU usage -->
+                    <cpuUseRateThreshold>0</cpuUseRateThreshold>
+                    <!-- Threshold of memory in use -->
+                    <memoryUsageThreshold>0</memoryUsageThreshold>
+                    <disk>
+                        <!-- Threshold of disk used space -->
+                        <usageThreshold>0</usageThreshold>
+                    </disk>
+                </controllerProcess>
+            </monitored>
+        </noticeDestInfo>
+        <!-- Number of notification retry (times) -->
+        <noticeRetryNum>5</noticeRetryNum>
+        <!-- Interval of notification retry (millisecond) -->
+        <noticeTimeout>500</noticeTimeout>
+        <!-- Monitoring cycle(second) -->
+        <monitoringPeriod>0</monitoringPeriod>
+    </controllerFailureNotification>
+</systemConf>
+

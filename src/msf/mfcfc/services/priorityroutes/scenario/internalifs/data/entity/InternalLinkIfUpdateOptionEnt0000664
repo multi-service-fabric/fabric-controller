@@ -1,0 +1,26 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+public class InternalLinkIfUpdateOptionEntity {
+
+  @SerializedName("igp_cost")
+  private Integer igpCost;
+
+  public Integer getIgpCost() {
+    return igpCost;
+  }
+
+  public void setIgpCost(Integer igpCost) {
+    this.igpCost = igpCost;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+
+}

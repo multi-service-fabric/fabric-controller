@@ -96,17 +96,10 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
 
     ParameterCheckUtil.checkNotNull(equipmentType.getCapability().getQos());
 
-    if (!equipmentType.getCapability().getVpn().getL2()) {
-      if (equipmentType.getCapability().getIrb() != null) {
-        String logMsg = "capability information on irb must be not set for the parameter.";
-        logger.error(logMsg);
-        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
-      }
-    }
-
     validateVpn();
     validateQos();
     validateIrb();
+    validateQInQ();
     validateTraffic();
   }
 
@@ -140,6 +133,13 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
 
   private void validateIrb() throws MsfException {
 
+    if (!equipmentType.getCapability().getVpn().getL2()) {
+      if (equipmentType.getCapability().getIrb() != null) {
+        String logMsg = "irb capability information is set in the parameter.";
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+      }
+    }
     if (equipmentType.getCapability().getIrb() != null) {
 
       Boolean asymmetric = equipmentType.getCapability().getIrb().getAsymmetric();
@@ -147,6 +147,25 @@ public class EquipmentCreateRequestBody implements RestRequestValidator {
 
       Boolean symmetric = equipmentType.getCapability().getIrb().getSymmetric();
       ParameterCheckUtil.checkNotNull(symmetric);
+    }
+  }
+
+  private void validateQInQ() throws MsfException {
+
+    if (!equipmentType.getCapability().getVpn().getL2()) {
+      if (equipmentType.getCapability().getQInQ() != null) {
+        String logMsg = "Q-in-Q capability information is set in the parameter.";
+        logger.error(logMsg);
+        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+      }
+    }
+    if (equipmentType.getCapability().getQInQ() != null) {
+
+      Boolean selectableByNode = equipmentType.getCapability().getQInQ().getSelectableByNode();
+      ParameterCheckUtil.checkNotNull(selectableByNode);
+
+      Boolean selectableByCp = equipmentType.getCapability().getQInQ().getSelectableByCp();
+      ParameterCheckUtil.checkNotNull(selectableByCp);
     }
   }
 

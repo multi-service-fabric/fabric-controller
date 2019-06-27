@@ -9,6 +9,14 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class LeafNodeRequest extends RestRequestBase {
 
+  private String clusterId;
+
+  private String nodeId;
+
+  private String format;
+
+  private String userType;
+
   public LeafNodeRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
       String nodeId, String format, String userType) {
     super(requestBody, notificationAddress, notificationPort);
@@ -17,14 +25,6 @@ public class LeafNodeRequest extends RestRequestBase {
     this.format = format;
     this.userType = userType;
   }
-
-  private String clusterId;
-
-  private String nodeId;
-
-  private String format;
-
-  private String userType;
 
   public String getClusterId() {
     return clusterId;

@@ -88,6 +88,9 @@ public class FcLeafNodeCreateRunner extends FcAbstractLeafNodeRunnerBase {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcLeafNodeCreateRunner.class);
 
+  @SuppressWarnings("unused")
+  private LeafNodeRequest request;
+
   private LeafNodeCreateRequestBody requestBody;
 
   /**
@@ -112,15 +115,15 @@ public class FcLeafNodeCreateRunner extends FcAbstractLeafNodeRunnerBase {
     try {
       logger.methodStart();
 
-      logger.performance("start wait to equipment decreasing process.");
+      logger.performance("start wait for equipment decreasing process.");
       synchronized (FcNodeManager.getInstance().getFcEquipmentDeleteLockObject()) {
-        logger.performance("end wait to equipment decreasing process.");
-        logger.performance("start wait to node increasing/decreasing process.");
+        logger.performance("end wait for equipment decreasing process.");
+        logger.performance("start wait for node increasing/decreasing process.");
         synchronized (FcNodeManager.getInstance().getFcNodeCreateAndDeleteLockObject()) {
-          logger.performance("end wait to node increasing/decreasing process.");
-          logger.performance("start wait to node update process.");
+          logger.performance("end wait for node increasing/decreasing process.");
+          logger.performance("start wait for node update process.");
           synchronized (FcNodeManager.getInstance().getFcNodeUpdateLockObject()) {
-            logger.performance("end wait to node update process.");
+            logger.performance("end wait for node update process.");
 
             RestResponseBase responseBase = null;
             SessionWrapper sessionWrapper = new SessionWrapper();
@@ -284,6 +287,11 @@ public class FcLeafNodeCreateRunner extends FcAbstractLeafNodeRunnerBase {
       if (requestBody.getIrbTypeEnum().getCode() > 0) {
 
         createNodeEcEntity.setIrbType(requestBody.getIrbType());
+      }
+
+      if (requestBody.getQInQTypeEnum().getCode() > 0) {
+
+        createNodeEcEntity.setQInQType(requestBody.getQInQType());
       }
 
       createNodeEcEntity.setClusterArea(String.valueOf(dataConfSwClusterData.getSwCluster().getOspfArea()));

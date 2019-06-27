@@ -9,16 +9,6 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class InternalIfRequest extends RestRequestBase {
 
-  public InternalIfRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
-      String fabricType, String nodeId, String internalLinkIfId, String format) {
-    super(requestBody, notificationAddress, notificationPort);
-    this.clusterId = clusterId;
-    this.fabricType = fabricType;
-    this.nodeId = nodeId;
-    this.internalLinkIfId = internalLinkIfId;
-    this.format = format;
-  }
-
   private String clusterId;
 
   private String fabricType;
@@ -28,6 +18,16 @@ public class InternalIfRequest extends RestRequestBase {
   private String internalLinkIfId;
 
   private String format;
+
+  public InternalIfRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
+      String fabricType, String nodeId, String internalLinkIfId, String format) {
+    super(requestBody, notificationAddress, notificationPort);
+    this.clusterId = clusterId;
+    this.fabricType = fabricType;
+    this.nodeId = nodeId;
+    this.internalLinkIfId = internalLinkIfId;
+    this.format = format;
+  }
 
   public String getClusterId() {
     return clusterId;
@@ -70,15 +70,11 @@ public class InternalIfRequest extends RestRequestBase {
   }
 
   public NodeType getFabricTypeEnum() {
-    if (NodeType.getEnumFromSingularMessage(fabricType) != null) {
-      return NodeType.getEnumFromSingularMessage(fabricType);
-    } else {
-      return NodeType.getEnumFromPluralMessage(fabricType);
-    }
+    return NodeType.getEnumFromPluralMessage(fabricType);
   }
 
   public void setFabricTypeEnum(NodeType fabricType) {
-    this.fabricType = fabricType.getSingularMessage();
+    this.fabricType = fabricType.getPluralMessage();
   }
 
   public RestFormatOption getFormatEnum() {

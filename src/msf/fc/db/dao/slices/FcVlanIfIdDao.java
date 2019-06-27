@@ -9,10 +9,10 @@ import msf.fc.db.dao.FcAbstractCommonDao;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.db.SessionWrapper;
 
-public class FcVlanIfIdDao extends FcAbstractCommonDao<FcVlanIfId, Integer> {
+public class FcVlanIfIdDao extends FcAbstractCommonDao<FcVlanIfId, Long> {
 
   @Override
-  public FcVlanIfId read(SessionWrapper session, Integer nodeInfoId) throws MsfException {
+  public FcVlanIfId read(SessionWrapper session, Long nodeInfoId) throws MsfException {
     Criteria criteria = session.getSession().createCriteria(FcVlanIfId.class)
         .add(Restrictions.eq("nodeInfoId", nodeInfoId));
     return readByCriteria(session, criteria);

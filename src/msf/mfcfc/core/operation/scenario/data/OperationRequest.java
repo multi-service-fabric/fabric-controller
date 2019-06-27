@@ -8,16 +8,16 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class OperationRequest extends RestRequestBase {
 
+  private String operationId;
+
+  private String format;
+
   public OperationRequest(String requestBody, String notificationAddress, String notificationPort, String operationId,
       String format) {
     super(requestBody, notificationAddress, notificationPort);
     this.operationId = operationId;
     this.format = format;
   }
-
-  private String operationId;
-
-  private String format;
 
   public String getOperationId() {
     return operationId;

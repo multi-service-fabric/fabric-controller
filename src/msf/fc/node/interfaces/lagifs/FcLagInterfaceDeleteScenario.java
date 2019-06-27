@@ -25,7 +25,7 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
 
   private LagIfRequest request;
 
-  private static final MsfLogger logger = MsfLogger.getInstance(FcLagInterfaceCreateRunner.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FcLagInterfaceDeleteScenario.class);
 
   /**
    * Constructor.
@@ -55,7 +55,9 @@ public class FcLagInterfaceDeleteScenario extends FcAbstractLagInterfaceScenario
       logger.methodStart(new String[] { "request" }, new Object[] { request });
 
       ParameterCheckUtil.checkNumericId(request.getClusterId(), ErrorCode.PARAMETER_VALUE_ERROR);
-      ParameterCheckUtil.checkNotNull(NodeType.getEnumFromPluralMessage(request.getFabricType()));
+      if (!NodeType.LEAF.equals(NodeType.getEnumFromPluralMessage(request.getFabricType()))) {
+        throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, "fabricType = " + request.getFabricType());
+      }
       ParameterCheckUtil.checkNumericId(request.getNodeId(), ErrorCode.RELATED_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNumericId(request.getLagIfId(), ErrorCode.TARGET_RESOURCE_NOT_FOUND);
       ParameterCheckUtil.checkNotificationAddressAndPort(request.getNotificationAddress(),

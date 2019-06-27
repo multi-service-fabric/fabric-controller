@@ -108,12 +108,14 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
 
     entity.setIsPriorityNodeGroupMember(false);
 
+    entity.setDetoured(false);
+
     super.create(session, entity);
 
     FcVlanIfIdDao fcVlanIfIdDao = new FcVlanIfIdDao();
     FcVlanIfId fcVlanIfId = new FcVlanIfId();
 
-    fcVlanIfId.setNodeInfoId(Integer.valueOf(entity.getNodeInfoId().toString()));
+    fcVlanIfId.setNodeInfoId(entity.getNodeInfoId());
 
     fcVlanIfId.setNextId(1);
     fcVlanIfIdDao.create(session, fcVlanIfId);
@@ -131,7 +133,7 @@ public class FcNodeDao extends FcAbstractCommonDao<FcNode, Long> {
     super.delete(session, nodeInfoId);
 
     FcVlanIfIdDao fcVlanIfIdDao = new FcVlanIfIdDao();
-    fcVlanIfIdDao.delete(session, Integer.valueOf(nodeInfoId.toString()));
+    fcVlanIfIdDao.delete(session, nodeInfoId);
   }
 
 }

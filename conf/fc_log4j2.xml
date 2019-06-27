@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE configuration>
-<configuration status="off" shutdownHook="disable">
+<configuration status="off" shutdownHook="disable" packages="msf.fc.services.ctrlstsnotify" >
   <Properties>
     <Property name="logLevel">info</Property>
     <Property name="responseLogLevel">info</Property>
+    <Property name="notifyLogLevel">info</Property>
     <Property name="logPath">../logs</Property>
     <Property name="responseAPILogPath">../logs/api_access</Property>
     <Property name="responseProcessingLogPath">../logs/processing</Property>
@@ -52,6 +53,14 @@
         <TimeBasedTriggeringPolicy interval="1"/>
       </Policies>
     </RollingFile>
+
+    <FcNotify name="FcNotify">
+      <PatternLayout pattern="${logFormat}" />
+    </FcNotify>
+
+    <Async name="Async" includeLocation="true">
+      <AppenderRef ref="FcNotify" />
+    </Async>
   </Appenders>
 
   <Loggers>
@@ -63,6 +72,7 @@
     <Logger name="msf" level="${logLevel}" additivity="false">
       <AppenderRef ref="FcRollingFile" />
       <AppenderRef ref="ResponseProcessingRollingFile" level="${responseLogLevel}" />
+      <AppenderRef ref="Async" level="${notifyLogLevel}" />
     </Logger>
 
     <Logger name="msf.mfcfc.rest.common.AbstractRestHandler" level="${logLevel}" additivity="true">

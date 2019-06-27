@@ -197,6 +197,20 @@ public enum EcRequestUri {
     public String makeUri(String... args) {
       return "/v1/internal/ec_ctrl/log";
     }
+  }),
+
+  NODE_CHANGE_EQUIPMENT_TYPE(HttpMethod.PUT, new RequestUriInterface() {
+    @Override
+    public String makeUri(String... args) {
+      return "/v1/internal/nodes/" + args[0];
+    }
+  }),
+
+  CHANGE_IF_STATUS(HttpMethod.PUT, new RequestUriInterface() {
+    @Override
+    public String makeUri(String... args) {
+      return "/v1/internal/nodes/" + args[0] + "/interfaces/status/" + args[1] + "/" + args[2];
+    }
   });
 
   private HttpMethod httpMethod;

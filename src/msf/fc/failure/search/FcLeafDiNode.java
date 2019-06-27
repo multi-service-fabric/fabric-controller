@@ -84,26 +84,51 @@ public class FcLeafDiNode extends FcNodeDiNode {
   }
 
   /**
-   * Returns a list which contains all failure information in of L2CPs, L3CPs
-   * and inter-cluster links.
+   * Create the lists of failure information of L2CPs and return them.
    *
-   * @return List of all failure information of L2CPs, L3CPs and inter-cluster
-   *         links.
+   * @return The lists of failure information for the L2CPs of each slice.
    */
-  public List<SliceUnitFailureEndPointData> getAllEndPointDataList() {
-    List<SliceUnitFailureEndPointData> endPointDataList = new ArrayList<>();
+  public Map<String, List<SliceUnitFailureEndPointData>> getL2CpEndPointDataMap() {
+    Map<String, List<SliceUnitFailureEndPointData>> endPointDataMap = new HashMap<>();
 
     for (Map.Entry<FcL2Cp, FailureStatus> entry : l2CpMap.entrySet()) {
-      SliceUnitFailureEndPointData endpointData = new SliceUnitFailureEndPointData(SliceType.L2_SLICE,
-          entry.getKey().getId().getSliceId(), entry.getKey().getId().getCpId(), entry.getValue());
-      endPointDataList.add(endpointData);
+      String sliceId = entry.getKey().getId().getSliceId();
+      SliceUnitFailureEndPointData endpointData = new SliceUnitFailureEndPointData(SliceType.L2_SLICE, sliceId,
+          entry.getKey().getId().getCpId(), entry.getValue());
+
+      endPointDataMap.computeIfAbsent(sliceId, k -> new ArrayList<>()).add(endpointData);
     }
 
+    return endPointDataMap;
+  }
+
+  /**
+   * Create the lists of failure information of L3CPs and return them.
+   *
+   * @return The lists of failure information for the L3CPs of each slice.
+   */
+  public Map<String, List<SliceUnitFailureEndPointData>> getL3CpEndPointDataMap() {
+    Map<String, List<SliceUnitFailureEndPointData>> endPointDataMap = new HashMap<>();
+
     for (Map.Entry<FcL3Cp, FailureStatus> entry : l3CpMap.entrySet()) {
+      String sliceId = entry.getKey().getId().getSliceId();
       SliceUnitFailureEndPointData endpointData = new SliceUnitFailureEndPointData(SliceType.L3_SLICE,
           entry.getKey().getId().getSliceId(), entry.getKey().getId().getCpId(), entry.getValue());
-      endPointDataList.add(endpointData);
+
+      endPointDataMap.computeIfAbsent(sliceId, k -> new ArrayList<>()).add(endpointData);
     }
+
+    return endPointDataMap;
+  }
+
+  /**
+   * Create the lists of failure information of the inter-cluster link IFs and
+   * return them.
+   *
+   * @return The lists of failure information of the inter-cluster link IFs.
+   */
+  public List<SliceUnitFailureEndPointData> getClusterIfEndPointDataList() {
+    List<SliceUnitFailureEndPointData> endPointDataList = new ArrayList<>();
 
     for (Map.Entry<FcClusterLinkIf, FailureStatus> entry : clusterLinkIfMap.entrySet()) {
       SliceUnitFailureEndPointData endpointData = new SliceUnitFailureEndPointData(null, null,

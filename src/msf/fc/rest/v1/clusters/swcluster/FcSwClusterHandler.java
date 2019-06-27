@@ -30,12 +30,12 @@ public class FcSwClusterHandler extends AbstractRestHandler {
   private static final MsfLogger logger = MsfLogger.getInstance(FcSwClusterHandler.class);
 
   /**
-   * SW cluster information list acquisition.
+   * SW Cluster information list acquisition.
    *
    * @param format
    *          Information type to acquire (optional parameter)
    * @param userType
-   *          User type (URI parameter)
+   *          User type (optional parameter)
    * @return response data
    */
   @GET
@@ -61,12 +61,12 @@ public class FcSwClusterHandler extends AbstractRestHandler {
   }
 
   /**
-   * SW cluster information acquisition.
+   * SW Cluster information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param userType
-   *          User type (URI parameter)
+   *          User type (optional parameter)
    * @return response data
    */
   @GET

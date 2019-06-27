@@ -3,6 +3,8 @@ package msf.mfcfc.core.status;
 
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.MfcFcRequestUri;
 import msf.mfcfc.common.constant.ServiceStatus;
@@ -67,6 +69,7 @@ public class SystemStatusManager {
         retStatus.setSystemId(status.getSystemId());
         retStatus.setServiceStatus(status.getServiceStatus());
         retStatus.setBlockadeStatus(status.getBlockadeStatus());
+        retStatus.setRenewalStatus(status.getRenewalStatus());
         return retStatus;
       } finally {
         logger.methodEnd();
@@ -113,8 +116,8 @@ public class SystemStatusManager {
         }
       }
 
-      logger.debug("Init system status.(systemId = {0}, blockadeStatus={1}, serviceStatus={2}; )", ret.getSystemId(),
-          ret.getBlockadeStatus(), ret.getServiceStatus());
+      logger.debug("Init system status.(systemId = {0}, blockadeStatus={1}, serviceStatus={2}, renewalStatus={3}; )",
+          ret.getSystemId(), ret.getBlockadeStatus(), ret.getServiceStatus(), ret.getRenewalStatus());
       return ret;
     } finally {
       logger.methodEnd();
@@ -151,14 +154,16 @@ public class SystemStatusManager {
         throw new MsfException(ErrorCode.TRANSITION_STATUS_ERROR, message);
       }
 
-      if (updateStatus.getServiceStatus() == null && updateStatus.getBlockadeStatus() == null) {
-        String message = "Input parameter serviceStatus and blockadeStatus is null.";
+      if (updateStatus.getServiceStatus() == null && updateStatus.getBlockadeStatus() == null
+          && updateStatus.getRenewalStatus() == null) {
+        String message = "Input parameter serviceStatus and blockadeStatus and renewalStatus are null.";
         logger.warn(message);
         throw new MsfException(ErrorCode.TRANSITION_STATUS_ERROR, message);
       }
 
       if (status.getServiceStatus().equals(updateStatus.getServiceStatus())
-          && status.getBlockadeStatus().equals(updateStatus.getBlockadeStatus())) {
+          && status.getBlockadeStatus().equals(updateStatus.getBlockadeStatus())
+          && status.getRenewalStatus().equals(updateStatus.getRenewalStatus())) {
         logger.warn("Argument status is the same as current status.");
         return;
       }
@@ -167,6 +172,7 @@ public class SystemStatusManager {
       tmpUpdateStatus.setSystemId(FIXED_SYSTEM_ID);
       tmpUpdateStatus.setServiceStatus(updateStatus.getServiceStatus());
       tmpUpdateStatus.setBlockadeStatus(updateStatus.getBlockadeStatus());
+      tmpUpdateStatus.setRenewalStatus(updateStatus.getRenewalStatus());
 
       logger.performance("Start wait to update system_status table.");
       synchronized (this) {
@@ -177,6 +183,9 @@ public class SystemStatusManager {
         }
         if (tmpUpdateStatus.getBlockadeStatus() == null) {
           tmpUpdateStatus.setBlockadeStatus(status.getBlockadeStatus());
+        }
+        if (tmpUpdateStatus.getRenewalStatus() == null) {
+          tmpUpdateStatus.setRenewalStatus(status.getRenewalStatus());
         }
 
         if (!canUpdateStatus(status, tmpUpdateStatus)) {
@@ -217,77 +226,92 @@ public class SystemStatusManager {
 
   private boolean canUpdateStatus(SystemStatus before, SystemStatus after) {
     try {
-      logger.methodStart(new String[] { "before", "after" }, new Object[] { before, after });
-      logger.debug("SystemStatus before={0}, after={1}", before, after);
+      logger.methodStart(new String[] { "before", "after" },
+          new Object[] { ToStringBuilder.reflectionToString(before), ToStringBuilder.reflectionToString(after) });
 
       boolean ret = false;
 
+      int changeCountNum = 0;
+
+      if (!before.getServiceStatus().equals(after.getServiceStatus())) {
+        logger.debug("count ServiceStatus for change.");
+        changeCountNum++;
+      }
       if (!before.getBlockadeStatus().equals(after.getBlockadeStatus())) {
-        logger.debug("BlockadeStatus is change.");
+        logger.debug("count BlockadeStatus for change.");
+        changeCountNum++;
+      }
+      if (!before.getRenewalStatus().equals(after.getRenewalStatus())) {
+        logger.debug("count RenewalStatus for change.");
+        changeCountNum++;
+      }
 
-        if (before.getServiceStatus().equals(after.getServiceStatus())) {
-          logger.debug("ServiceStatus is not change.");
+      if (changeCountNum != 1) {
+        logger.debug("It cannot be changed because there is not one state that has changed.");
+        return ret;
+      }
 
-          if (Integer.valueOf(ServiceStatus.STARTED.getCode()).equals(before.getServiceStatus())) {
-            logger.debug("ServiceStatus is STARTED.");
-            ret = true;
-            logger.debug("canUpdateStatus={0}", ret);
-            return ret;
-          } else {
-            logger.debug("ServiceStatus is not STARTED.");
-            logger.debug("canUpdateStatus={0}", ret);
-            return ret;
-          }
+      if (!before.getBlockadeStatus().equals(after.getBlockadeStatus())) {
+
+        if (Integer.valueOf(ServiceStatus.STARTED.getCode()).equals(before.getServiceStatus())) {
+          logger.debug("ServiceStatus is STARTED.");
+          ret = true;
         } else {
-          logger.debug("ServiceStatus is change.");
-
-          logger.debug("canUpdateStatus={0}", ret);
-          return ret;
+          logger.debug("ServiceStatus is not STARTED.");
         }
       }
 
-      logger.debug("BlockadeStatus is not change.");
-      logger.debug("before ServiceStatus={0}, after ServiceStatus={1}", before.getServiceStatusEnum(),
-          after.getServiceStatusEnum());
+      if (!before.getServiceStatus().equals(after.getServiceStatus())) {
 
-      switch (before.getServiceStatusEnum()) {
-        case STOPPED:
+        switch (before.getServiceStatusEnum()) {
+          case STOPPED:
 
-          if (ServiceStatus.INITIALIZING == after.getServiceStatusEnum()) {
-            ret = true;
-          }
-          break;
-        case STARTED:
+            if (ServiceStatus.INITIALIZING == after.getServiceStatusEnum()) {
+              ret = true;
+            }
+            break;
+          case STARTED:
 
-          if (ServiceStatus.FINALIZING == after.getServiceStatusEnum()
-              || ServiceStatus.SWITCHING == after.getServiceStatusEnum()) {
-            ret = true;
-          }
-          break;
-        case INITIALIZING:
+            if (ServiceStatus.FINALIZING == after.getServiceStatusEnum()
+                || ServiceStatus.SWITCHING == after.getServiceStatusEnum()) {
+              ret = true;
+            }
+            break;
+          case INITIALIZING:
 
-          if (ServiceStatus.STARTED == after.getServiceStatusEnum()
-              || ServiceStatus.STOPPED == after.getServiceStatusEnum()) {
-            ret = true;
-          }
-          break;
-        case FINALIZING:
+            if (ServiceStatus.STARTED == after.getServiceStatusEnum()
+                || ServiceStatus.STOPPED == after.getServiceStatusEnum()) {
+              ret = true;
+            }
+            break;
+          case FINALIZING:
 
-          if (ServiceStatus.STOPPED == after.getServiceStatusEnum()) {
-            ret = true;
-          }
-          break;
-        case SWITCHING:
+            if (ServiceStatus.STOPPED == after.getServiceStatusEnum()) {
+              ret = true;
+            }
+            break;
+          case SWITCHING:
 
-          if (ServiceStatus.STARTED == after.getServiceStatusEnum()
-              || ServiceStatus.FINALIZING == after.getServiceStatusEnum()) {
-            ret = true;
-          }
-          break;
+            if (ServiceStatus.STARTED == after.getServiceStatusEnum()
+                || ServiceStatus.FINALIZING == after.getServiceStatusEnum()) {
+              ret = true;
+            }
+            break;
 
-        default:
-          String message = logger.debug("Unexpected argument.(arg={0})", before.getServiceStatusEnum());
-          throw new IllegalArgumentException(message);
+          default:
+            String message = logger.debug("Unexpected argument.(arg={0})", before.getServiceStatusEnum());
+            throw new IllegalArgumentException(message);
+        }
+      }
+
+      if (!before.getRenewalStatus().equals(after.getRenewalStatus())) {
+
+        if (Integer.valueOf(ServiceStatus.STARTED.getCode()).equals(before.getServiceStatus())) {
+          logger.debug("ServiceStatus is STARTED.");
+          ret = true;
+        } else {
+          logger.debug("ServiceStatus is not STARTED.");
+        }
       }
 
       logger.debug("canUpdateStatus={0}", ret);

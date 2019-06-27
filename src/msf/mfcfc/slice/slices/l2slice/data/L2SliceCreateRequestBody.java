@@ -27,6 +27,9 @@ public class L2SliceCreateRequestBody implements RestRequestValidator {
   @SerializedName("irb_type")
   private String irbType;
 
+  @SerializedName("q_in_q_enable")
+  private Boolean qInQEnable;
+
   public String getSliceId() {
     return sliceId;
   }
@@ -57,6 +60,14 @@ public class L2SliceCreateRequestBody implements RestRequestValidator {
 
   public void setIrbType(String irbType) {
     this.irbType = irbType;
+  }
+
+  public Boolean getQInQEnable() {
+    return qInQEnable;
+  }
+
+  public void setQInQEnable(Boolean qInQEnable) {
+    this.qInQEnable = qInQEnable;
   }
 
   public IrbType getIrbTypeEnum() {

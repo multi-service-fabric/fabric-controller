@@ -11,8 +11,8 @@ public class FcLagIfFilterInfoPK implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
-  @Column(name = "lag_if_id", insertable = false, updatable = false)
-  private Integer lagIfId;
+  @Column(name = "lag_if_info_id", insertable = false, updatable = false)
+  private Long lagIfInfoId;
 
   @Column(name = "term_id")
   private String termId;
@@ -20,12 +20,12 @@ public class FcLagIfFilterInfoPK implements Serializable {
   public FcLagIfFilterInfoPK() {
   }
 
-  public Integer getLagIfId() {
-    return this.lagIfId;
+  public Long getLagIfInfoId() {
+    return this.lagIfInfoId;
   }
 
-  public void setLagIfId(Integer lagIfId) {
-    this.lagIfId = lagIfId;
+  public void setLagIfInfoId(Long lagIfInfoId) {
+    this.lagIfInfoId = lagIfInfoId;
   }
 
   public String getTermId() {
@@ -45,14 +45,14 @@ public class FcLagIfFilterInfoPK implements Serializable {
       return false;
     }
     FcLagIfFilterInfoPK castOther = (FcLagIfFilterInfoPK) other;
-    return this.lagIfId.equals(castOther.lagIfId) && this.termId.equals(castOther.termId);
+    return this.lagIfInfoId.equals(castOther.lagIfInfoId) && this.termId.equals(castOther.termId);
   }
 
   @Override
   public int hashCode() {
     final int prime = 31;
     int hash = 17;
-    hash = hash * prime + this.lagIfId.hashCode();
+    hash = hash * prime + this.lagIfInfoId.hashCode();
     hash = hash * prime + this.termId.hashCode();
 
     return hash;

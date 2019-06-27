@@ -23,6 +23,7 @@ import msf.mfcfc.node.equipments.data.entity.EquipmentDhcpEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentIfDefinitionEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentIrbEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentPortEntity;
+import msf.mfcfc.node.equipments.data.entity.EquipmentQInQEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentQosEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSlotEntity;
 import msf.mfcfc.node.equipments.data.entity.EquipmentSnmpEntity;
@@ -116,6 +117,21 @@ public abstract class FcAbstractEquipmentScenarioBase<T extends RestRequestBase>
       traffic.setVlanTrafficCounterValueMibOid(equipmentEcData.getVlanTrafficCounterValueMibOid());
       traffic.setCliExecPath(equipmentEcData.getCliExecPath());
       capability.setTraffic(traffic);
+
+      if ((equipmentEcData.getCapabilities() != null) && (equipmentEcData.getCapabilities().getQInQ() != null)) {
+        EquipmentQInQEntity qinQ = new EquipmentQInQEntity();
+        if (equipmentEcData.getCapabilities().getQInQ().getSelectableByVlanIf() == null) {
+          qinQ.setSelectableByCp(false);
+        } else {
+          qinQ.setSelectableByCp(equipmentEcData.getCapabilities().getQInQ().getSelectableByVlanIf());
+        }
+        if (equipmentEcData.getCapabilities().getQInQ().getSelectableByNode() == null) {
+          qinQ.setSelectableByNode(false);
+        } else {
+          qinQ.setSelectableByNode(equipmentEcData.getCapabilities().getQInQ().getSelectableByNode());
+        }
+        capability.setQInQ(qinQ);
+      }
 
       equipmentType.setCapability(capability);
 

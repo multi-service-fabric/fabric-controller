@@ -13,6 +13,20 @@ import msf.mfcfc.common.constant.HttpMethod;
  */
 public class RestRequestBase {
 
+  private String requestBody;
+
+  private String requestUri;
+
+  private String requestMethod;
+
+  private String requestQueryString;
+
+  private String notificationAddress;
+
+  private String notificationPort;
+
+  private String sourceIpAddress;
+
   /**
    * Default constructor.
    */
@@ -34,20 +48,6 @@ public class RestRequestBase {
     this.notificationAddress = notificationAddress;
     this.notificationPort = notificationPort;
   }
-
-  private String requestBody;
-
-  private String requestUri;
-
-  private String requestMethod;
-
-  private String requestQueryString;
-
-  private String notificationAddress;
-
-  private String notificationPort;
-
-  private String sourceIpAddress;
 
   /**
    * Get the data to set in HTTP request body (JSON format).

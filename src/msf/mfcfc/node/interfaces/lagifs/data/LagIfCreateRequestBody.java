@@ -48,13 +48,9 @@ public class LagIfCreateRequestBody implements RestRequestValidator {
     try {
       logger.methodStart();
 
-      if (physicalIfIdList == null) {
+      if (physicalIfIdList.isEmpty()) {
 
-        ParameterCheckUtil.checkNotNull(breakoutIfIdList);
-      }
-      if (breakoutIfIdList == null) {
-
-        ParameterCheckUtil.checkNotNull(physicalIfIdList);
+        ParameterCheckUtil.checkNotNullAndLength(breakoutIfIdList);
       }
     } finally {
       logger.methodEnd();

@@ -8,6 +8,12 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class ClusterLinkIfRequest extends RestRequestBase {
 
+  private String clusterId;
+
+  private String clusterLinkIfId;
+
+  private String format;
+
   public ClusterLinkIfRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
       String clusterLinkIfId, String format) {
     super(requestBody, notificationAddress, notificationPort);
@@ -15,12 +21,6 @@ public class ClusterLinkIfRequest extends RestRequestBase {
     this.clusterLinkIfId = clusterLinkIfId;
     this.format = format;
   }
-
-  private String clusterId;
-
-  private String clusterLinkIfId;
-
-  private String format;
 
   public String getClusterId() {
     return clusterId;

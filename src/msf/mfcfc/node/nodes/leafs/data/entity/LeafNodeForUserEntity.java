@@ -21,6 +21,9 @@ public class LeafNodeForUserEntity {
   @SerializedName("irb_type")
   private String irbType;
 
+  @SerializedName("q_in_q_type")
+  private String qInQType;
+
   @SerializedName("plane")
   private Integer plane;
 
@@ -66,6 +69,14 @@ public class LeafNodeForUserEntity {
 
   public void setIrbType(String irbType) {
     this.irbType = irbType;
+  }
+
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
   }
 
   public Integer getPlane() {

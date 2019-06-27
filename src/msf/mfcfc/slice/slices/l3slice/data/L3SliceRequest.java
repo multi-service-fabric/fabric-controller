@@ -9,18 +9,18 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class L3SliceRequest extends RestRequestBase {
 
+  private String sliceType = SliceType.L3_SLICE.getMessage();
+
+  private String sliceId;
+
+  private String format;
+
   public L3SliceRequest(String requestBody, String notificationAddress, String notificationPort, String sliceId,
       String format) {
     super(requestBody, notificationAddress, notificationPort);
     this.sliceId = sliceId;
     this.format = format;
   }
-
-  private String sliceType = SliceType.L3_SLICE.getMessage();
-
-  private String sliceId;
-
-  private String format;
 
   public String getSliceType() {
     return sliceType;

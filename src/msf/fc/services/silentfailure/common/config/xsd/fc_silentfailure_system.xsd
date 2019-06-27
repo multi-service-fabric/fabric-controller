@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema
+	targetNamespace="http://fc.msf/services/silentfailure/common/config/type/system"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://fc.msf/services/silentfailure/common/config/type/system">
+
+	<xsd:element name="systemConf" type="tns:SystemConf" />
+
+	<xsd:complexType name="SystemConf">
+		<xsd:sequence>
+			<xsd:element name="silentFailure" type="tns:SilentFailure"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+
+
+	<xsd:complexType name="SilentFailure">
+		<xsd:sequence>
+			<xsd:element name="noticeDestInfo" type="tns:NoticeDestInfo"
+				maxOccurs="unbounded" minOccurs="0">
+			</xsd:element>
+			<xsd:element name="noticeRetryNum" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="noticeTimeout" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="pingMonitorCycle" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1"></xsd:element>
+			<xsd:element name="ospfNeighborMonitorCycle" type="tns:integer_of_0_or_more"
+				minOccurs="1" maxOccurs="1">
+			</xsd:element>
+			<xsd:element name="enableExecutingIfBlockade" type="xsd:boolean" maxOccurs="1" minOccurs="1"></xsd:element>
+		</xsd:sequence>
+
+	</xsd:complexType>
+
+	<xsd:complexType name="NoticeDestInfo">
+		<xsd:sequence>
+			<xsd:element name="noticeAddress" type="xsd:string"
+				maxOccurs="1" minOccurs="1"></xsd:element>
+			<xsd:element name="noticePort" type="tns:port" maxOccurs="1"
+				minOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+	<xsd:simpleType name="port">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="65535" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="integer_of_0_or_more">
+		<xsd:restriction base="xsd:integer">
+			<xsd:minInclusive value="0" />
+			<xsd:maxInclusive value="2147483647" />
+		</xsd:restriction>
+	</xsd:simpleType>
+
+</xsd:schema>
+

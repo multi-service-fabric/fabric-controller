@@ -89,7 +89,7 @@ public class FcL3CpTrafficReadListScenario extends FcAbstractCpsTrafficScenarioB
         session.openSession();
 
         TrafficInfoCollectAllTrafficEcResponseBody responseBody = sendTrafficReadList();
-        Map<Integer, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap = getTrafficInfoMap(session,
+        Map<Long, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap = getTrafficInfoMap(session,
             responseBody.getSwitchTrafficList());
 
         List<L3CpTrafficEntity> ifTraffics = getCpTraffics(session, trafficInfoMap);
@@ -107,10 +107,10 @@ public class FcL3CpTrafficReadListScenario extends FcAbstractCpsTrafficScenarioB
     }
   }
 
-  private Map<Integer, List<TrafficInfoTrafficValueEcEntity>> getTrafficInfoMap(SessionWrapper session,
+  private Map<Long, List<TrafficInfoTrafficValueEcEntity>> getTrafficInfoMap(SessionWrapper session,
       List<TrafficInfoSwitchTrafficCollectAllEcEntity> switchTrafficList) throws MsfException {
 
-    Map<Integer, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap = new HashMap<>();
+    Map<Long, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap = new HashMap<>();
     if (switchTrafficList == null) {
       return trafficInfoMap;
     }
@@ -133,7 +133,7 @@ public class FcL3CpTrafficReadListScenario extends FcAbstractCpsTrafficScenarioB
         if (!InterfaceType.VLAN_IF.getMessage().equals(trafficInfo.getIfType())) {
           continue;
         }
-        Integer nodeInfoId = new Integer(fcNode.getNodeInfoId().toString());
+        Long nodeInfoId = fcNode.getNodeInfoId();
         if (!trafficInfoMap.containsKey(nodeInfoId)) {
           trafficInfoMap.put(nodeInfoId, new ArrayList<TrafficInfoTrafficValueEcEntity>());
         }
@@ -145,7 +145,7 @@ public class FcL3CpTrafficReadListScenario extends FcAbstractCpsTrafficScenarioB
   }
 
   private List<L3CpTrafficEntity> getCpTraffics(SessionWrapper session,
-      Map<Integer, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap) throws MsfException {
+      Map<Long, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap) throws MsfException {
 
     List<L3CpTrafficEntity> cpTrafficList = new ArrayList<L3CpTrafficEntity>();
 
@@ -162,7 +162,7 @@ public class FcL3CpTrafficReadListScenario extends FcAbstractCpsTrafficScenarioB
   }
 
   private TrafficInfoTrafficValueEcEntity getTrafficInfo(FcVlanIfPK fcVlanIfPk,
-      Map<Integer, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap) throws MsfException {
+      Map<Long, List<TrafficInfoTrafficValueEcEntity>> trafficInfoMap) throws MsfException {
 
     if (!trafficInfoMap.containsKey(fcVlanIfPk.getNodeInfoId())) {
       String logMsg = MessageFormat.format("There is the data only in the FC system. NodeInfoId={0}",

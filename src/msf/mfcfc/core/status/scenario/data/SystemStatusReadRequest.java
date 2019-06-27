@@ -9,6 +9,12 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class SystemStatusReadRequest extends RestRequestBase {
 
+  private String controller;
+
+  private String cluster;
+
+  private String getInfo;
+
   public SystemStatusReadRequest(String requestBody, String notificationAddress, String notificationPort,
       String controller, String cluster, String getInfo) {
     super(requestBody, notificationAddress, notificationPort);
@@ -16,12 +22,6 @@ public class SystemStatusReadRequest extends RestRequestBase {
     this.cluster = cluster;
     this.getInfo = getInfo;
   }
-
-  private String controller;
-
-  private String cluster;
-
-  private String getInfo;
 
   public String getController() {
     return controller;

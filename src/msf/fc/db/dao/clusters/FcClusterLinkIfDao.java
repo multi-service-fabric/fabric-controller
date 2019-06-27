@@ -101,6 +101,16 @@ public class FcClusterLinkIfDao extends FcAbstractCommonDao<FcClusterLinkIf, Lon
     }
   }
 
+  public List<FcClusterLinkIf> readList(SessionWrapper session) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "session" }, new Object[] { session });
+      Criteria criteria = session.getSession().createCriteria(FcClusterLinkIf.class);
+      return readListByCriteria(session, criteria);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
   @Override
   public FcClusterLinkIf read(SessionWrapper session, Long clusterLinkIfId) throws MsfException {
     Criteria criteria = session.getSession().createCriteria(FcClusterLinkIf.class)

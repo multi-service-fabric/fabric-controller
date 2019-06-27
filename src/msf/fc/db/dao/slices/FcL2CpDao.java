@@ -36,7 +36,7 @@ public class FcL2CpDao extends FcAbstractCommonDao<FcL2Cp, FcL2CpPK> {
       logger.methodStart(new String[] { "session", "sliceId", "nodeInfoId" },
           new Object[] { session, sliceId, nodeInfoId });
       Criteria criteria = session.getSession().createCriteria(FcL2Cp.class).add(Restrictions.eq("id.sliceId", sliceId))
-          .add(Restrictions.eq("vlanIf.id.nodeInfoId", nodeInfoId.intValue()));
+          .add(Restrictions.eq("vlanIf.id.nodeInfoId", nodeInfoId));
       return readListByCriteria(session, criteria);
     } finally {
       logger.methodEnd();
@@ -47,7 +47,7 @@ public class FcL2CpDao extends FcAbstractCommonDao<FcL2Cp, FcL2CpPK> {
     try {
       logger.methodStart(new String[] { "session", "nodeInfoId" }, new Object[] { session, nodeInfoId });
       Criteria criteria = session.getSession().createCriteria(FcL2Cp.class)
-          .add(Restrictions.eq("vlanIf.id.nodeInfoId", nodeInfoId.intValue()));
+          .add(Restrictions.eq("vlanIf.id.nodeInfoId", nodeInfoId));
       return readListByCriteria(session, criteria);
     } finally {
       logger.methodEnd();
@@ -99,7 +99,7 @@ public class FcL2CpDao extends FcAbstractCommonDao<FcL2Cp, FcL2CpPK> {
 
       FcVlanIfDao fcVlanIfDao = new FcVlanIfDao();
       FcVlanIfPK fcVlanIfPk = new FcVlanIfPK();
-      fcVlanIfPk.setNodeInfoId(fcNode.getNodeInfoId().intValue());
+      fcVlanIfPk.setNodeInfoId(fcNode.getNodeInfoId());
       fcVlanIfPk.setVlanIfId(Integer.valueOf(vlanIfId));
       FcVlanIf fcVlanIf = fcVlanIfDao.read(session, fcVlanIfPk);
       if (fcVlanIf == null) {

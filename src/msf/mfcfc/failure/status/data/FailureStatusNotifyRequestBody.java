@@ -179,7 +179,7 @@ public class FailureStatusNotifyRequestBody implements RestRequestValidator {
 
     ParameterCheckUtil.checkNotNullAndLength(tempSlice.getSliceId());
 
-    ParameterCheckUtil.checkNotNull(tempSlice.getCpIdList());
+    ParameterCheckUtil.checkNotNull(tempSlice.getCpIdSet());
 
     ParameterCheckUtil.checkNotNull(tempSlice.getFailureStatusEnum());
 

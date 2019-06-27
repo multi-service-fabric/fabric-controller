@@ -22,6 +22,7 @@ import msf.fc.db.dao.clusters.FcEquipmentDao;
 import msf.fc.db.dao.clusters.FcNodeDao;
 import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.fc.node.FcNodeManager;
+import msf.fc.rest.ec.node.nodes.data.NodeUpdateEcRequestBody;
 import msf.fc.rest.ec.node.nodes.operation.data.NodeCreateDeleteEcRequestBody;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodePairNodeEcEntity;
 import msf.fc.rest.ec.node.nodes.operation.data.entity.NodeRangeEcEntity;
@@ -86,12 +87,12 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
     try {
       logger.methodStart();
 
-      logger.performance("start wait to node increasing/decreasing process.");
+      logger.performance("start wait for node increasing/decreasing process.");
       synchronized (FcNodeManager.getInstance().getFcNodeCreateAndDeleteLockObject()) {
-        logger.performance("end wait to node increasing/decreasing process.");
-        logger.performance("start wait to node update process.");
+        logger.performance("end wait for node increasing/decreasing process.");
+        logger.performance("start wait for node update process.");
         synchronized (FcNodeManager.getInstance().getFcNodeUpdateLockObject()) {
-          logger.performance("end wait to node update process.");
+          logger.performance("end wait for node update process.");
 
           RestResponseBase responseBase = null;
           SessionWrapper sessionWrapper = new SessionWrapper();
@@ -120,6 +121,10 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
                 responseBase = recoverNodeProcess(sessionWrapper, fcNodeList, updateNode, leafNodes);
                 break;
 
+              case CHG_EQUIPMENT_TYPE:
+
+                responseBase = changeEquipmentTypeProcess(sessionWrapper, updateNode, leafNodes);
+                break;
               default:
 
                 throw new MsfException(ErrorCode.UNDEFINED_ERROR,
@@ -475,6 +480,133 @@ public class FcLeafNodeUpdateRunner extends FcAbstractLeafNodeRunnerBase {
     } finally {
       logger.methodEnd();
     }
+  }
+
+  private RestResponseBase changeEquipmentTypeProcess(SessionWrapper sessionWrapper, FcNode updateNode,
+      List<FcNode> leafNodes) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "updateNode", "leafNode" }, new Object[] { updateNode, leafNodes });
+
+      logger.performance("start get leaf resources lock.");
+      FcDbManager.getInstance().getLeafsLock(leafNodes, sessionWrapper);
+      logger.performance("end get leaf resources lock.");
+
+      checkChangeEquipmentTypeNodeAfterLock(sessionWrapper, requestBody, updateNode);
+
+      updateChangeEquipmentType(sessionWrapper, updateNode, requestBody);
+
+      NodeUpdateEcRequestBody ecRequestBody = createChangeEquipmentNodeData(requestBody);
+
+      sendLeafNodeChangeEquipment(updateNode, ecRequestBody);
+
+      RestResponseBase responseBase = responseLeafNodeUpdateData();
+
+      sessionWrapper.commit();
+
+      return responseBase;
+    } catch (MsfException msfException) {
+      sessionWrapper.rollback();
+      throw msfException;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private void checkChangeEquipmentTypeNodeAfterLock(SessionWrapper sessionWrapper,
+      LeafNodeUpdateRequestBody requestBody, FcNode updateNode) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "sessionWrapper", "requestEquipmmentTypeId", "nodeEquipmentTypeId" },
+          new Object[] { sessionWrapper, requestBody, updateNode });
+
+      getEquipmentForChangeEquipmentType(sessionWrapper, requestBody, updateNode);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private FcEquipment getEquipmentForChangeEquipmentType(SessionWrapper sessionWrapper,
+      LeafNodeUpdateRequestBody requestBody, FcNode updateNode) throws MsfException {
+    try {
+      logger.methodStart(new String[] { "requestEquipmentTypeId", "nodeEqiopmentTypeId" },
+          new Object[] { requestBody, updateNode });
+      FcEquipmentDao equipmentDao = new FcEquipmentDao();
+      FcEquipment equipment = new FcEquipment();
+      equipment = equipmentDao.read(sessionWrapper,
+          Integer.valueOf(requestBody.getChangeEquipmentTypeOption().getEquipmentTypeId()));
+      if (equipment == null) {
+
+        throw new MsfException(ErrorCode.RELATED_RESOURCE_NOT_FOUND,
+            "target resource is not found. parameters = fcEquipment");
+      } else if (equipment.getEquipmentTypeId().equals(updateNode.getEquipment().getEquipmentTypeId())) {
+
+        throw new MsfException(ErrorCode.UPDATE_INFORMATION_ERROR,
+            "The specified EquipmentTypeID is the same as the EquipmentTypeID of the equipment will be changed");
+      }
+      return equipment;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private void updateChangeEquipmentType(SessionWrapper session, FcNode entity, LeafNodeUpdateRequestBody requestBody)
+      throws MsfException {
+    try {
+      logger.methodEnd(new String[] { "fcNode", "equipmentTypeId" }, new Object[] { entity, requestBody });
+      FcEquipment updateEquipment = new FcEquipment();
+      updateEquipment
+          .setEquipmentTypeId(Integer.valueOf(requestBody.getChangeEquipmentTypeOption().getEquipmentTypeId()));
+      entity.setEquipment(updateEquipment);
+      FcNodeDao dao = new FcNodeDao();
+      dao.update(session, entity);
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private NodeUpdateEcRequestBody createChangeEquipmentNodeData(LeafNodeUpdateRequestBody requestBody) {
+    try {
+      logger.methodStart(new String[] { "requestBody" }, new Object[] { requestBody });
+      NodeUpdateEcRequestBody body = new NodeUpdateEcRequestBody();
+      body.setNode(new msf.fc.rest.ec.node.nodes.data.entity.NodeUpdateEcEntity());
+      body.getNode().setEquipmentTypeId(requestBody.getChangeEquipmentTypeOption().getEquipmentTypeId());
+      return body;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  private RestResponseBase sendLeafNodeChangeEquipment(FcNode updateNode, NodeUpdateEcRequestBody requestBody)
+      throws MsfException {
+    try {
+      logger.methodStart(new String[] { "updateNode", "requestBody" }, new Object[] { updateNode, requestBody });
+      RestRequestBase request = new RestRequestBase();
+
+      request.setRequestBody(JsonUtil.toJson(requestBody));
+
+      String ecControlIpAddress = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster()
+          .getEcControlAddress();
+      int ecControlPort = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getEcControlPort();
+
+      RestResponseBase restResponseBase = RestClient.sendRequest(
+          EcRequestUri.NODE_CHANGE_EQUIPMENT_TYPE.getHttpMethod(),
+          EcRequestUri.NODE_CHANGE_EQUIPMENT_TYPE.getUri(String.valueOf(updateNode.getEcNodeId())), request,
+          ecControlIpAddress, ecControlPort);
+
+      String errorCode = null;
+      if (StringUtils.isNotEmpty(restResponseBase.getResponseBody())) {
+        ErrorInternalResponseBody recoverNodeEcResponseBody = JsonUtil.fromJson(restResponseBase.getResponseBody(),
+            ErrorInternalResponseBody.class, ErrorCode.EC_CONTROL_ERROR);
+        errorCode = recoverNodeEcResponseBody.getErrorCode();
+      }
+
+      checkRestResponseHttpStatusCode(restResponseBase.getHttpStatusCode(), HttpStatus.OK_200, errorCode,
+          ErrorCode.EC_CONTROL_ERROR);
+
+      return restResponseBase;
+    } finally {
+      logger.methodEnd();
+    }
+
   }
 
   private RestResponseBase responseLeafNodeUpdateData() {

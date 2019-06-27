@@ -34,6 +34,9 @@ public class FcL2Slice implements Serializable {
   @Column(name = "l3vni_vlan_id")
   private Integer l3vniVlanId;
 
+  @Column(name = "q_in_q_enable")
+  private Boolean qInQEnable;
+
   @Column(name = "remark_menu")
   private String remarkMenu;
 
@@ -81,6 +84,14 @@ public class FcL2Slice implements Serializable {
 
   public void setL3vniVlanId(Integer l3vniVlanId) {
     this.l3vniVlanId = l3vniVlanId;
+  }
+
+  public Boolean getQInQEnable() {
+    return this.qInQEnable;
+  }
+
+  public void setQInQEnable(Boolean qInQEnable) {
+    this.qInQEnable = qInQEnable;
   }
 
   public String getRemarkMenu() {

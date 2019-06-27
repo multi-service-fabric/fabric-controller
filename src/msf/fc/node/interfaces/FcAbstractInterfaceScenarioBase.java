@@ -15,7 +15,6 @@ import msf.fc.common.data.FcLagIf;
 import msf.fc.common.data.FcNode;
 import msf.fc.common.data.FcPhysicalIf;
 import msf.fc.db.dao.clusters.FcNodeDao;
-import msf.fc.node.interfaces.physicalifs.FcAbstractPhysicalInterfaceScenarioBase;
 import msf.fc.rest.ec.node.interfaces.breakout.data.BreakoutIfReadEcResponseBody;
 import msf.fc.rest.ec.node.interfaces.breakout.data.entity.BreakoutIfEcEntity;
 import msf.fc.rest.ec.node.interfaces.data.InterfaceReadListEcResponseBody;
@@ -63,7 +62,7 @@ import msf.mfcfc.rest.common.RestClient;
 public abstract class FcAbstractInterfaceScenarioBase<T extends RestRequestBase>
     extends AbstractInterfaceScenarioBase<T> {
 
-  private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractPhysicalInterfaceScenarioBase.class);
+  private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractInterfaceScenarioBase.class);
 
   protected List<InternalLinkIfEntity> getInternalIfEntities(List<FcInternalLinkIf> internalLinkIfs)
       throws MsfException {

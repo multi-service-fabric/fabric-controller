@@ -8,6 +8,12 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class L3CpTrafficRequest extends RestRequestBase {
 
+  private String sliceType = SliceType.L3_SLICE.getMessage();
+
+  private String sliceId;
+
+  private String cpId;
+
   public L3CpTrafficRequest(String requestBody, String notificationAddress, String notificationPort, String sliceType,
       String sliceId, String cpId) {
     super(requestBody, notificationAddress, notificationPort);
@@ -15,12 +21,6 @@ public class L3CpTrafficRequest extends RestRequestBase {
     this.sliceId = sliceId;
     this.cpId = cpId;
   }
-
-  private String sliceType = SliceType.L3_SLICE.getMessage();
-
-  private String sliceId;
-
-  private String cpId;
 
   public String getSliceType() {
     return sliceType;

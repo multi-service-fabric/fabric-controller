@@ -19,6 +19,9 @@ public class EquipmentCapabilitiesEcEntity {
   @SerializedName("irb")
   private EquipmentIrbEcEntity irb;
 
+  @SerializedName("q_in_q")
+  private EquipmentQInQEcEntity qInQ;
+
   public Boolean getL2vpn() {
     return l2vpn;
   }
@@ -49,6 +52,14 @@ public class EquipmentCapabilitiesEcEntity {
 
   public void setIrb(EquipmentIrbEcEntity irb) {
     this.irb = irb;
+  }
+
+  public EquipmentQInQEcEntity getQInQ() {
+    return qInQ;
+  }
+
+  public void setQInQ(EquipmentQInQEcEntity qInQ) {
+    this.qInQ = qInQ;
   }
 
   @Override

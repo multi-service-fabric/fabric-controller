@@ -47,11 +47,17 @@ public class FcAsyncRequest implements Serializable {
   @Column(name = "request_uri")
   private String requestUri;
 
+  @Column(name = "reservation_time")
+  private Timestamp reservationTime;
+
   @Column(name = "response_body")
   private String responseBody;
 
   @Column(name = "response_status_code")
   private Integer responseStatusCode;
+
+  @Column(name = "start_time")
+  private Timestamp startTime;
 
   private Integer status;
 
@@ -137,6 +143,14 @@ public class FcAsyncRequest implements Serializable {
     this.requestUri = requestUri;
   }
 
+  public Timestamp getReservationTime() {
+    return this.reservationTime;
+  }
+
+  public void setReservationTime(Timestamp reservationTime) {
+    this.reservationTime = reservationTime;
+  }
+
   public String getResponseBody() {
     return this.responseBody;
   }
@@ -151,6 +165,14 @@ public class FcAsyncRequest implements Serializable {
 
   public void setResponseStatusCode(Integer responseStatusCode) {
     this.responseStatusCode = responseStatusCode;
+  }
+
+  public Timestamp getStartTime() {
+    return this.startTime;
+  }
+
+  public void setStartTime(Timestamp startTime) {
+    this.startTime = startTime;
   }
 
   public Integer getStatus() {
@@ -190,6 +212,8 @@ public class FcAsyncRequest implements Serializable {
     setResponseStatusCode(asyncRequest.getResponseStatusCode());
     setStatus(asyncRequest.getStatus());
     setSubStatus(asyncRequest.getSubStatus());
+    setReservationTime(asyncRequest.getReservationTime());
+    setStartTime(asyncRequest.getStartTime());
   }
 
   public AsyncRequest getCommonEntity() {
@@ -206,6 +230,8 @@ public class FcAsyncRequest implements Serializable {
     asyncRequest.setResponseStatusCode(getResponseStatusCode());
     asyncRequest.setStatus(getStatus());
     asyncRequest.setSubStatus(getSubStatus());
+    asyncRequest.setReservationTime(getReservationTime());
+    asyncRequest.setStartTime(getStartTime());
     return asyncRequest;
   }
 

@@ -98,7 +98,7 @@ public class FcLagIfFilterCreateDeleteRunner extends FcAbstractFilterRunnerBase 
               NodeType.LEAF.getCode(), Integer.parseInt(request.getNodeId()), Integer.parseInt(request.getLagIfId()));
 
           lagIfFilterCreateProcess(termIds, fcLagIfFilterInfoDao, fcLagIfFilterInfos, sessionWrapper,
-              filterOperationTermEcEntities);
+              filterOperationTermEcEntities, fcLagIf);
 
           sendFilterCreateDelete(fcNode.getEcNodeId(), EcFilterIfType.LAG_IFS.getMessage(),
               String.valueOf(fcLagIf.getLagIfId()), filterOperationTermEcEntities);
@@ -141,7 +141,7 @@ public class FcLagIfFilterCreateDeleteRunner extends FcAbstractFilterRunnerBase 
 
   private void lagIfFilterCreateProcess(List<String> termIds, FcLagIfFilterInfoDao fcLagIfFilterInfoDao,
       List<FcLagIfFilterInfo> fcLagIfFilterInfos, SessionWrapper sessionWrapper,
-      List<FilterOperationTermEcEntity> filterOperationTermEcEntities) throws MsfException {
+      List<FilterOperationTermEcEntity> filterOperationTermEcEntities, FcLagIf fcLagIf) throws MsfException {
     try {
       logger.methodStart();
 
@@ -182,7 +182,7 @@ public class FcLagIfFilterCreateDeleteRunner extends FcAbstractFilterRunnerBase 
         }
 
         FcLagIfFilterInfo createLagIfFilter = new FcLagIfFilterInfo();
-        createLagIfFilterPk.setLagIfId(Integer.parseInt(request.getLagIfId()));
+        createLagIfFilterPk.setLagIfInfoId(fcLagIf.getLagIfInfoId());
         createLagIfFilter.setId(createLagIfFilterPk);
 
         fcLagIfFilterInfoDao.create(sessionWrapper, createLagIfFilter);

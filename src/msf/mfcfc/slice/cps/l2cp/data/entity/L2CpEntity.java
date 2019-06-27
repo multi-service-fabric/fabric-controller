@@ -36,6 +36,9 @@ public class L2CpEntity {
   @SerializedName("irb")
   private L2CpIrbEntity irb;
 
+  @SerializedName("q_in_q_enable")
+  private Boolean qInQEnable;
+
   @SerializedName("traffic_threshold")
   private Double trafficThreshold;
 
@@ -117,6 +120,14 @@ public class L2CpEntity {
 
   public void setIrb(L2CpIrbEntity irb) {
     this.irb = irb;
+  }
+
+  public Boolean getQInQEnable() {
+    return qInQEnable;
+  }
+
+  public void setQInQEnable(Boolean qInQEnable) {
+    this.qInQEnable = qInQEnable;
   }
 
   public Double getTrafficThreshold() {

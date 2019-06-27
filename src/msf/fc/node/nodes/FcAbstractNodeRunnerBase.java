@@ -48,6 +48,7 @@ import msf.mfcfc.common.constant.NodeType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.common.util.IpAddressUtil;
+import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.core.operation.OperationManager;
 import msf.mfcfc.core.scenario.RestResponseBase;
 import msf.mfcfc.db.SessionWrapper;
@@ -71,34 +72,12 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
   protected static final Integer MANAGEMENT_ADDRESS_PREFIX = 32;
   protected static final Integer LOOPBACK_ADDRESS_PREFIX = 32;
 
-  protected static final Integer EC_LEAF_NODE_START_ID = 0;
-  protected static final Integer EC_SPINE_NODE_START_ID = 100;
-  protected static final Integer EC_RR_NODE_START_ID = 200;
-
   private static Pattern ecErrorRollBackPattern = Pattern.compile("^80[0-9]{4}$");
 
   protected Integer createEcNodeId(Integer nodeId, NodeType nodeType) throws MsfException {
     try {
       logger.methodStart(new String[] { "nodeId", "nodeType" }, new Object[] { nodeId, nodeType });
-      Integer ecNodeId = null;
-      switch (nodeType) {
-        case LEAF:
-          ecNodeId = nodeId + EC_LEAF_NODE_START_ID;
-          break;
-
-        case SPINE:
-          ecNodeId = nodeId + EC_SPINE_NODE_START_ID;
-          break;
-
-        case RR:
-          ecNodeId = nodeId + EC_RR_NODE_START_ID;
-          break;
-
-        default:
-
-          throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter. nodeType = " + nodeType);
-      }
-      return ecNodeId;
+      return ParameterCheckUtil.getEcNodeId(nodeId, nodeType);
     } finally {
       logger.methodEnd();
     }
@@ -108,13 +87,9 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
     try {
       logger.methodStart(new String[] { "leafId", "spineId" }, new Object[] { leafId, spineId });
 
-      SwCluster swCluster = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster();
+      int leafLagIfId = spineId;
 
-      int nsi = swCluster.getMaxSpineNum();
-
-      int leafLagIfId = 4 * (nsi * (leafId - 1) + spineId - 1) + 1;
-
-      int spineLagIfId = 4 * (nsi * (leafId - 1) + spineId - 1) + 2;
+      int spineLagIfId = leafId;
 
       Map<String, String> retMap = new HashMap<String, String>();
       retMap.put(IpAddressUtil.LEAF, String.valueOf(leafLagIfId));
@@ -312,7 +287,8 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
 
       try {
 
-        notifyOperationResult(createOperationNotifyBody(targetAsyncRequest.getCommonEntity()));
+        notifyOperationResult(createOperationNotifyBody(targetAsyncRequest.getCommonEntity()),
+            targetAsyncRequest.getOperationId());
       } catch (MsfException msfException) {
         logger.error(msfException.getMessage(), msfException);
         throw msfException;
@@ -558,7 +534,7 @@ public abstract class FcAbstractNodeRunnerBase extends AbstractNodeRunnerBase {
               .get(0);
           fcInternalLinkIfDao.delete(sessionWrapper, oppositeInternalLinkIf.getInternalLinkIfId());
 
-          fcLagIfDao.delete(sessionWrapper, oppositeInternalLinkIf.getLagIf().getLagIfId());
+          fcLagIfDao.delete(sessionWrapper, oppositeInternalLinkIf.getLagIf().getLagIfInfoId());
 
           oppositeNodeDeleteList.add(getNodeOppositeNodeDeleteEcEntity(oppositeInternalLinkIf));
         }

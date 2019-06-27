@@ -90,4 +90,8 @@ public class ObjectFactory {
   public Irb createIrb() {
     return new Irb();
   }
+
+  public Node createNode() {
+    return new Node();
+  }
 }

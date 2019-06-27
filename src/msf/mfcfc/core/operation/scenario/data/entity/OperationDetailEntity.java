@@ -20,6 +20,12 @@ public class OperationDetailEntity {
   @SerializedName("last_update_time")
   private String lastUpdateTime;
 
+  @SerializedName("reservation_time")
+  private String reservationTime;
+
+  @SerializedName("start_time")
+  private String startTime;
+
   @SerializedName("status")
   private String status;
 
@@ -60,6 +66,22 @@ public class OperationDetailEntity {
 
   public void setLastUpdateTime(String lastUpdateTime) {
     this.lastUpdateTime = lastUpdateTime;
+  }
+
+  public String getReservationTime() {
+    return reservationTime;
+  }
+
+  public void setReservationTime(String reservationTime) {
+    this.reservationTime = reservationTime;
+  }
+
+  public String getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(String startTime) {
+    this.startTime = startTime;
   }
 
   public String getStatus() {

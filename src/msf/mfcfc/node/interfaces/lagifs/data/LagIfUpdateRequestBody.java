@@ -7,8 +7,10 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.gson.annotations.SerializedName;
 
+import msf.mfcfc.common.constant.LagIfUpdateAction;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.common.util.ParameterCheckUtil;
 import msf.mfcfc.rest.common.RestRequestValidator;
 
 public class LagIfUpdateRequestBody implements RestRequestValidator {
@@ -48,10 +50,25 @@ public class LagIfUpdateRequestBody implements RestRequestValidator {
     this.breakoutIfIdList = breakoutIfIdList;
   }
 
+  public LagIfUpdateAction getActionEnum() {
+    return LagIfUpdateAction.getEnumFromMessage(action);
+  }
+
+  public void setActionEnum(LagIfUpdateAction action) {
+    this.action = action.getMessage();
+  }
+
   @Override
   public void validate() throws MsfException {
     try {
       logger.methodStart();
+
+      ParameterCheckUtil.checkNotNull(getActionEnum());
+
+      if (breakoutIfIdList == null) {
+
+        ParameterCheckUtil.checkNotNull(physicalIfIdList);
+      }
     } finally {
       logger.methodEnd();
     }

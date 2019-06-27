@@ -34,7 +34,7 @@ public class FcSystemStatusHandler extends AbstractRestHandler {
    * @param controller
    *          Acquisition target controller
    * @param cluster
-   *          Acquisition target SW cluster
+   *          Acquisition target cluster
    * @param getInfo
    *          Acquired information
    *

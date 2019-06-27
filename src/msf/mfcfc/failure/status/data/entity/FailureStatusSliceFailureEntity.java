@@ -3,6 +3,7 @@ package msf.mfcfc.failure.status.data.entity;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -20,7 +21,7 @@ public class FailureStatusSliceFailureEntity implements Serializable {
   private String sliceId;
 
   @SerializedName("cp_ids")
-  private List<String> cpIdList;
+  private Set<String> cpIdSet;
 
   @SerializedName("failure_status")
   private String failureStatus;
@@ -32,12 +33,12 @@ public class FailureStatusSliceFailureEntity implements Serializable {
 
   }
 
-  public FailureStatusSliceFailureEntity(String sliceId, String sliceType, List<String> cpIdList, String failureStatus,
+  public FailureStatusSliceFailureEntity(String sliceId, String sliceType, Set<String> cpIdSet, String failureStatus,
       List<FailureStatusReachableStatusFailureEntity> reachableStatusList) {
     super();
     this.sliceId = sliceId;
     this.sliceType = sliceType;
-    this.cpIdList = cpIdList;
+    this.cpIdSet = cpIdSet;
     this.failureStatus = failureStatus;
     this.reachableStatusList = reachableStatusList;
   }
@@ -58,12 +59,12 @@ public class FailureStatusSliceFailureEntity implements Serializable {
     this.sliceType = sliceType;
   }
 
-  public List<String> getCpIdList() {
-    return cpIdList;
+  public Set<String> getCpIdSet() {
+    return cpIdSet;
   }
 
-  public void setCpIdList(List<String> cpIdList) {
-    this.cpIdList = cpIdList;
+  public void setCpIdSet(Set<String> cpIdSet) {
+    this.cpIdSet = cpIdSet;
   }
 
   public String getFailureStatus() {

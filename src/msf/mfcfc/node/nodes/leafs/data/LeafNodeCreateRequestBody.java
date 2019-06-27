@@ -12,6 +12,7 @@ import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.constant.LeafType;
 import msf.mfcfc.common.constant.PlaneBelongsTo;
+import msf.mfcfc.common.constant.QInQType;
 import msf.mfcfc.common.constant.VpnType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -64,6 +65,9 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
 
   @SerializedName("irb_type")
   private String irbType;
+
+  @SerializedName("q_in_q_type")
+  private String qInQType;
 
   @SerializedName("plane")
   private Integer plane;
@@ -166,6 +170,14 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
     this.irbType = irbType;
   }
 
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
+  }
+
   public Integer getPlane() {
     return plane;
   }
@@ -246,6 +258,14 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
     this.irbType = irbType.getMessage();
   }
 
+  public QInQType getQInQTypeEnum() {
+    return QInQType.getEnumFromMessage(qInQType);
+  }
+
+  public void setQInQTypeEnum(QInQType qInQType) {
+    this.qInQType = qInQType.getMessage();
+  }
+
   public PlaneBelongsTo getPlaneEnum() {
     return PlaneBelongsTo.getEnumFromMessage(plane);
   }
@@ -285,7 +305,7 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
               break;
             case ASYMMETRIC:
             case SYMMETRIC:
-              String logMsg = "irbType must match NONE.";
+              String logMsg = "irbType does not match NONE.";
               logger.error(logMsg);
               throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
             default:
@@ -293,6 +313,16 @@ public class LeafNodeCreateRequestBody implements RestRequestValidator {
               throw new IllegalArgumentException(MessageFormat.format("op={0}", getIrbTypeEnum()));
           }
         }
+      }
+
+      if (VpnType.L3VPN.equals(getVpnTypeEnum())) {
+        if (qInQType != null) {
+          String logMsg = "Q-in-QType is set in the parameter.";
+          logger.error(logMsg);
+          throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR, logMsg);
+        }
+      } else if (qInQType != null) {
+        ParameterCheckUtil.checkNotNull(getQInQTypeEnum());
       }
 
       ParameterCheckUtil.checkNotNull(getPlaneEnum());

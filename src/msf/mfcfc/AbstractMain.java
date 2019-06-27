@@ -20,10 +20,12 @@ import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.config.ConfigManager;
 import msf.mfcfc.common.constant.AsyncProcessStatus;
 import msf.mfcfc.common.constant.BlockadeStatus;
+import msf.mfcfc.common.constant.RenewalStatusType;
 import msf.mfcfc.common.constant.ServiceStatus;
 import msf.mfcfc.common.data.SystemStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.common.reservation.ReservationBlockBase;
 import msf.mfcfc.core.CoreManager;
 import msf.mfcfc.core.status.SystemStatusManager;
 import msf.mfcfc.db.DbManager;
@@ -80,6 +82,8 @@ public abstract class AbstractMain {
     try {
 
       logger.methodStart();
+
+      stopReservationScheduler();
 
       boolean isSwitchingMode = false;
 
@@ -249,6 +253,7 @@ public abstract class AbstractMain {
           newSysStatus.setSystemId(SystemStatusManager.FIXED_SYSTEM_ID);
           newSysStatus.setServiceStatusEnum(ServiceStatus.INITIALIZING);
           newSysStatus.setBlockadeStatusEnum(BlockadeStatus.NONE);
+          newSysStatus.setRenewalStatusEnum(RenewalStatusType.NONE);
 
           systemStatusDao.create(session, newSysStatus);
           logger.info("Create new SystemStatus : " + newSysStatus);
@@ -498,6 +503,56 @@ public abstract class AbstractMain {
         logger.error(MessageFormat.format("ExtensionFunction stop processing failed. className({0}).",
             extensionFunction.getClass().getName()));
       }
+    }
+  }
+
+  protected boolean startReservationScheduler() {
+    try {
+      logger.methodStart();
+
+      if (this.core == null) {
+        logger.error("CoreManager not found.");
+        return false;
+      }
+
+      List<ReservationBlockBase> reservationsList = this.core.getReservationFunctions();
+      for (int num = 0; num < reservationsList.size(); num++) {
+        ReservationBlockBase reservationFunction = reservationsList.get(num);
+
+        if (!reservationFunction.startScheduler()) {
+
+          logger.error(MessageFormat.format("ReservationFunction start scheduler processing failed. className({0}).",
+              reservationFunction.getClass().getName()));
+          return false;
+        }
+      }
+      return true;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void stopReservationScheduler() {
+    try {
+      logger.methodStart();
+
+      if (this.core == null) {
+        logger.error("CoreManager not found.");
+        return;
+      }
+
+      List<ReservationBlockBase> reservationsList = this.core.getReservationFunctions();
+      for (int num = reservationsList.size() - 1; num >= 0; num--) {
+        ReservationBlockBase reservationFunction = reservationsList.get(num);
+
+        if (!reservationFunction.stopScheduler()) {
+
+          logger.error(MessageFormat.format("ReservationFunction stop scheduler processing failed. className({0}).",
+              reservationFunction.getClass().getName()));
+        }
+      }
+    } finally {
+      logger.methodEnd();
     }
   }
 

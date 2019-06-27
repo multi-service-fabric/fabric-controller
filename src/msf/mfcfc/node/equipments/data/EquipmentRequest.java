@@ -8,16 +8,16 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class EquipmentRequest extends RestRequestBase {
 
+  private String equipmentTypeId;
+
+  private String format;
+
   public EquipmentRequest(String requestBody, String notificationAddress, String notificationPort,
       String equipmentTypeId, String format) {
     super(requestBody, notificationAddress, notificationPort);
     this.equipmentTypeId = equipmentTypeId;
     this.format = format;
   }
-
-  private String equipmentTypeId;
-
-  private String format;
 
   public String getEquipmentTypeId() {
     return equipmentTypeId;

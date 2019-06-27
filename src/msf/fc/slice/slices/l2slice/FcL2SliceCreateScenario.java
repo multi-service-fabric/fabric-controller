@@ -57,10 +57,10 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
 
   @Override
   protected RestResponseBase executeImpl() throws MsfException {
-    logger.performance("start wait to l2slice creation process.");
+    logger.performance("start wait for l2slice creation process.");
 
     synchronized (FcSliceManager.getInstance().getL2SliceCreateLockObject()) {
-      logger.performance("end wait to l2slice creation process.");
+      logger.performance("end wait for l2slice creation process.");
       SessionWrapper sessionWrapper = new SessionWrapper();
       try {
         logger.methodStart();
@@ -166,6 +166,8 @@ public class FcL2SliceCreateScenario extends FcAbstractL2SliceScenarioBase<L2Sli
         newL2Slice.setSliceId(requestBody.getSliceId());
       }
       newL2Slice.setRemarkMenu(requestBody.getRemarkMenu());
+
+      newL2Slice.setQInQEnable(requestBody.getQInQEnable() != null ? requestBody.getQInQEnable() : false);
       return newL2Slice;
     } finally {
       logger.methodEnd();

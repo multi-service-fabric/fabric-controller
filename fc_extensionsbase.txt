@@ -1,1 +1,6 @@
 msf.fc.services.filter.FcFilterManager
+msf.fc.services.priorityroutes.FcPriorityRoutesManager
+msf.fc.services.ctrlstsnotify.FcCtrlStsNotifyManager
+msf.fc.services.nodeosupgrade.FcNodeOsUpgradeManager
+msf.fc.services.renewal.FcRenewalManager
+msf.fc.services.silentfailure.FcSilentFailureManager

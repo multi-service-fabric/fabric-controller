@@ -840,4 +840,5 @@ public class MsfLogger {
   private void outputLog(Level logLevel, Object object, Throwable exception) {
     this.logger.logIfEnabled(this.fqcn, logLevel, null, object.toString(), exception);
   }
+
 }

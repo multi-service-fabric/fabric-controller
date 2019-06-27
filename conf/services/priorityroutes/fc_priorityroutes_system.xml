@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<systemConf xmlns="http://fc.msf/services/priorityroutes/common/config/type/system">
+    <priorityRoutes>
+        <!-- Priority IGP cost of internal link -->
+        <internalLinkPriorityIgpCost>10</internalLinkPriorityIgpCost>
+    </priorityRoutes>
+</systemConf>
+

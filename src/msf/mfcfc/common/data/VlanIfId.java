@@ -5,18 +5,18 @@ import java.io.Serializable;
 
 public class VlanIfId implements Serializable {
 
-  private Integer nodeInfoId;
+  private Long nodeInfoId;
 
   private Integer nextId;
 
   public VlanIfId() {
   }
 
-  public Integer getNodeInfoId() {
+  public Long getNodeInfoId() {
     return this.nodeInfoId;
   }
 
-  public void setNodeInfoId(Integer nodeInfoId) {
+  public void setNodeInfoId(Long nodeInfoId) {
     this.nodeInfoId = nodeInfoId;
   }
 

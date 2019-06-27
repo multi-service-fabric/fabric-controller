@@ -1,0 +1,152 @@
+
+package msf.fc.services.priorityroutes.scenario.internalifs;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import msf.fc.common.data.FcInternalLinkIf;
+import msf.fc.common.data.FcNode;
+import msf.mfcfc.common.constant.ErrorCode;
+import msf.mfcfc.common.exception.MsfException;
+import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.core.scenario.RestRequestBase;
+import msf.mfcfc.core.scenario.RestResponseBase;
+import msf.mfcfc.rest.common.AbstractResponseBody;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.AbstractInternalLinkIfPriorityScenarioBase;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityLeafsEntity;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityLinkIfsLeafsEntity;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityLinkIfsSpinesEntity;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityNodesEntity;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityReadEntity;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPrioritySpinesEntity;
+
+/**
+ * Abstract class to implement the internal-link interface related common
+ * process in the priority routes control management function.
+ *
+ * @author NTT
+ *
+ * @param <T>
+ *          Request class that inherits RestRequestBase class
+ */
+public abstract class FcAbstractInternalLinkIfPriorityScenarioBase<T extends RestRequestBase>
+    extends AbstractInternalLinkIfPriorityScenarioBase<T> {
+
+  private static final MsfLogger logger = MsfLogger.getInstance(FcAbstractInternalLinkIfPriorityScenarioBase.class);
+
+  protected InternalLinkIfPriorityReadEntity getInternalLinkIfPriority(FcInternalLinkIf fcInternalLinkIf) {
+    try {
+      logger.methodStart(new String[] { "internalLinkIf" }, new Object[] { fcInternalLinkIf });
+      InternalLinkIfPriorityReadEntity internalLinkIfPriorityReadEntity = new InternalLinkIfPriorityReadEntity();
+      internalLinkIfPriorityReadEntity.setInternalLinkIfId(String.valueOf(fcInternalLinkIf.getInternalLinkIfId()));
+      internalLinkIfPriorityReadEntity.setIgpCost(fcInternalLinkIf.getIgpCost());
+
+      return internalLinkIfPriorityReadEntity;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected InternalLinkIfPriorityNodesEntity getInternalLinkIfPriorityNodes(List<FcInternalLinkIf> internalLinkIfs)
+      throws MsfException {
+    try {
+      logger.methodStart();
+      TreeMap<Integer, List<InternalLinkIfPriorityLinkIfsLeafsEntity>> priorityLeafsEntityMap = new TreeMap<>();
+      TreeMap<Integer, List<InternalLinkIfPriorityLinkIfsSpinesEntity>> prioritySpinesEntityMap = new TreeMap<>();
+
+      for (FcInternalLinkIf fcInternalLinkIf : internalLinkIfs) {
+
+        FcNode node = null;
+        if (fcInternalLinkIf.getLagIf() != null) {
+          node = fcInternalLinkIf.getLagIf().getNode();
+        } else if (fcInternalLinkIf.getPhysicalIf() != null) {
+          node = fcInternalLinkIf.getPhysicalIf().getNode();
+        } else {
+          node = fcInternalLinkIf.getBreakoutIf().getNode();
+        }
+
+        switch (node.getNodeTypeEnum()) {
+          case LEAF:
+            List<InternalLinkIfPriorityLinkIfsLeafsEntity> priorityLinkIfsLeafsEntities;
+            if (priorityLeafsEntityMap.containsKey(node.getNodeId())) {
+
+              priorityLinkIfsLeafsEntities = priorityLeafsEntityMap.get(node.getNodeId());
+            } else {
+
+              priorityLinkIfsLeafsEntities = new ArrayList<>();
+            }
+            InternalLinkIfPriorityLinkIfsLeafsEntity ifsLeafsEntity = new InternalLinkIfPriorityLinkIfsLeafsEntity();
+            ifsLeafsEntity.setInternalLinkIfId(String.valueOf(fcInternalLinkIf.getInternalLinkIfId()));
+            ifsLeafsEntity.setIgpCost(fcInternalLinkIf.getIgpCost());
+            priorityLinkIfsLeafsEntities.add(ifsLeafsEntity);
+
+            priorityLeafsEntityMap.put(node.getNodeId(), priorityLinkIfsLeafsEntities);
+            break;
+
+          case SPINE:
+            List<InternalLinkIfPriorityLinkIfsSpinesEntity> priorityLinkIfsSpinesEntities;
+            if (prioritySpinesEntityMap.containsKey(node.getNodeId())) {
+
+              priorityLinkIfsSpinesEntities = prioritySpinesEntityMap.get(node.getNodeId());
+            } else {
+
+              priorityLinkIfsSpinesEntities = new ArrayList<>();
+            }
+            InternalLinkIfPriorityLinkIfsSpinesEntity ifsSpinesEntity = new InternalLinkIfPriorityLinkIfsSpinesEntity();
+            ifsSpinesEntity.setInternalLinkIfId(String.valueOf(fcInternalLinkIf.getInternalLinkIfId()));
+            ifsSpinesEntity.setIgpCost(fcInternalLinkIf.getIgpCost());
+            priorityLinkIfsSpinesEntities.add(ifsSpinesEntity);
+
+            prioritySpinesEntityMap.put(node.getNodeId(), priorityLinkIfsSpinesEntities);
+            break;
+          default:
+
+            throw new MsfException(ErrorCode.UNDEFINED_ERROR, "Illegal parameter. nodeType = " + node.getNodeType());
+        }
+      }
+
+      List<InternalLinkIfPriorityLeafsEntity> leafList = new ArrayList<>();
+      for (Entry<Integer, List<InternalLinkIfPriorityLinkIfsLeafsEntity>> leafsEntry : priorityLeafsEntityMap
+          .entrySet()) {
+        InternalLinkIfPriorityLeafsEntity ifPriorityLeafsEntity = new InternalLinkIfPriorityLeafsEntity();
+        ifPriorityLeafsEntity.setNodeId(String.valueOf(leafsEntry.getKey()));
+        ifPriorityLeafsEntity.setInternalLinkIfList(leafsEntry.getValue());
+        leafList.add(ifPriorityLeafsEntity);
+      }
+
+      List<InternalLinkIfPrioritySpinesEntity> spineList = new ArrayList<>();
+      for (Entry<Integer, List<InternalLinkIfPriorityLinkIfsSpinesEntity>> spinesEntry : prioritySpinesEntityMap
+          .entrySet()) {
+        InternalLinkIfPrioritySpinesEntity ifPrioritySpinesEntity = new InternalLinkIfPrioritySpinesEntity();
+        ifPrioritySpinesEntity.setNodeId(String.valueOf(spinesEntry.getKey()));
+        ifPrioritySpinesEntity.setInternalLinkIfList(spinesEntry.getValue());
+        spineList.add(ifPrioritySpinesEntity);
+      }
+
+      InternalLinkIfPriorityNodesEntity internalLinkIfPriorityNodesEntity = new InternalLinkIfPriorityNodesEntity();
+      internalLinkIfPriorityNodesEntity.setLeafList(leafList);
+      internalLinkIfPriorityNodesEntity.setSpineList(spineList);
+
+      return internalLinkIfPriorityNodesEntity;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected RestResponseBase createRestResponse(AbstractResponseBody body, int statusCode) {
+    try {
+      logger.methodStart(new String[] { "body", "statusCode" },
+          new Object[] { ToStringBuilder.reflectionToString(body), statusCode });
+
+      RestResponseBase response = new RestResponseBase(statusCode, body);
+      return response;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+}

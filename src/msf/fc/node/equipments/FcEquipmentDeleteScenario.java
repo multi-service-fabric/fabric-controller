@@ -78,12 +78,12 @@ public class FcEquipmentDeleteScenario extends FcAbstractEquipmentScenarioBase<E
     try {
       logger.methodStart();
 
-      logger.performance("start wait to equipment increasing process.");
+      logger.performance("start wait for equipment increasing process.");
       synchronized (FcNodeManager.getInstance().getFcEquipmentCreateLockObject()) {
-        logger.performance("end wait to equipment increasing process.");
-        logger.performance("start wait to equipment decreasing process.");
+        logger.performance("end wait for equipment increasing process.");
+        logger.performance("start wait for equipment decreasing process.");
         synchronized (FcNodeManager.getInstance().getFcEquipmentDeleteLockObject()) {
-          logger.performance("end wait to equipment decreasing process.");
+          logger.performance("end wait for equipment decreasing process.");
 
           RestResponseBase responseBase = null;
           SessionWrapper sessionWrapper = new SessionWrapper();

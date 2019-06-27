@@ -181,6 +181,8 @@ public class JsonUtil {
         if (isSerializeNulls) {
           gsonBuilder.serializeNulls();
         }
+
+        gsonBuilder.disableHtmlEscaping();
         gson = gsonBuilder.create();
       }
       return gson;

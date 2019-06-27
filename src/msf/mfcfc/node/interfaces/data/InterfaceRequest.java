@@ -9,6 +9,14 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class InterfaceRequest extends RestRequestBase {
 
+  private String clusterId;
+
+  private String fabricType;
+
+  private String nodeId;
+
+  private String format;
+
   public InterfaceRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
       String fabricType, String nodeId, String format) {
     super(requestBody, notificationAddress, notificationPort);
@@ -17,14 +25,6 @@ public class InterfaceRequest extends RestRequestBase {
     this.nodeId = nodeId;
     this.format = format;
   }
-
-  private String clusterId;
-
-  private String fabricType;
-
-  private String nodeId;
-
-  private String format;
 
   public String getClusterId() {
     return clusterId;
@@ -55,15 +55,11 @@ public class InterfaceRequest extends RestRequestBase {
   }
 
   public NodeType getFabricTypeEnum() {
-    if (NodeType.getEnumFromSingularMessage(fabricType) != null) {
-      return NodeType.getEnumFromSingularMessage(fabricType);
-    } else {
-      return NodeType.getEnumFromPluralMessage(fabricType);
-    }
+    return NodeType.getEnumFromPluralMessage(fabricType);
   }
 
   public void setFabricTypeEnum(NodeType fabricType) {
-    this.fabricType = fabricType.getSingularMessage();
+    this.fabricType = fabricType.getPluralMessage();
   }
 
   public void setFormat(String format) {

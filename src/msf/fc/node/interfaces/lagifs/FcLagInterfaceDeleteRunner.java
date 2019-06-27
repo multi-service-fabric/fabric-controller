@@ -66,7 +66,7 @@ public class FcLagInterfaceDeleteRunner extends FcAbstractLagInterfaceRunnerBase
 
         checkStatus(sessionWrapper, fcLagIf);
 
-        fcLagIfDao.delete(sessionWrapper, fcLagIf.getLagIfId());
+        fcLagIfDao.delete(sessionWrapper, fcLagIf.getLagIfInfoId());
 
         sendLagInterfaceDelete(fcLagIf);
 

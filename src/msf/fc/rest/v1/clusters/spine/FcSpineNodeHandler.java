@@ -5,6 +5,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -16,6 +17,7 @@ import msf.fc.node.nodes.spines.FcSpineNodeCreateScenario;
 import msf.fc.node.nodes.spines.FcSpineNodeDeleteScenario;
 import msf.fc.node.nodes.spines.FcSpineNodeReadListScenario;
 import msf.fc.node.nodes.spines.FcSpineNodeReadScenario;
+import msf.fc.node.nodes.spines.FcSpineNodeUpdateScenario;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.log.MsfLogger;
@@ -81,7 +83,7 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
    * @param format
    *          Information type to acquire (optional parameter)
    * @param userType
-   *          User type (URI parameter)
+   *          User type (optional parameter)
    * @return response data
    */
   @GET
@@ -117,7 +119,7 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID
    * @param userType
-   *          User type (URI parameter)
+   *          User type (optional parameter)
    * @return response data
    */
   @GET
@@ -179,6 +181,48 @@ public class FcSpineNodeHandler extends AbstractRestHandler {
       RestResponseBase restResponseBase = scenario.execute(request);
       return createResponse(restResponseBase);
 
+    } finally {
+      logger.methodEnd();
+    }
+
+  }
+
+  /**
+   * Spine modification.
+   *
+   * @param clusterId
+   *          Cluster ID (URI parameter)
+   * @param nodeId
+   *          Node ID (URI parameter)
+   * @param notificationAddress
+   *          Operation completion notification address
+   * @param notificationPort
+   *          Operation completion notification port
+   * @param requestBody
+   *          Request message (Body part)
+   * @return response data
+   */
+  @PUT
+  @Path("/{cluster_id}/nodes/spines/{node_id}")
+  @Produces(MediaType.APPLICATION_JSON)
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response update(@PathParam("cluster_id") String clusterId, @PathParam("node_id") String nodeId,
+      @QueryParam("notification_address") String notificationAddress,
+      @QueryParam("notification_port") String notificationPort, String requestBody) {
+    try {
+      logger.methodStart();
+      loggingRequestReceived();
+      loggingRequestJsonBody(requestBody);
+
+      SpineNodeRequest request = new SpineNodeRequest(requestBody, notificationAddress, notificationPort, clusterId,
+          nodeId, null, null);
+
+      setCommonData(request);
+
+      FcSpineNodeUpdateScenario scenario = new FcSpineNodeUpdateScenario(OperationType.NORMAL,
+          SystemInterfaceType.EXTERNAL);
+      RestResponseBase restResponseBase = scenario.execute(request);
+      return createResponse(restResponseBase);
     } finally {
       logger.methodEnd();
     }

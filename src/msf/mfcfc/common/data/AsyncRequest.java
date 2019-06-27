@@ -26,9 +26,13 @@ public class AsyncRequest {
 
   private String requestUri;
 
+  private Timestamp reservationTime;
+
   private String responseBody;
 
   private Integer responseStatusCode;
+
+  private Timestamp startTime;
 
   private Integer status;
 
@@ -111,6 +115,14 @@ public class AsyncRequest {
     this.requestUri = requestUri;
   }
 
+  public Timestamp getReservationTime() {
+    return this.reservationTime;
+  }
+
+  public void setReservationTime(Timestamp reservationTime) {
+    this.reservationTime = reservationTime;
+  }
+
   public String getResponseBody() {
     return this.responseBody;
   }
@@ -125,6 +137,14 @@ public class AsyncRequest {
 
   public void setResponseStatusCode(Integer responseStatusCode) {
     this.responseStatusCode = responseStatusCode;
+  }
+
+  public Timestamp getStartTime() {
+    return this.startTime;
+  }
+
+  public void setStartTime(Timestamp startTime) {
+    this.startTime = startTime;
   }
 
   public Integer getStatus() {

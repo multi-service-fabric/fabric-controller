@@ -15,9 +15,8 @@ import org.xml.sax.SAXException;
 
 import msf.mfcfc.common.FunctionBlockBase;
 import msf.mfcfc.common.constant.IpAddressType;
-import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
-import msf.mfcfc.common.util.ParameterCheckUtil;
+import msf.mfcfc.common.util.IpAddressUtil;
 
 /**
  * Class to provide the initialization, living confirmation and termination
@@ -136,6 +135,7 @@ public class ConfigManager implements FunctionBlockBase {
    *
    * @return boolean process result, true success, false fail
    */
+  @Override
   public boolean start() {
     try {
       logger.methodStart();
@@ -197,64 +197,7 @@ public class ConfigManager implements FunctionBlockBase {
   protected String checkHost(String host, IpAddressType ipAddressType) {
     try {
       logger.methodStart();
-      String resultString;
-
-      switch (ipAddressType) {
-        case IPV4:
-
-          try {
-
-            resultString = ParameterCheckUtil.checkIpv4Address(host);
-
-          } catch (MsfException error1) {
-            logger.warn(host + " is not IPv4.");
-            resultString = null;
-
-          }
-          return resultString;
-
-        case IPV4V6:
-
-          try {
-
-            resultString = ParameterCheckUtil.checkIpAddress(host);
-
-          } catch (MsfException error1) {
-            logger.warn(host + " is not IPv4/IPv6.");
-            resultString = null;
-
-          }
-          return resultString;
-
-        case IPV4V6FQDN:
-
-          try {
-
-            resultString = ParameterCheckUtil.checkIpAddress(host);
-            return resultString;
-
-          } catch (MsfException error1) {
-
-          }
-
-          try {
-
-            ParameterCheckUtil.checkIdSpecifiedByUri(host);
-            return host;
-
-          } catch (MsfException error1) {
-            logger.warn(host + " is not IPv4/IPv6/FQDN.");
-            resultString = null;
-            return resultString;
-          }
-
-        default:
-
-          resultString = null;
-          logger.warn("IP address type parameter is incorrect.");
-      }
-
-      return resultString;
+      return IpAddressUtil.checkHost(host, ipAddressType);
     } finally {
       logger.methodEnd();
     }
@@ -398,11 +341,11 @@ public class ConfigManager implements FunctionBlockBase {
       checkAddress = checkHost(managementIpAddress, IpAddressType.IPV4V6);
 
       if (checkAddress == null) {
-        logger.error("Management Ip Address NG :" + managementIpAddress);
+        logger.error("ManagementIpAddress is NG because the format is invalid.:" + managementIpAddress);
         return false;
 
       } else {
-        logger.debug("Management Ip Address OK.");
+        logger.debug("ManagementIpAddress is OK.");
 
         managementIpAddress = checkAddress;
       }
@@ -410,11 +353,11 @@ public class ConfigManager implements FunctionBlockBase {
       checkAddress = checkHost(restServerListeningAddress, IpAddressType.IPV4V6);
 
       if (checkAddress == null) {
-        logger.error("Rest Server Listening Address NG :" + restServerListeningAddress);
+        logger.error("RestServerListeningAddress is NG because the format is invalid.:" + restServerListeningAddress);
         return false;
 
       } else {
-        logger.debug("Listening Address OK.");
+        logger.debug("RestServerListeningAddress is OK.");
 
         restServerListeningAddress = checkAddress;
       }

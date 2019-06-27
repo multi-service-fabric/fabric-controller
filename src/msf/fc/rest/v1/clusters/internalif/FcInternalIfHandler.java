@@ -34,7 +34,7 @@ public class FcInternalIfHandler extends AbstractRestHandler {
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
-   * @param fabricType
+   * @param fablicType
    *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID
@@ -67,11 +67,11 @@ public class FcInternalIfHandler extends AbstractRestHandler {
   }
 
   /**
-   * Internal link IF information acquisition.
+   * Intra-cluster link IF information acquisition.
    *
    * @param clusterId
    *          Cluster ID (URI parameter)
-   * @param fabricType
+   * @param fablicType
    *          Fabric type (URI parameter)
    * @param nodeId
    *          Node ID

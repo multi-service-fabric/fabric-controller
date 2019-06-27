@@ -76,11 +76,6 @@ public class FcLeafNodeReadListScenario extends FcAbstractLeafNodeScenarioBase<L
 
       if (request.getUserType() != null) {
 
-        if (!RestFormatOption.DETAIL_LIST.equals(request.getFormatEnum())) {
-          throw new MsfException(ErrorCode.PARAMETER_VALUE_ERROR,
-              "To set the \"userType\" must be set to \"format\" = detail-list. ");
-        }
-
         ParameterCheckUtil.checkNotNull(request.getUserTypeEnum());
 
       }

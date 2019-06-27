@@ -9,6 +9,14 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class EdgePointRequest extends RestRequestBase {
 
+  private String clusterId;
+
+  private String edgePointId;
+
+  private String format;
+
+  private String userType;
+
   public EdgePointRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
       String edgePointId, String format, String userType) {
     super(requestBody, notificationAddress, notificationPort);
@@ -17,14 +25,6 @@ public class EdgePointRequest extends RestRequestBase {
     this.format = format;
     this.userType = userType;
   }
-
-  private String clusterId;
-
-  private String edgePointId;
-
-  private String format;
-
-  private String userType;
 
   public String getClusterId() {
     return clusterId;

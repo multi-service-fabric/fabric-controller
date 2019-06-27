@@ -1,0 +1,20 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs;
+
+import msf.mfcfc.core.scenario.AbstractScenario;
+import msf.mfcfc.core.scenario.RestRequestBase;
+
+/**
+ * Abstract class to implement the internal-link interface related common
+ * process in the priority routes control management function.
+ *
+ * @author NTT
+ *
+ * @param <T>
+ *          Request class that inherits RestRequestBase class
+ *
+ */
+public abstract class AbstractInternalLinkIfPriorityScenarioBase<T extends RestRequestBase>
+    extends AbstractScenario<T> {
+
+}

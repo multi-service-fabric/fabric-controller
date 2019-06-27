@@ -32,10 +32,10 @@ public class FcLagInterfaceReadScenario extends FcAbstractLagInterfaceScenarioBa
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagInterfaceReadScenario.class);
 
   /**
-   * Constructor
+   * Constructor.
    *
    * <p>
-   * Set the "operation type" and "system interface type" as arguments
+   * Set the "operation type" and "system interface type" as arguments.
    * </p>
    *
    * @param operationType

@@ -21,7 +21,7 @@ public class FcVlanIfDao extends FcAbstractCommonDao<FcVlanIf, FcVlanIfPK> {
     try {
       logger.methodStart();
       Criteria criteria = session.getSession().createCriteria(FcVlanIf.class)
-          .add(Restrictions.eq("id.nodeInfoId", nodeInfoId.intValue()));
+          .add(Restrictions.eq("id.nodeInfoId", nodeInfoId));
       return readListByCriteria(session, criteria);
     } finally {
       logger.methodEnd();

@@ -41,7 +41,7 @@ public class FcLagIfFilterHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
-   *          LagIF ID (URI parameter)
+   *          LagIF ID(URI parameter)
    * @param notificationAddress
    *          Operation completion notification address
    * @param notificationPort
@@ -126,7 +126,7 @@ public class FcLagIfFilterHandler extends AbstractRestHandler {
    * @param nodeId
    *          Node ID (URI parameter)
    * @param lagIfId
-   *          LagIF ID (URI parameter)
+   *          LagIF ID(URI parameter)
    * @return response data
    */
   @GET

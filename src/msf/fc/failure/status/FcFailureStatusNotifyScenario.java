@@ -130,11 +130,17 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
 
         int clusterId = FcConfigManager.getInstance().getSystemConfSwClusterData().getSwCluster().getSwClusterId();
 
+        int retry = systemConfFailure.getNoticeRetryNum();
+        int timeout = systemConfFailure.getNoticeTimeout();
+
         List<FailureStatusNodeFailureEntity> nodeList = getNodeFailureList(session, fcNodeMap, clusterId,
             requestBody.getUpdateLogicalIfStatusOption().getNodeList());
 
         List<FailureStatusIfFailureEntity> ifList = getIfFailureList(session, fcNodeMap, clusterId,
             requestBody.getUpdateLogicalIfStatusOption().getIfList(), ifInfoEcMap);
+
+        noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), ifList, nodeList, new ArrayList<>(), new ArrayList<>(),
+            null, retry, timeout);
 
         List<FailureStatusClusterFailureEntity> clusterList = new ArrayList<>();
 
@@ -147,6 +153,10 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
 
           if (isSlice) {
             sliceEntity = createSliceNotifyInfo(session, ifInfoEcMap, null);
+
+            noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), new ArrayList<>(), new ArrayList<>(),
+                new ArrayList<>(), (sliceEntity == null) ? new ArrayList<>() : sliceEntity.getSliceList(),
+                (sliceEntity == null) ? null : sliceEntity.getClusterLink(), retry, timeout);
           }
 
           if (isCluster) {
@@ -155,15 +165,11 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
                 null);
 
             clusterList.addAll(getClusterFailureEntityList(failureInfoMap, clusterId));
+
+            noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), new ArrayList<>(), new ArrayList<>(), clusterList,
+                new ArrayList<>(), null, retry, timeout);
           }
         }
-
-        int retry = systemConfFailure.getNoticeRetryNum();
-        int timeout = systemConfFailure.getNoticeTimeout();
-
-        noticeFailureInfo(systemConfFailure.getNoticeDestInfo(), ifList, nodeList, clusterList,
-            (sliceEntity == null) ? new ArrayList<>() : sliceEntity.getSliceList(),
-            (sliceEntity == null) ? null : sliceEntity.getClusterLink(), retry, timeout);
 
         return responseFailureNotifyData();
       } catch (MsfException msfException) {
@@ -205,6 +211,8 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
       nodes.add(getNodeFailureEntity(ecNode, fcNode, clusterId));
     }
 
+    sortFailureStatusNodeFailureEntity(nodes);
+
     return nodes;
   }
 
@@ -239,6 +247,8 @@ public class FcFailureStatusNotifyScenario extends FcAbstractFailureStatusScenar
 
       setMap(ifInfoEcMap.get(ife.getIfTypeEnum()), ife);
     }
+
+    sortFailureStatusIfFailureEntity(ifs);
 
     return ifs;
   }

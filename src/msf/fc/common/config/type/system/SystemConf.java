@@ -28,6 +28,8 @@ public class SystemConf {
   protected Qos qos;
   @XmlElement(required = true)
   protected Irb irb;
+  @XmlElement(required = true)
+  protected Node node;
 
   public Controller getController() {
     return controller;
@@ -99,5 +101,13 @@ public class SystemConf {
 
   public void setIrb(Irb value) {
     this.irb = value;
+  }
+
+  public Node getNode() {
+    return node;
+  }
+
+  public void setNode(Node value) {
+    this.node = value;
   }
 }

@@ -27,15 +27,24 @@ public class FcClusterLinkIf implements Serializable {
   @Column(name = "cluster_link_if_id")
   private Long clusterLinkIfId;
 
+  @Column(name = "igp_cost")
+  private Integer igpCost;
+
+  @Column(name = "ipv4_addr")
+  private String ipv4Addr;
+
   @Column(name = "traffic_threshold")
   private Double trafficThreshold;
+
+  @Column(name = "port_status")
+  private Boolean portStatus;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "breakout_if_info_id")
   private FcBreakoutIf breakoutIf;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lag_if_id")
+  @JoinColumn(name = "lag_if_info_id")
   private FcLagIf lagIf;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -53,12 +62,36 @@ public class FcClusterLinkIf implements Serializable {
     this.clusterLinkIfId = clusterLinkIfId;
   }
 
+  public Integer getIgpCost() {
+    return this.igpCost;
+  }
+
+  public void setIgpCost(Integer igpCost) {
+    this.igpCost = igpCost;
+  }
+
+  public String getIpv4Addr() {
+    return this.ipv4Addr;
+  }
+
+  public void setIpv4Addr(String ipv4Addr) {
+    this.ipv4Addr = ipv4Addr;
+  }
+
   public Double getTrafficThreshold() {
     return this.trafficThreshold;
   }
 
   public void setTrafficThreshold(Double trafficThreshold) {
     this.trafficThreshold = trafficThreshold;
+  }
+
+  public Boolean getPortStatus() {
+    return this.portStatus;
+  }
+
+  public void setPortStatus(Boolean portStatus) {
+    this.portStatus = portStatus;
   }
 
   public FcBreakoutIf getBreakoutIf() throws MsfException {

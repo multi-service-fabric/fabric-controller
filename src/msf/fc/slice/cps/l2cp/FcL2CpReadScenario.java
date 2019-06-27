@@ -94,8 +94,8 @@ public class FcL2CpReadScenario extends FcAbstractL2CpScenarioBase<L2CpRequest> 
     try {
       logger.methodStart(new String[] { "l2Cp" }, new Object[] { l2Cp });
 
-      VlanIfReadEcResponseBody vlanIfResponseBody = getVlanIf(sessionWrapper,
-          l2Cp.getVlanIf().getId().getNodeInfoId().longValue(), l2Cp.getVlanIf().getId().getVlanIfId());
+      VlanIfReadEcResponseBody vlanIfResponseBody = getVlanIf(sessionWrapper, l2Cp.getVlanIf().getId().getNodeInfoId(),
+          l2Cp.getVlanIf().getId().getVlanIfId());
 
       L2CpEntity l2CpEntity = createL2CpEntity(sessionWrapper, l2Cp, vlanIfResponseBody.getVlanIf());
       L2CpReadResponseBody responseBody = new L2CpReadResponseBody();

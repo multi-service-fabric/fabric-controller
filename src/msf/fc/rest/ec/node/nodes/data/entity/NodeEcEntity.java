@@ -40,6 +40,9 @@ public class NodeEcEntity {
   @SerializedName("irb_type")
   private String irbType;
 
+  @SerializedName("q_in_q_type")
+  private String qInQType;
+
   @SerializedName("username")
   private String username;
 
@@ -138,6 +141,14 @@ public class NodeEcEntity {
 
   public void setIrbType(String irbType) {
     this.irbType = irbType;
+  }
+
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
   }
 
   public String getUsername() {

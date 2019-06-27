@@ -145,7 +145,7 @@ public abstract class AbstractCpRunnerBase extends AbstractAsyncRunner {
     return EsiUtil.getLacpSystemIdFromEsi(esi);
   }
 
-  protected int getNextVlanIfId(SessionWrapper sessionWrapper, Set<String> vlanIfIdSet, int nodeInfoId)
+  protected int getNextVlanIfId(SessionWrapper sessionWrapper, Set<String> vlanIfIdSet, long nodeInfoId)
       throws MsfException {
     try {
       logger.methodStart(new String[] { "sessionWrapper", "vlanIfIdSet", "nodeInfoId" },

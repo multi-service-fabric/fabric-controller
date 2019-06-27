@@ -55,6 +55,7 @@ import msf.mfcfc.common.constant.EcCommonOperationAction;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.IrbType;
 import msf.mfcfc.common.constant.PlaneBelongsTo;
+import msf.mfcfc.common.constant.QInQType;
 import msf.mfcfc.common.constant.SliceType;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
@@ -103,6 +104,8 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
   private List<FcL2CpPK> deletedL2CpPkList = new ArrayList<>();
 
+  protected Map<Long, NodeReadEcResponseBody> nodeReadEcResponseBodyForQinqCheckMap = new HashMap<>();
+
   protected OperationCreateVlanIfEcEntity makeOperationCreateVlanIfEcEntity(SessionWrapper sessionWrapper, FcL2Cp l2Cp,
       String portMode, Integer vlanId, L2CpQosCreateEntity qosEntity) throws MsfException {
     try {
@@ -140,7 +143,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
     try {
       logger.methodStart(new String[] { "sessionWrapper", "vlanIf" }, new Object[] { sessionWrapper, vlanIf });
       FcNodeDao nodeDao = new FcNodeDao();
-      FcNode requestTargetNode = nodeDao.read(sessionWrapper, vlanIf.getId().getNodeInfoId().longValue());
+      FcNode requestTargetNode = nodeDao.read(sessionWrapper, vlanIf.getId().getNodeInfoId());
       OperationCreateVlanIfEcEntity entity = new OperationCreateVlanIfEcEntity();
       entity.setNodeId(String.valueOf(requestTargetNode.getEcNodeId()));
       entity.setVlanId(vlanIf.getIrbInstance().getVlanId());
@@ -303,6 +306,8 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
         }
       }
 
+      entity.setQInQ(l2Slice.getQInQEnable());
+
       OperationRequestBody body = new OperationRequestBody();
       body.setAction(EcCommonOperationAction.CREATE_UPDATE_L2VLAN_IF.getMessage());
       body.setCreateUpdateL2vlanIfOption(entity);
@@ -381,6 +386,8 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
       FcL2CpDao l2CpDao = new FcL2CpDao();
       FcL2Cp newL2Cp = makeNewL2Cp(sessionWrapper, l2Slice, node, cpId, edgePointId, esi, trafficThreshold);
 
+      checkQinQTypeConstraints(sessionWrapper, newL2Cp);
+
       if (pairCpId != null) {
         FcL2CpPK pairL2CpPk = new FcL2CpPK();
         pairL2CpPk.setSliceId(l2Slice.getSliceId());
@@ -404,7 +411,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
             if (!checkCreateProcessedPairCpId(newL2Cp.getEsi())) {
 
-              checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId().intValue(),
+              checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId(),
                   pairL2Cp.getVlanIf().getId().getVlanIfId(), null, null);
             }
 
@@ -585,9 +592,9 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
       FcVlanIfPK vlanIfPk = new FcVlanIfPK();
       Set<String> vlanIfIdSet = createVlanIfIdSet(sessionWrapper, node.getNodeInfoId());
-      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, node.getNodeInfoId().intValue());
+      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, node.getNodeInfoId());
       vlanIfPk.setVlanIfId(vlanIfId);
-      vlanIfPk.setNodeInfoId(node.getNodeInfoId().intValue());
+      vlanIfPk.setNodeInfoId(node.getNodeInfoId());
       FcVlanIf vlanIf = new FcVlanIf();
       vlanIf.setId(vlanIfPk);
       newL2Cp.setVlanIf(vlanIf);
@@ -617,7 +624,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
     }
   }
 
-  protected void updateL2CpWithIrb(SessionWrapper sessionWrapper, FcL2Cp l2Cp, int nodeInfoId, int vlanIfId)
+  protected void updateL2CpWithIrb(SessionWrapper sessionWrapper, FcL2Cp l2Cp, long nodeInfoId, int vlanIfId)
       throws MsfException {
     try {
       logger.methodStart(new String[] { "l2Cp", "nodeInfoId", "vlanIfId" },
@@ -876,7 +883,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
   }
 
   protected void checkPairCpVlanIdAndPortMode(SessionWrapper sessionWrapper, String portMode, int vlanId,
-      Integer pairNodeInfoId, Integer pairCpVlanIfId, String pairCpPortMode, Integer pairCpVlanId) throws MsfException {
+      Long pairNodeInfoId, Integer pairCpVlanIfId, String pairCpPortMode, Integer pairCpVlanId) throws MsfException {
     try {
       logger.methodStart(
           new String[] { "portMode", "vlanId", "pairNodeInfoId", "pairCpVlanIfId", "pairCpPortMode", "pairCpVlanId" },
@@ -884,7 +891,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
       if (pairCpVlanIfId != null) {
 
-        VlanIfReadEcResponseBody pairVlanIfReadEcResponseBody = getVlanIf(sessionWrapper, pairNodeInfoId.longValue(),
+        VlanIfReadEcResponseBody pairVlanIfReadEcResponseBody = getVlanIf(sessionWrapper, pairNodeInfoId,
             pairCpVlanIfId);
         pairCpVlanId = pairVlanIfReadEcResponseBody.getVlanIf().getVlanIdInt();
         pairCpPortMode = pairVlanIfReadEcResponseBody.getVlanIf().getPortMode();
@@ -913,42 +920,42 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
           FcNode checkTargetNode = new FcNodeDao().readByEcNodeId(sessionWrapper,
               Integer.valueOf(nodeEcEntity.getNodeId()));
           List<FcL2Cp> l2CpList = l2CpDao.readListByNodeInfo(sessionWrapper, checkTargetNode.getNodeInfoId());
-          for (FcL2Cp l2Cp : l2CpList) {
-
-            if (!l2Slice.getSliceId().equals(l2Cp.getL2Slice().getSliceId())) {
-
-              if (l2Slice.getIrbType() != null) {
-
-                int checkTargetVlanId;
-                if (l2Cp.getL2Slice().getIrbType() != null) {
-                  checkTargetVlanId = l2Cp.getVlanIf().getIrbInstance().getVlanId();
-                } else {
-                  VlanIfReadEcResponseBody vlanIfReadEcResponseBody = getVlanIf(sessionWrapper,
-                      checkTargetNode.getNodeInfoId(), l2Cp.getVlanIf().getId().getVlanIfId());
-                  checkTargetVlanId = vlanIfReadEcResponseBody.getVlanIf().getVlanIdInt();
-                }
-
-                if (vlanId == checkTargetVlanId) {
-                  String logMsg = MessageFormat.format(
-                      "occurred l2 constraint violation of vlan id in the case of creating l2cp"
-                          + " that irb enabled on asymmetric irb type leaf."
-                          + " vlan id = {0}, target node id= {1}, target vlan id = {2}",
-                      vlanId, checkTargetNode.getNodeId(), checkTargetVlanId);
-                  logger.error(logMsg);
-                  throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
-                }
-              } else {
-
-                if (l2Cp.getL2Slice().getIrbType() != null) {
-
-                  if (vlanId == l2Cp.getVlanIf().getIrbInstance().getVlanId()) {
+          if (!l2CpList.isEmpty()) {
+            VlanIfReadListEcResponseBody responseBody = getVlanIfList(sessionWrapper, checkTargetNode.getNodeInfoId());
+            for (FcL2Cp l2Cp : l2CpList) {
+              if (!l2Slice.getSliceId().equals(l2Cp.getL2Slice().getSliceId())) {
+                if (l2Slice.getIrbType() != null) {
+                  int checkTargetVlanId = 0;
+                  if (l2Cp.getL2Slice().getIrbType() != null) {
+                    checkTargetVlanId = l2Cp.getVlanIf().getIrbInstance().getVlanId();
+                  } else {
+                    for (VlanIfEcEntity vlanIfEcEntity : responseBody.getVlanIfList()) {
+                      if (vlanIfEcEntity.getVlanIfId().equals(String.valueOf(l2Cp.getVlanIf().getId().getVlanIfId()))) {
+                        checkTargetVlanId = vlanIfEcEntity.getVlanIdInt();
+                        break;
+                      }
+                    }
+                  }
+                  if (vlanId == checkTargetVlanId) {
                     String logMsg = MessageFormat.format(
                         "occurred l2 constraint violation of vlan id in the case of creating l2cp"
-                            + " that irb disabled on asymmetric irb type leaf."
+                            + " that irb enabled on asymmetric irb type leaf."
                             + " vlan id = {0}, target node id= {1}, target vlan id = {2}",
-                        vlanId, checkTargetNode.getNodeId(), l2Cp.getVlanIf().getIrbInstance().getVlanId());
+                        vlanId, checkTargetNode.getNodeId(), checkTargetVlanId);
                     logger.error(logMsg);
                     throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+                  }
+                } else {
+                  if (l2Cp.getL2Slice().getIrbType() != null) {
+                    if (vlanId == l2Cp.getVlanIf().getIrbInstance().getVlanId()) {
+                      String logMsg = MessageFormat.format(
+                          "occurred l2 constraint violation of vlan id in the case of creating l2cp"
+                              + " that irb disabled on asymmetric irb type leaf."
+                              + " vlan id = {0}, target node id= {1}, target vlan id = {2}",
+                          vlanId, checkTargetNode.getNodeId(), l2Cp.getVlanIf().getIrbInstance().getVlanId());
+                      logger.error(logMsg);
+                      throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+                    }
                   }
                 }
               }
@@ -988,8 +995,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
     try {
       logger.methodStart(new String[] { "l2Slice", "node", "vlanId" }, new Object[] { l2Slice, node, vlanId });
       FcIrbInstanceDao irbInstanceDao = new FcIrbInstanceDao();
-      List<FcIrbInstance> irbInstanceList = irbInstanceDao.readListByNodeInfoId(sessionWrapper,
-          node.getNodeInfoId().intValue());
+      List<FcIrbInstance> irbInstanceList = irbInstanceDao.readListByNodeInfoId(sessionWrapper, node.getNodeInfoId());
       for (FcIrbInstance irbInstance : irbInstanceList) {
 
         if (!l2Slice.getSliceId().equals(irbInstance.getL2Slice().getSliceId())) {
@@ -1316,12 +1322,13 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
           new Object[] { newCreateVlanIfEntity, newL2Cp, node, vlanId, irbEntity });
 
       FcL2CpDao l2CpDao = new FcL2CpDao();
-      FcVlanIfDao vlanIfDao = new FcVlanIfDao();
 
       saveVlanIfListFromEcOnMemory(sessionWrapper, newL2Cp.getL2Slice().getSliceId(), l2CpDao);
 
       L2CpIrbEntity irbEntityAfterCheck = checkIrbAddressParameter(sessionWrapper, irbEntity, newL2Cp.getL2Slice(),
           node, vlanId);
+
+    	FcVlanIfDao vlanIfDao = new FcVlanIfDao();
 
       checkAndCreateIrbDummyInterface(sessionWrapper, vlanIfDao, l2CpDao, newL2Cp, node, vlanId, irbEntityAfterCheck);
 
@@ -1426,8 +1433,8 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
           for (VlanIfEcEntity ecEntity : entry.getValue().getVlanIfList()) {
 
             int vlanIfId = Integer.valueOf(ecEntity.getVlanIfId());
-            if (isVlanIfMemberOfSlice(sessionWrapper, entry.getKey(), vlanIfId, l2Slice)
-                && vlanId == ecEntity.getVlanIdInt()) {
+            if (ecEntity.getIrb() != null && vlanId == ecEntity.getVlanIdInt()
+                && isVlanIfMemberOfSlice(sessionWrapper, entry.getKey(), vlanIfId, l2Slice)) {
               if (ecEntity.getIrb().getVirtualGatewayAddress() != null) {
 
                 checkIrbAddressVgaPrefixToMatchTarget(null, irbVga, irbPrefix, ecEntity.getIrb().getIpv4Address(),
@@ -1482,8 +1489,8 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             if (entry.getValue().getVlanIfList() != null) {
               for (VlanIfEcEntity ecEntity : entry.getValue().getVlanIfList()) {
 
-                if (isVlanIfMemberOfSlice(sessionWrapper, entry.getKey(), Integer.valueOf(ecEntity.getVlanIfId()),
-                    newL2Cp.getL2Slice())) {
+                if (ecEntity.getIrb() != null && isVlanIfMemberOfSlice(sessionWrapper, entry.getKey(),
+                    Integer.valueOf(ecEntity.getVlanIfId()), newL2Cp.getL2Slice())) {
 
                   if (vlanId == ecEntity.getVlanIdInt()) {
 
@@ -1545,8 +1552,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
           for (FcIrbInstance irbInstance : l2Cp.getL2Slice().getIrbInstances()) {
 
-            if (irbInstance.getVlanId() != vlanId
-                && irbInstance.getNodeInfoId().equals(node.getNodeInfoId().intValue())) {
+            if (irbInstance.getVlanId() != vlanId && irbInstance.getNodeInfoId().equals(node.getNodeInfoId())) {
               for (FcVlanIf vlanIf : irbInstance.getVlanIfs()) {
                 if (deletedVlanIfPkList.contains(vlanIf.getId())) {
                   logger.debug("skiped:" + vlanIf.getId());
@@ -1611,7 +1617,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
                     deleteVlanIfEntityList.add(vlanIfEntityDummy);
 
                     FcVlanIfPK pk = new FcVlanIfPK();
-                    pk.setNodeInfoId(entry.getKey().intValue());
+                    pk.setNodeInfoId(entry.getKey());
                     pk.setVlanIfId(vlanIfId);
                     vlanIfDao.delete(sessionWrapper, pk);
                     deletedVlanIfPkList.add(pk);
@@ -1652,8 +1658,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             false);
         if (ecEntity != null) {
 
-          updateL2CpWithIrb(sessionWrapper, newL2Cp, node.getNodeInfoId().intValue(),
-              Integer.valueOf(ecEntity.getVlanIfId()));
+          updateL2CpWithIrb(sessionWrapper, newL2Cp, node.getNodeInfoId(), Integer.valueOf(ecEntity.getVlanIfId()));
 
           updateOperationCreateVlanIfEcEntityForIrb(newCreateVlanIfEntity, newL2Cp, irbEntity.getIrbIpv4Address(),
               irbEntity.getVgaIpv4Address(), irbEntity.getIpv4AddressPrefix());
@@ -1670,7 +1675,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             if (ecEntityIrbDummy != null) {
 
               FcVlanIfPK vlanIfPk = new FcVlanIfPK();
-              vlanIfPk.setNodeInfoId(node.getNodeInfoId().intValue());
+              vlanIfPk.setNodeInfoId(node.getNodeInfoId());
               vlanIfPk.setVlanIfId(Integer.valueOf(ecEntityIrbDummy.getVlanIfId()));
               FcVlanIf vlanIfDummy = vlanIfDao.read(sessionWrapper, vlanIfPk);
 
@@ -1764,8 +1769,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
         logger.debug("deletedVlanIfPkList=" + ToStringBuilder.reflectionToString(deletedVlanIfPkList));
         for (FcIrbInstance irbInstance : l2Cp.getL2Slice().getIrbInstances()) {
 
-          if (!irbInstance.getVlanId().equals(vlanId)
-              && irbInstance.getNodeInfoId().equals(node.getNodeInfoId().intValue())) {
+          if (!irbInstance.getVlanId().equals(vlanId) && irbInstance.getNodeInfoId().equals(node.getNodeInfoId())) {
 
             for (FcVlanIf vlanIf : irbInstance.getVlanIfs()) {
               if (deletedVlanIfPkList.contains(vlanIf.getId())) {
@@ -1778,8 +1782,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             }
           }
 
-          if (irbInstance.getVlanId().equals(vlanId)
-              && irbInstance.getNodeInfoId().equals(node.getNodeInfoId().intValue())) {
+          if (irbInstance.getVlanId().equals(vlanId) && irbInstance.getNodeInfoId().equals(node.getNodeInfoId())) {
 
             for (FcVlanIf vlanIf : irbInstance.getVlanIfs()) {
               if (deletedVlanIfPkList.contains(vlanIf.getId())) {
@@ -1794,8 +1797,7 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
             }
           }
 
-          if (!irbInstance.getNodeInfoId().equals(node.getNodeInfoId().intValue())
-              && irbInstance.getVlanId().equals(vlanId)) {
+          if (!irbInstance.getNodeInfoId().equals(node.getNodeInfoId()) && irbInstance.getVlanId().equals(vlanId)) {
             for (FcVlanIf vlanIf : irbInstance.getVlanIfs()) {
               if (deletedVlanIfPkList.contains(vlanIf.getId())) {
                 logger.debug("skiped:" + ToStringBuilder.reflectionToString(vlanIf.getId()));
@@ -1886,9 +1888,13 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
           new Object[] { nodeInfoId, vlanIfId, l2Slice });
       FcVlanIfDao vlanIfDao = new FcVlanIfDao();
       FcVlanIfPK vlanIfPk = new FcVlanIfPK();
-      vlanIfPk.setNodeInfoId((int) nodeInfoId);
+      vlanIfPk.setNodeInfoId(nodeInfoId);
       vlanIfPk.setVlanIfId(vlanIfId);
       FcVlanIf vlanIf = vlanIfDao.read(sessionWrapper, vlanIfPk);
+      if (vlanIf == null) {
+        return false;
+      }
+
       if (deletedVlanIfPkList.contains(vlanIf.getId())) {
 
         return false;
@@ -1944,15 +1950,15 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
 
       FcVlanIfPK vlanIfPk = new FcVlanIfPK();
       Set<String> vlanIfIdSet = createVlanIfIdSet(sessionWrapper, nodeInfoId);
-      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, nodeInfoId.intValue());
+      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, nodeInfoId);
       vlanIfPk.setVlanIfId(vlanIfId);
-      vlanIfPk.setNodeInfoId(nodeInfoId.intValue());
+      vlanIfPk.setNodeInfoId(nodeInfoId);
       FcVlanIf vlanIf = new FcVlanIf();
       vlanIf.setId(vlanIfPk);
 
       FcIrbInstance irbInstance = new FcIrbInstance();
       irbInstance.setL2Slice(l2Slice);
-      irbInstance.setNodeInfoId(nodeInfoId.intValue());
+      irbInstance.setNodeInfoId(nodeInfoId);
       irbInstance.setVlanId(vlanId);
       irbInstance.setVni(getVniForIrbInstance(vlanId, IrbType.ASYMMETRIC.getCode()));
 
@@ -2062,6 +2068,45 @@ public abstract class FcAbstractL2CpRunnerBase extends FcAbstractCpRunnerBase {
           break;
         }
       }
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void checkQinQTypeConstraints(SessionWrapper sessionWrapper, FcL2Cp l2Cp) throws MsfException {
+    try {
+      logger.methodStart();
+      NodeReadEcResponseBody nodeReadEcResponseBody = null;
+
+      Long targetNodeInfoId = l2Cp.getVlanIf().getId().getNodeInfoId();
+      if (nodeReadEcResponseBodyForQinqCheckMap.containsKey(targetNodeInfoId)) {
+
+        nodeReadEcResponseBody = nodeReadEcResponseBodyForQinqCheckMap.get(targetNodeInfoId);
+      } else {
+
+        nodeReadEcResponseBody = getNodeFromEc(sessionWrapper, targetNodeInfoId);
+
+        nodeReadEcResponseBodyForQinqCheckMap.put(targetNodeInfoId, nodeReadEcResponseBody);
+      }
+
+      QInQType qinqType = QInQType.getEnumFromEcMessage(nodeReadEcResponseBody.getNode().getQInQType());
+
+      if (l2Cp.getL2Slice().getQInQEnable() == true) {
+
+        if (qinqType.equals(QInQType.Q_IN_Q_UNSUPPORT)) {
+          String logMsg = "l2slice supports Q-in-Q but node does not support.";
+          logger.warn(logMsg);
+          throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+        }
+      } else {
+
+        if (qinqType.equals(QInQType.Q_IN_Q_ONLY)) {
+          String logMsg = "l2slice does not support Q-in-Q but node supports Q-in-Q only.";
+          logger.warn(logMsg);
+          throw new MsfException(ErrorCode.REGIST_INFORMATION_ERROR, logMsg);
+        }
+      }
+
     } finally {
       logger.methodEnd();
     }

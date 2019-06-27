@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<systemConf
+  xmlns="http://fc.msf/services/silentfailure/common/config/type/system">
+  <silentFailure>
+    <noticeDestInfo>
+      <!-- IP address of notification destination -->
+      <noticeAddress>1.1.1.1</noticeAddress>
+      <!-- Port number of notification destination -->
+      <noticePort>0</noticePort>
+    </noticeDestInfo>
+    <!-- Number of notification retry (times) -->
+    <noticeRetryNum>5</noticeRetryNum>
+    <!-- Interval of notification retry (millisecond) -->
+    <noticeTimeout>500</noticeTimeout>
+    <!-- Interval of monitoring communication between devices by ping command(second) -->
+    <pingMonitorCycle>60</pingMonitorCycle>
+    <!-- Interval of monitoring OSPF neighbor status(second) -->
+    <ospfNeighborMonitorCycle>60</ospfNeighborMonitorCycle>
+    <!-- Execution property of IF blockade -->
+    <enableExecutingIfBlockade>true</enableExecutingIfBlockade>
+  </silentFailure>
+</systemConf>
+

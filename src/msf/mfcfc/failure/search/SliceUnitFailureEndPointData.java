@@ -13,7 +13,7 @@ import msf.mfcfc.common.constant.SliceType;
  * @author NTT
  *
  */
-public class SliceUnitFailureEndPointData {
+public class SliceUnitFailureEndPointData implements Comparable<SliceUnitFailureEndPointData> {
 
   /**
    * Constructor.
@@ -116,5 +116,59 @@ public class SliceUnitFailureEndPointData {
     hash = hash * prime + (this.failureStatus == null ? 0 : this.failureStatus.hashCode());
 
     return hash;
+  }
+
+  @Override
+  public int compareTo(SliceUnitFailureEndPointData other) {
+
+    if (this.sliceType != null && other.sliceType != null) {
+      int sliceTypeCompare = this.sliceType.compareTo(other.sliceType);
+      if (sliceTypeCompare != 0) {
+        return sliceTypeCompare;
+      }
+    } else if (this.sliceType != null || other.sliceType != null) {
+      if (this.sliceType == null) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+
+    if (this.sliceId != null && other.sliceId != null) {
+      int sliceIdCompare = this.sliceId.compareTo(other.sliceId);
+      if (sliceIdCompare != 0) {
+        return sliceIdCompare;
+      }
+    } else if (this.sliceId != null || other.sliceId != null) {
+      if (this.sliceId == null) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+
+    if (this.endPointId != null && other.endPointId != null) {
+      int endPointIdCompare = this.endPointId.compareTo(other.endPointId);
+      if (endPointIdCompare != 0) {
+        return endPointIdCompare;
+      }
+    } else if (this.endPointId != null || other.endPointId != null) {
+      if (this.endPointId == null) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+
+    if (this.failureStatus != null && other.failureStatus != null) {
+      return this.failureStatus.compareTo(other.failureStatus);
+    } else if (this.failureStatus != null || other.failureStatus != null) {
+      if (this.failureStatus == null) {
+        return -1;
+      } else {
+        return 1;
+      }
+    }
+    return 0;
   }
 }

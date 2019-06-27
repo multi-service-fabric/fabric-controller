@@ -52,6 +52,7 @@ public abstract class FcAbstractL2SliceScenarioBase<T extends RestRequestBase> e
       l2SliceEntity.setSliceId(l2Slice.getSliceId());
       l2SliceEntity.setRemarkMenu(l2Slice.getRemarkMenu());
       l2SliceEntity.setIrbType(IrbType.getEnumFromCode(l2Slice.getIrbType()).getMessage());
+      l2SliceEntity.setQInQEnable(l2Slice.getQInQEnable());
       return l2SliceEntity;
     } finally {
       logger.methodEnd();

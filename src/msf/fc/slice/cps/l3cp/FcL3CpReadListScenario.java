@@ -129,14 +129,14 @@ public class FcL3CpReadListScenario extends FcAbstractL3CpScenarioBase<L3CpReque
       logger.methodStart(new String[] { "l3CpList" }, new Object[] { l3CpList });
       List<L3CpEntity> l3CpEntityList = new ArrayList<>();
 
-      Set<Integer> nodeInfoIdSet = new HashSet<>();
-      Map<Integer, VlanIfReadListEcResponseBody> vlanIfListMap = new HashMap<>();
+      Set<Long> nodeInfoIdSet = new HashSet<>();
+      Map<Long, VlanIfReadListEcResponseBody> vlanIfListMap = new HashMap<>();
       for (FcL3Cp l3Cp : l3CpList) {
         nodeInfoIdSet.add(l3Cp.getVlanIf().getId().getNodeInfoId());
       }
-      for (Integer nodeInfoId : nodeInfoIdSet) {
+      for (Long nodeInfoId : nodeInfoIdSet) {
 
-        VlanIfReadListEcResponseBody vlanIfResponseBody = getVlanIfList(sessionWrapper, nodeInfoId.longValue());
+        VlanIfReadListEcResponseBody vlanIfResponseBody = getVlanIfList(sessionWrapper, nodeInfoId);
         vlanIfListMap.put(nodeInfoId, vlanIfResponseBody);
       }
       for (FcL3Cp l3Cp : l3CpList) {

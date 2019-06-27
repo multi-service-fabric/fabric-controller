@@ -3,6 +3,7 @@ package msf.mfcfc.db.dao.common;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import msf.mfcfc.common.data.AsyncRequest;
 import msf.mfcfc.common.exception.MsfException;
@@ -17,5 +18,7 @@ public abstract class AsyncRequestsDao extends AbstractCommonDao<AsyncRequest, S
       String afterSubStatus) throws MsfException;
 
   public abstract void delete(SessionWrapper session, Timestamp targetTime) throws MsfException;
+
+  public abstract boolean hasNoRunningOperation(Map<String, Object> assignedOperationIdMap) throws MsfException;
 
 }

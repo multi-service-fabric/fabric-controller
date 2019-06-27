@@ -3,9 +3,7 @@ package msf.fc.node;
 
 import java.util.List;
 
-import msf.fc.common.data.FcLagIfId;
 import msf.fc.common.data.FcNodeOperationInfo;
-import msf.fc.db.dao.clusters.FcLagIfIdDao;
 import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.NodeOperationStatus;
 import msf.mfcfc.common.exception.MsfException;
@@ -31,6 +29,8 @@ public final class FcNodeManager extends NodeManager {
   private static final Object FC_NODE_CREATE_AND_DELETE_LOCK_OBJECT = new Object();
 
   private static final Object FC_NODE_UPDATE_LOCK_OBJECT = new Object();
+
+  private static final Object FC_IF_STATE_CHANGE_LOCK_OBJECT = new Object();
 
   private FcNodeManager() {
 
@@ -68,14 +68,6 @@ public final class FcNodeManager extends NodeManager {
       sessionWrapper.openSession();
       sessionWrapper.beginTransaction();
 
-      FcLagIfIdDao fcLagIfIdDao = new FcLagIfIdDao();
-      List<FcLagIfId> fcLagIfIds = fcLagIfIdDao.readList(sessionWrapper);
-      if (fcLagIfIds.isEmpty()) {
-        FcLagIfId fcLagIfId = new FcLagIfId();
-        fcLagIfId.setNextId(FC_LAG_IF_START_ID);
-        fcLagIfIdDao.create(sessionWrapper, fcLagIfId);
-      }
-
       FcNodeOperationInfoDao fcNodeOperationInfoDao = new FcNodeOperationInfoDao();
       List<FcNodeOperationInfo> fcNodeOperationInfos = fcNodeOperationInfoDao.readList(sessionWrapper);
       if (fcNodeOperationInfos.isEmpty()) {
@@ -83,9 +75,6 @@ public final class FcNodeManager extends NodeManager {
 
         fcNodeOperationInfo.setNodeOperationStatusEnum(NodeOperationStatus.WAITING);
         fcNodeOperationInfoDao.create(sessionWrapper, fcNodeOperationInfo);
-      }
-
-      if ((fcLagIfIds.isEmpty()) || (fcNodeOperationInfos.isEmpty())) {
         sessionWrapper.commit();
       }
 
@@ -156,6 +145,21 @@ public final class FcNodeManager extends NodeManager {
     try {
       logger.methodStart();
       return FC_NODE_UPDATE_LOCK_OBJECT;
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  /**
+   * Get the lock object for exclusive control of the IF blockade status
+   * modification.
+   *
+   * @return FC_IF_STATE_CHANGE_LOCK_OBJECT
+   */
+  public Object getFcIfStateChangeLockObject() {
+    try {
+      logger.methodStart();
+      return FC_IF_STATE_CHANGE_LOCK_OBJECT;
     } finally {
       logger.methodEnd();
     }

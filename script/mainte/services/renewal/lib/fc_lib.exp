@@ -1,0 +1,62 @@
+#!/usr/bin/expect
+
+;# Expect library for connecting from FC to remote server.
+
+;# A function for waiting prompt.
+proc expect_prompt {} {
+    upvar spawn_id spawn_id
+    expect -re {[#$] $}
+}
+
+;# A function for the SSH connection.
+;# When timeout occurs, return code is set to 9.
+proc open_conn { user host password } {
+    upvar spawn_id spawn_id
+    set timeout 20
+    spawn /usr/bin/ssh $user@$host
+    ;# loops forever until we get a shell prompt
+    while (1) {
+      expect {
+        default { exit 9 } ;
+        ;# Displayed at initial access
+        "no)? " {
+          send -- "yes\r"
+        }
+        ;# request password
+        "password: " {
+          send -- "$password\r"
+        }
+        # When it displays prompt, it over.
+        "\[#$] $" {
+          break
+        }
+      }
+    }
+}
+
+;# Function to terminate SSH connection.
+proc close_conn {} {
+    upvar spawn_id spawn_id
+    send "exit\r"
+    expect eof
+}
+
+;# Execute the command in argument and wait until the prompt is displayed.
+proc send_cmd { cmd } {
+    upvar spawn_id spawn_id
+    set timeout 60
+    send "$cmd ; echo retCode=$?\r"
+    expect {
+      default { exit 1 }
+      "retCode=0" {}
+    }
+    expect_prompt
+}
+
+;# Login by SSH, execute the "cmd" command, and close connection.
+proc remote_cmd { user host password cmd } {
+    set result [open_conn $user $host $password]
+    send_cmd $cmd
+    close_conn
+}
+

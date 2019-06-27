@@ -26,6 +26,9 @@ public class FcSystemStatus implements Serializable {
   @Column(name = "blockade_status")
   private Integer blockadeStatus;
 
+  @Column(name = "renewal_status")
+  private Integer renewalStatus;
+
   @Column(name = "service_status")
   private Integer serviceStatus;
 
@@ -52,6 +55,14 @@ public class FcSystemStatus implements Serializable {
     this.blockadeStatus = blockadeStatus;
   }
 
+  public Integer getRenewalStatus() {
+    return this.renewalStatus;
+  }
+
+  public void setRenewalStatus(Integer renewalStatus) {
+    this.renewalStatus = renewalStatus;
+  }
+
   public Integer getServiceStatus() {
     return this.serviceStatus;
   }
@@ -64,6 +75,7 @@ public class FcSystemStatus implements Serializable {
     setBlockadeStatus(systemStatus.getBlockadeStatus());
     setServiceStatus(systemStatus.getServiceStatus());
     setSystemId(systemStatus.getSystemId());
+    setRenewalStatus(systemStatus.getRenewalStatus());
   }
 
   public SystemStatus getCommonEntity() {
@@ -71,6 +83,7 @@ public class FcSystemStatus implements Serializable {
     systemStatus.setBlockadeStatus(getBlockadeStatus());
     systemStatus.setServiceStatus(getServiceStatus());
     systemStatus.setSystemId(getSystemId());
+    systemStatus.setRenewalStatus(getRenewalStatus());
     return systemStatus;
   }
 

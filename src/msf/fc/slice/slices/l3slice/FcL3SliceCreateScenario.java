@@ -59,10 +59,10 @@ public class FcL3SliceCreateScenario extends FcAbstractL3SliceScenarioBase<L3Sli
 
   @Override
   protected RestResponseBase executeImpl() throws MsfException {
-    logger.performance("start wait to l3slice creation process.");
+    logger.performance("start wait for l3slice creation process.");
 
     synchronized (FcSliceManager.getInstance().getL3SliceCreateLockObject()) {
-      logger.performance("end wait to l3slice creation process.");
+      logger.performance("end wait for l3slice creation process.");
       SessionWrapper sessionWrapper = new SessionWrapper();
       try {
         logger.methodStart();

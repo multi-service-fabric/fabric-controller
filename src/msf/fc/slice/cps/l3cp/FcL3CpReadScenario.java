@@ -94,8 +94,8 @@ public class FcL3CpReadScenario extends FcAbstractL3CpScenarioBase<L3CpRequest> 
     try {
       logger.methodStart(new String[] { "l3Cp" }, new Object[] { l3Cp });
 
-      VlanIfReadEcResponseBody vlanIfResponseBody = getVlanIf(sessionWrapper,
-          l3Cp.getVlanIf().getId().getNodeInfoId().longValue(), l3Cp.getVlanIf().getId().getVlanIfId());
+      VlanIfReadEcResponseBody vlanIfResponseBody = getVlanIf(sessionWrapper, l3Cp.getVlanIf().getId().getNodeInfoId(),
+          l3Cp.getVlanIf().getId().getVlanIfId());
 
       L3CpEntity l3CpEntity = createL3CpEntity(sessionWrapper, l3Cp, vlanIfResponseBody.getVlanIf());
       L3CpReadResponseBody responseBody = new L3CpReadResponseBody();

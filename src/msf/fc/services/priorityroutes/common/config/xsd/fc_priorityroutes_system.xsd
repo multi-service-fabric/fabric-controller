@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://fc.msf/services/priorityroutes/common/config/type/system"
+	elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:tns="http://fc.msf/services/priorityroutes/common/config/type/system">
+
+	<xsd:element name="systemConf" type="tns:SystemConf" />
+
+	<xsd:complexType name="SystemConf">
+		<xsd:sequence>
+			<xsd:element name="priorityRoutes" type="tns:PriorityRoutes" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+
+	<xsd:complexType name="PriorityRoutes">
+		<xsd:sequence>
+			<xsd:element name="internalLinkPriorityIgpCost" type="tns:igp_cost" minOccurs="1" maxOccurs="1"></xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+
+    <xsd:simpleType name="igp_cost">
+    	<xsd:restriction base="xsd:integer">
+    		<xsd:minInclusive value="1"></xsd:minInclusive>
+    		<xsd:maxInclusive value="65535"></xsd:maxInclusive>
+    	</xsd:restriction>
+    </xsd:simpleType>
+</xsd:schema>
+

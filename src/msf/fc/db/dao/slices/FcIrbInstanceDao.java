@@ -27,7 +27,7 @@ public class FcIrbInstanceDao extends FcAbstractCommonDao<FcIrbInstance, Long> {
     }
   }
 
-  public List<FcIrbInstance> readListByNodeInfoId(SessionWrapper session, Integer nodeInfoId) throws MsfException {
+  public List<FcIrbInstance> readListByNodeInfoId(SessionWrapper session, Long nodeInfoId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeInfoId" }, new Object[] { session, nodeInfoId });
       Criteria criteria = session.getSession().createCriteria(FcIrbInstance.class)
@@ -49,7 +49,7 @@ public class FcIrbInstanceDao extends FcAbstractCommonDao<FcIrbInstance, Long> {
     }
   }
 
-  public FcIrbInstance read(SessionWrapper session, Integer nodeInfoId, Integer vlanId) throws MsfException {
+  public FcIrbInstance read(SessionWrapper session, Long nodeInfoId, Integer vlanId) throws MsfException {
     try {
       logger.methodStart(new String[] { "session", "nodeInfoId", "vlanId" },
           new Object[] { session, nodeInfoId, vlanId });

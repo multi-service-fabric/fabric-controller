@@ -4,6 +4,7 @@ package msf.mfcfc.common.data;
 import java.io.Serializable;
 
 import msf.mfcfc.common.constant.BlockadeStatus;
+import msf.mfcfc.common.constant.RenewalStatusType;
 import msf.mfcfc.common.constant.ServiceStatus;
 
 public class SystemStatus implements Serializable {
@@ -11,6 +12,8 @@ public class SystemStatus implements Serializable {
   private Integer systemId;
 
   private Integer blockadeStatus;
+
+  private Integer renewalStatus;
 
   private Integer serviceStatus;
 
@@ -41,6 +44,14 @@ public class SystemStatus implements Serializable {
     this.blockadeStatus = blockadeStatus.getCode();
   }
 
+  public Integer getRenewalStatus() {
+    return this.renewalStatus;
+  }
+
+  public void setRenewalStatus(Integer renewalStatus) {
+    this.renewalStatus = renewalStatus;
+  }
+
   public Integer getServiceStatus() {
     return this.serviceStatus;
   }
@@ -55,5 +66,13 @@ public class SystemStatus implements Serializable {
 
   public void setServiceStatusEnum(ServiceStatus serviceStatus) {
     this.serviceStatus = serviceStatus.getCode();
+  }
+
+  public RenewalStatusType getRenewalStatusEnum() {
+    return RenewalStatusType.getEnumFromCode(this.renewalStatus);
+  }
+
+  public void setRenewalStatusEnum(RenewalStatusType renewalStatus) {
+    this.renewalStatus = renewalStatus.getCode();
   }
 }

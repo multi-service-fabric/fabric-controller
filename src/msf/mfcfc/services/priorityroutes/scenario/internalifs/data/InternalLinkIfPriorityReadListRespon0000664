@@ -1,0 +1,28 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs.data;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+import msf.mfcfc.rest.common.AbstractResponseBody;
+import msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity.InternalLinkIfPriorityNodesEntity;
+
+public class InternalLinkIfPriorityReadListResponseBody extends AbstractResponseBody {
+
+  @SerializedName("nodes")
+  private InternalLinkIfPriorityNodesEntity nodes;
+
+  public InternalLinkIfPriorityNodesEntity getNodes() {
+    return nodes;
+  }
+
+  public void setNodes(InternalLinkIfPriorityNodesEntity nodes) {
+    this.nodes = nodes;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

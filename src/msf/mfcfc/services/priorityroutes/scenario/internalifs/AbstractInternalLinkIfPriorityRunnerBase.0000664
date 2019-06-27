@@ -1,0 +1,16 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs;
+
+import msf.mfcfc.core.scenario.AbstractAsyncRunner;
+
+/**
+ * Abstract class to implement the common process of the internal-link interface
+ * related asynchronous runner processing in the priority routes control
+ * management function.
+ *
+ * @author NTT
+ *
+ */
+public abstract class AbstractInternalLinkIfPriorityRunnerBase extends AbstractAsyncRunner {
+
+}

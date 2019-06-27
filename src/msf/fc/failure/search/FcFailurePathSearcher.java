@@ -2,9 +2,11 @@
 package msf.fc.failure.search;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import msf.fc.common.data.FcClusterLinkIf;
 import msf.fc.common.data.FcL2Cp;
@@ -16,6 +18,7 @@ import msf.mfcfc.common.constant.SliceUnitReachableOppositeType;
 import msf.mfcfc.common.constant.SliceUnitReachableStatus;
 import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
+import msf.mfcfc.common.util.Tuple;
 import msf.mfcfc.db.SessionWrapper;
 import msf.mfcfc.failure.logicalif.data.entity.LogicalIfStatusIfEntity;
 import msf.mfcfc.failure.search.AbstractFailurePathSearcher;
@@ -131,32 +134,23 @@ public class FcFailurePathSearcher extends AbstractFailurePathSearcher {
   protected void createStartGoalNodePairs() throws MsfException {
     try {
       logger.methodStart();
-      for (DiNode diNode : diNodeSet) {
-        for (DiNode diNode2 : diNodeSet) {
-          boolean isDiNodeLeaf = (diNode instanceof FcLeafDiNode);
-          boolean isDiNodeLeaf2 = (diNode2 instanceof FcLeafDiNode);
 
-          if (isDiNodeLeaf && isDiNodeLeaf2) {
+      diNodeSet.stream().flatMap(x -> diNodeSet.stream().filter(y -> y.compareTo(x) >= 0).map(y -> new Tuple<>(x, y)))
 
-            boolean isExist = false;
-            for (DiNodePair tmpPair : diNodePairSet) {
+          .forEach(t -> {
+            DiNode diNode = t.getElement1();
+            DiNode diNode2 = t.getElement2();
+            boolean isDiNodeLeaf = (diNode instanceof FcLeafDiNode);
+            boolean isDiNodeLeaf2 = (diNode2 instanceof FcLeafDiNode);
 
-              if (tmpPair.getFrom().equals(diNode2) && tmpPair.getTo().equals(diNode)) {
-                isExist = true;
-                break;
-              }
-            }
-            if (!isExist) {
+            if (isDiNodeLeaf && isDiNodeLeaf2) {
 
               DiNodePair diNodePair = new DiNodePair(diNode, diNode2);
 
               calculatePath(diNodePair);
               diNodePairSet.add(diNodePair);
             }
-          }
-        }
-      }
-      logger.debug("created node pairs = " + diNodePairSet);
+          });
 
     } finally {
       logger.methodEnd();
@@ -250,42 +244,79 @@ public class FcFailurePathSearcher extends AbstractFailurePathSearcher {
       for (DiNodePair diNodePair : diNodePairSet) {
         FcLeafDiNode fromNode = (FcLeafDiNode) diNodePair.getFrom();
         FcLeafDiNode toNode = (FcLeafDiNode) diNodePair.getTo();
+        boolean sameNode = (fromNode.compareTo(toNode) == 0);
 
-        List<Map<SliceUnitFailureEndPointData, SliceUnitFailureEndPointData>> createdPairList = new ArrayList<>();
+        Map<String, List<SliceUnitFailureEndPointData>> fromL2CpFailures = fromNode.getL2CpEndPointDataMap();
+        Map<String, List<SliceUnitFailureEndPointData>> fromL3CpFailures = fromNode.getL3CpEndPointDataMap();
+        List<SliceUnitFailureEndPointData> fromClusterIfFailures = fromNode.getClusterIfEndPointDataList();
 
-        for (SliceUnitFailureEndPointData fromEndpoint : fromNode.getAllEndPointDataList()) {
+        Map<String, List<SliceUnitFailureEndPointData>> toL2CpFailures = toNode.getL2CpEndPointDataMap();
+        Map<String, List<SliceUnitFailureEndPointData>> toL3CpFailures = toNode.getL3CpEndPointDataMap();
+        List<SliceUnitFailureEndPointData> toClusterIfFailures = toNode.getClusterIfEndPointDataList();
 
-          for (SliceUnitFailureEndPointData toEndpoint : toNode.getAllEndPointDataList()) {
+        Map<String, List<Tuple<List<SliceUnitFailureEndPointData>, List<List<SliceUnitFailureEndPointData>>>>> l2Map = new java.util.HashMap<>();
+        Map<String, List<Tuple<List<SliceUnitFailureEndPointData>, List<List<SliceUnitFailureEndPointData>>>>> l3Map = new java.util.HashMap<>();
+        List<Tuple<List<SliceUnitFailureEndPointData>, List<List<SliceUnitFailureEndPointData>>>> clusterList = Arrays
+            .asList(new Tuple<>(fromClusterIfFailures, Arrays.asList(toClusterIfFailures)));
 
-            if (fromEndpoint.equals(toEndpoint)) {
-              continue;
-            }
-
-            boolean isSkip = false;
-            check: {
-              for (Map<SliceUnitFailureEndPointData, SliceUnitFailureEndPointData> map : createdPairList) {
-                for (SliceUnitFailureEndPointData key : map.keySet()) {
-                  if (key.equals(toEndpoint) && map.get(key).equals(fromEndpoint)) {
-                    isSkip = true;
-                    break check;
-                  }
-                }
-              }
-            }
-            if (isSkip) {
-              continue;
-            }
-
-            createFailureStatusEntity(fromEndpoint, toEndpoint, diNodePair.isReachable());
-            Map<SliceUnitFailureEndPointData, SliceUnitFailureEndPointData> pairMap = new HashMap<>();
-            pairMap.put(fromEndpoint, toEndpoint);
-            createdPairList.add(pairMap);
-
+        fromL2CpFailures.forEach((sliceId, cps) -> {
+          List<List<SliceUnitFailureEndPointData>> toList = new ArrayList<>();
+          if (toL2CpFailures.containsKey(sliceId)) {
+            toList.add(toL2CpFailures.get(sliceId));
           }
+          toList.add(toClusterIfFailures);
+          l2Map.computeIfAbsent(sliceId, id -> new ArrayList<>()).add(new Tuple<>(cps, toList));
+        });
+
+        fromL3CpFailures.forEach((sliceId, cps) -> {
+          List<List<SliceUnitFailureEndPointData>> toList = new ArrayList<>();
+          if (toL3CpFailures.containsKey(sliceId)) {
+            toList.add(toL3CpFailures.get(sliceId));
+          }
+          toList.add(toClusterIfFailures);
+          l3Map.computeIfAbsent(sliceId, id -> new ArrayList<>()).add(new Tuple<>(cps, toList));
+        });
+
+        if (!sameNode) {
+
+          toL2CpFailures.forEach((sliceId, cps) -> {
+            List<List<SliceUnitFailureEndPointData>> toList = Arrays.asList(fromClusterIfFailures);
+            l2Map.computeIfAbsent(sliceId, id -> new ArrayList<>()).add(new Tuple<>(cps, toList));
+          });
+
+          toL3CpFailures.forEach((sliceId, cps) -> {
+            List<List<SliceUnitFailureEndPointData>> toList = Arrays.asList(fromClusterIfFailures);
+            l3Map.computeIfAbsent(sliceId, id -> new ArrayList<>()).add(new Tuple<>(cps, toList));
+          });
         }
+
+        Stream.of(l2Map.values(), l3Map.values(), Arrays.asList(clusterList)).forEach(tupleListList -> {
+
+          tupleListList.stream()
+
+              .flatMap(
+                  tupleList -> tupleList.stream()
+                      .flatMap(
+                          tuple -> tuple.getElement1().stream()
+                              .flatMap(
+                                  fromEndPoint -> tuple.getElement2().stream()
+                                      .flatMap(toEndPointList -> toEndPointList.stream()
+                                          .map(toEndPoint -> new Tuple<>(fromEndPoint, toEndPoint))))))
+              .forEach(fromTo -> {
+                SliceUnitFailureEndPointData fromEndPoint = fromTo.getElement1();
+                SliceUnitFailureEndPointData toEndPoint = fromTo.getElement2();
+
+                if (sameNode && fromEndPoint.compareTo(toEndPoint) >= 0) {
+                  return;
+                }
+
+                createFailureStatusEntity(fromEndPoint, toEndPoint, diNodePair.isReachable());
+              });
+        });
       }
 
-      failureStatusSliceUnitEntity.setSliceList(sliceList);
+      failureStatusSliceUnitEntity
+          .setSliceList(sliceMap.values().stream().flatMap(m -> m.values().stream()).collect(Collectors.toList()));
       failureStatusSliceUnitEntity.setClusterLink(clusterLink);
 
     } finally {
@@ -305,12 +336,8 @@ public class FcFailurePathSearcher extends AbstractFailurePathSearcher {
 
     if (fromEndpoint.isCp() && toEndpoint.isCp()) {
 
-      if (fromEndpoint.getSliceType().equals(toEndpoint.getSliceType())
-          && fromEndpoint.getSliceId().equals(toEndpoint.getSliceId())) {
-        addFailureStatusReachableStatusFailureEntity(fromEndpoint.getSliceType(), fromEndpoint.getSliceId(),
-            fromEndpoint.getEndPointId(), SliceUnitReachableOppositeType.CP, toEndpoint.getEndPointId(),
-            reachableStatus);
-      }
+      addFailureStatusReachableStatusFailureEntity(fromEndpoint.getSliceType(), fromEndpoint.getSliceId(),
+          fromEndpoint.getEndPointId(), SliceUnitReachableOppositeType.CP, toEndpoint.getEndPointId(), reachableStatus);
     } else if (fromEndpoint.isCp() && !toEndpoint.isCp()) {
 
       addFailureStatusReachableStatusFailureEntity(fromEndpoint.getSliceType(), fromEndpoint.getSliceId(),

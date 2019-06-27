@@ -15,7 +15,7 @@ import msf.mfcfc.common.exception.MsfException;
 import msf.mfcfc.common.log.MsfLogger;
 import msf.mfcfc.db.SessionWrapper;
 
-public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
+public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Long> {
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcLagIfDao.class);
 
@@ -68,8 +68,9 @@ public class FcLagIfDao extends FcAbstractCommonDao<FcLagIf, Integer> {
   }
 
   @Override
-  public FcLagIf read(SessionWrapper session, Integer lagIfId) throws MsfException {
-    Criteria criteria = session.getSession().createCriteria(FcLagIf.class).add(Restrictions.eq("lagIfId", lagIfId));
+  public FcLagIf read(SessionWrapper session, Long lagIfInfoId) throws MsfException {
+    Criteria criteria = session.getSession().createCriteria(FcLagIf.class)
+        .add(Restrictions.eq("lagIfInfoId", lagIfInfoId));
     return readByCriteria(session, criteria);
   }
 }

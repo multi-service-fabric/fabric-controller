@@ -1,0 +1,30 @@
+
+package msf.fc.services.silentfailure.rest.ec.pingbetweendevices.data;
+
+import java.util.List;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+import msf.fc.services.silentfailure.rest.ec.pingbetweendevices.data.entity.PingTargetListResponseEcEntity;
+import msf.mfcfc.rest.common.AbstractInternalResponseBody;
+
+public class PingBetweenDevicesEcResponseBody extends AbstractInternalResponseBody {
+
+  @SerializedName("ping_targets")
+  private List<PingTargetListResponseEcEntity> pingTargetList;
+
+  public List<PingTargetListResponseEcEntity> getPingTargetList() {
+    return pingTargetList;
+  }
+
+  public void setPingTargetList(List<PingTargetListResponseEcEntity> pingTargetList) {
+    this.pingTargetList = pingTargetList;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

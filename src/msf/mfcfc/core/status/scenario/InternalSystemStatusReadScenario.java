@@ -86,7 +86,7 @@ public class InternalSystemStatusReadScenario extends AbstractStatusScenarioBase
     }
   }
 
-  private String createResponseBody(SystemStatus sysStat) throws MsfException {
+  private String createResponseBody(SystemStatus sysStat) {
     try {
       logger.methodStart(new String[] { "sysStat" }, new Object[] { sysStat });
 

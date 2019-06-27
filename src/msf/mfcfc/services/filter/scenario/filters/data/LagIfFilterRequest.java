@@ -9,16 +9,6 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class LagIfFilterRequest extends RestRequestBase {
 
-  public LagIfFilterRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
-      String fabricType, String nodeId, String lagIfId, String format) {
-    super(requestBody, notificationAddress, notificationPort);
-    this.clusterId = clusterId;
-    this.fabricType = fabricType;
-    this.nodeId = nodeId;
-    this.lagIfId = lagIfId;
-    this.format = format;
-  }
-
   private String clusterId;
 
   private String fabricType;
@@ -28,6 +18,16 @@ public class LagIfFilterRequest extends RestRequestBase {
   private String lagIfId;
 
   private String format;
+
+  public LagIfFilterRequest(String requestBody, String notificationAddress, String notificationPort, String clusterId,
+      String fabricType, String nodeId, String lagIfId, String format) {
+    super(requestBody, notificationAddress, notificationPort);
+    this.clusterId = clusterId;
+    this.fabricType = fabricType;
+    this.nodeId = nodeId;
+    this.lagIfId = lagIfId;
+    this.format = format;
+  }
 
   public String getClusterId() {
     return clusterId;

@@ -66,9 +66,9 @@ public class FcTrafficNoticeThread extends Thread {
 
   private TrafficCommonData trafficCommonData = TrafficCommonData.getInstance();
 
-  private boolean isRunning = false;
+  private volatile boolean isRunning = false;
 
-  private boolean wakeupFlag = false;
+  private volatile boolean wakeUpFlag = false;
 
   private static Date startTime = new Date();
 
@@ -93,22 +93,22 @@ public class FcTrafficNoticeThread extends Thread {
    * @param wakeupFlag
    *          Wakeup flag
    */
-  public void setWakeupFlag(boolean wakeupFlag) {
-    this.wakeupFlag = wakeupFlag;
+  public void setWakeUpFlag(boolean wakeupFlag) {
+    this.wakeUpFlag = wakeUpFlag;
   }
 
   protected synchronized void lock() throws InterruptedException {
     try {
       logger.methodStart();
 
-      while ((!wakeupFlag) && (!trafficCommonData.isForceStop())) {
+      while ((!wakeUpFlag) && (!trafficCommonData.isForceStop())) {
         wait();
       }
 
-      logger.trace("Wakeup FcTrafficNoticeThread.");
+      logger.trace("Wake up FcTrafficNoticeThread.");
 
       isRunning = true;
-      wakeupFlag = false;
+      wakeUpFlag = false;
     } finally {
       logger.methodEnd();
     }
@@ -134,7 +134,7 @@ public class FcTrafficNoticeThread extends Thread {
 
         } catch (InterruptedException ie) {
           if (trafficCommonData.isForceStop()) {
-            logger.warn("Force Stop.");
+            logger.info("Force Stop.");
             return;
           }
 

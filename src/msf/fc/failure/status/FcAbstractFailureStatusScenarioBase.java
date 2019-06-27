@@ -51,6 +51,8 @@ import msf.mfcfc.failure.status.data.AbstractFailureStatusScenarioBase;
 import msf.mfcfc.failure.status.data.entity.FailureStatusClusterFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusIfFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusNodeFailureEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceClusterLinkFailureEntity;
+import msf.mfcfc.failure.status.data.entity.FailureStatusSliceFailureEntity;
 import msf.mfcfc.failure.status.data.entity.FailureStatusSliceUnitEntity;
 import msf.mfcfc.rest.common.AbstractResponseBody;
 import msf.mfcfc.rest.common.JsonUtil;
@@ -165,8 +167,12 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
 
         FailureStatusSliceUnitEntity diffEntity = takeDiffBetweenBeforeAndAfterNotify(sliceUnitEntityBeforeNotify,
             sliceUnitEntity, true);
+
+        sortFailureStatusSliceUnitEntity(diffEntity.getSliceList(), diffEntity.getClusterLink());
         return diffEntity;
       } else {
+
+        sortFailureStatusSliceUnitEntity(sliceUnitEntity.getSliceList(), sliceUnitEntity.getClusterLink());
         return sliceUnitEntity;
       }
     } finally {
@@ -436,7 +442,7 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
     List<VlanIfEcEntity> targetVlanIfList = new ArrayList<>();
 
     for (FcL3Cp fcL3Cp : fcL3CpList) {
-      Long nodeInfoId = new Long(fcL3Cp.getVlanIf().getId().getNodeInfoId());
+      Long nodeInfoId = fcL3Cp.getVlanIf().getId().getNodeInfoId();
       Integer cpVlanIfId = fcL3Cp.getVlanIf().getId().getVlanIfId();
 
       if (!fcNodeMap.containsKey(nodeInfoId)) {
@@ -750,6 +756,9 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
 
       clusterList.addAll(getClusterFailureEntityList(internalMap, clusterId, ClusterType.INTERNAL));
     }
+
+    sortFailureStatusClusterFailureEntity(clusterList);
+
     return clusterList;
   }
 
@@ -874,6 +883,105 @@ public abstract class FcAbstractFailureStatusScenarioBase<T extends RestRequestB
           ifEntity.setStatusEnum(FailureStatus.DOWN);
         }
       }
+    }
+  }
+
+  protected void sortFailureStatusNodeFailureEntity(List<FailureStatusNodeFailureEntity> entityList) {
+    try {
+      logger.methodStart();
+
+      entityList.sort((s1, s2) -> {
+        if (!s1.getClusterId().equals(s2.getClusterId())) {
+          return s1.getClusterId().compareTo(s2.getClusterId());
+        } else if (!s1.getFabricType().equals(s2.getFabricType())) {
+          return s1.getFabricType().compareTo(s2.getFabricType());
+        } else {
+          return s1.getNodeId().compareTo(s2.getNodeId());
+        }
+      });
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void sortFailureStatusIfFailureEntity(List<FailureStatusIfFailureEntity> entityList) {
+    try {
+      logger.methodStart();
+
+      entityList.sort((s1, s2) -> {
+        if (!s1.getClusterId().equals(s2.getClusterId())) {
+          return s1.getClusterId().compareTo(s2.getClusterId());
+        } else if (!s1.getFabricType().equals(s2.getFabricType())) {
+          return s1.getFabricType().compareTo(s2.getFabricType());
+        } else if (!s1.getNodeId().equals(s2.getNodeId())) {
+          return s1.getNodeId().compareTo(s2.getNodeId());
+        } else if (!s1.getIfType().equals(s2.getIfType())) {
+          return s1.getIfType().compareTo(s2.getIfType());
+        } else {
+          return s1.getIfId().compareTo(s2.getIfId());
+        }
+      });
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void sortFailureStatusClusterFailureEntity(List<FailureStatusClusterFailureEntity> entityList) {
+    try {
+      logger.methodStart();
+
+      entityList.sort((s1, s2) -> {
+        if (!s1.getClusterId().equals(s2.getClusterId())) {
+          return s1.getClusterId().compareTo(s2.getClusterId());
+        } else if (!s1.getType().equals(s2.getType())) {
+          return s1.getType().compareTo(s2.getType());
+        } else {
+
+          return s1.getId().compareTo(s2.getId());
+        }
+      });
+    } finally {
+      logger.methodEnd();
+    }
+  }
+
+  protected void sortFailureStatusSliceUnitEntity(List<FailureStatusSliceFailureEntity> sliceList,
+      FailureStatusSliceClusterLinkFailureEntity clusterLink) {
+    try {
+      logger.methodStart();
+
+      if (sliceList != null) {
+
+        sliceList.sort((s1, s2) -> {
+          if (!s1.getSliceType().equals(s2.getSliceType())) {
+            return s1.getSliceType().compareTo(s2.getSliceType());
+          } else {
+            return s1.getSliceId().compareTo(s2.getSliceId());
+          }
+        });
+
+        sliceList.forEach(sliceEntity -> sliceEntity.getReachableStatusList().sort((s1, s2) -> {
+          if (!s1.getCpId().equals(s2.getCpId())) {
+            return s1.getCpId().compareTo(s2.getCpId());
+          } else if (!s1.getOppositeType().equals(s2.getOppositeType())) {
+            return s1.getOppositeType().compareTo(s2.getOppositeType());
+          } else {
+            return s1.getOppositeId().compareTo(s2.getOppositeId());
+          }
+        }));
+      }
+
+      if (clusterLink != null) {
+        clusterLink.getReachableStatusList().sort((s1, s2) -> {
+          if (!s1.getClusterLinkIfId().equals(s2.getClusterLinkIfId())) {
+            return s1.getClusterLinkIfId().compareTo(s2.getClusterLinkIfId());
+          } else {
+            return s1.getOppositeClusterLinkIfId().compareTo(s2.getOppositeClusterLinkIfId());
+          }
+        });
+      }
+    } finally {
+      logger.methodEnd();
     }
   }
 }

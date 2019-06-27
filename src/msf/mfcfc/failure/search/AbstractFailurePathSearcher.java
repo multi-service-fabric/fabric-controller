@@ -2,8 +2,10 @@
 package msf.mfcfc.failure.search;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -48,7 +50,7 @@ public abstract class AbstractFailurePathSearcher {
 
   protected FailureStatusSliceUnitEntity failureStatusSliceUnitEntity = new FailureStatusSliceUnitEntity();
 
-  protected List<FailureStatusSliceFailureEntity> sliceList = new ArrayList<>();
+  protected Map<SliceType, Map<String, FailureStatusSliceFailureEntity>> sliceMap = new HashMap<>();
 
   protected FailureStatusSliceClusterLinkFailureEntity clusterLink = null;
 
@@ -56,6 +58,7 @@ public abstract class AbstractFailurePathSearcher {
 
     diNodeSet = new TreeSet<>();
     diEdgeSet = new HashSet<>();
+
     diNodePairSet = new TreeSet<>();
 
     builder = GraphBuilder.create();
@@ -63,7 +66,7 @@ public abstract class AbstractFailurePathSearcher {
 
     failureStatusSliceUnitEntity = new FailureStatusSliceUnitEntity();
 
-    sliceList = new ArrayList<>();
+    sliceMap = new HashMap<>();
 
     clusterLink = null;
   }
@@ -117,35 +120,24 @@ public abstract class AbstractFailurePathSearcher {
       SliceUnitReachableOppositeType oppositeType, String oppositeId, SliceUnitReachableStatus reachableStatus) {
     FailureStatusSliceFailureEntity sliceFailureEntity = null;
 
-    for (FailureStatusSliceFailureEntity entity : sliceList) {
-      if (entity.getSliceTypeEnum().equals(sliceType) && entity.getSliceId().equals(sliceId)) {
-        sliceFailureEntity = entity;
-        break;
-      }
-    }
+    Map<String, FailureStatusSliceFailureEntity> sliceIdMap = sliceMap.computeIfAbsent(sliceType,
+        type -> new HashMap<>());
 
-    if (sliceFailureEntity == null) {
-      sliceFailureEntity = new FailureStatusSliceFailureEntity(sliceId, sliceType.getMessage(), new ArrayList<>(),
-          FailureStatus.UP.getMessage(), new ArrayList<>());
-      sliceList.add(sliceFailureEntity);
-    }
+    sliceFailureEntity = sliceIdMap.computeIfAbsent(sliceId, id -> new FailureStatusSliceFailureEntity(id,
+        sliceType.getMessage(), new TreeSet<String>(), FailureStatus.UP.getMessage(), new ArrayList<>()));
 
     sliceFailureEntity.getReachableStatusList().add(new FailureStatusReachableStatusFailureEntity(cpId,
         oppositeType.getMessage(), oppositeId, reachableStatus.getMessage()));
 
-    if (!sliceFailureEntity.getCpIdList().contains(cpId)) {
-      sliceFailureEntity.getCpIdList().add(cpId);
-    }
+    sliceFailureEntity.getCpIdSet().add(cpId);
 
     if (oppositeType.equals(SliceUnitReachableOppositeType.CP)) {
-      if (!sliceFailureEntity.getCpIdList().contains(oppositeId)) {
-        sliceFailureEntity.getCpIdList().add(oppositeId);
-      }
+
+      sliceFailureEntity.getCpIdSet().add(oppositeId);
 
       if (SliceUnitReachableStatus.UNREACHABLE.equals(reachableStatus)) {
         sliceFailureEntity.setFailureStatusEnum(FailureStatus.DOWN);
       }
-
     }
 
   }

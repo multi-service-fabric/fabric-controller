@@ -16,7 +16,9 @@ import msf.mfcfc.common.constant.ErrorResponseDataConsistency;
 import msf.mfcfc.common.constant.HttpMethod;
 import msf.mfcfc.common.constant.OperationType;
 import msf.mfcfc.common.constant.RequestType;
+import msf.mfcfc.common.constant.ReservationRequestType;
 import msf.mfcfc.common.constant.RestRequestType;
+import msf.mfcfc.common.constant.SpecialOperationType;
 import msf.mfcfc.common.constant.SynchronousType;
 import msf.mfcfc.common.constant.SystemInterfaceType;
 import msf.mfcfc.common.data.SystemStatus;
@@ -51,6 +53,10 @@ public abstract class AbstractScenarioBase {
   protected SynchronousType lowerSystemSyncType = SynchronousType.SYNC;
 
   protected TimerTaskMaker timerTaskMaker = null;
+
+  protected ReservationRequestType reservationRequestType = ReservationRequestType.NORMAL;
+
+  protected SpecialOperationType specialOperationType = SpecialOperationType.NORMAL;
 
   protected List<RestResponseData> sendRequest(List<RestRequestData> requestDataList, RequestType requestType)
       throws MsfException {

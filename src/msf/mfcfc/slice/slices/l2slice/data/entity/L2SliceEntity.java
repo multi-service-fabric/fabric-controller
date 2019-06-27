@@ -21,6 +21,9 @@ public class L2SliceEntity {
   @SerializedName("irb_type")
   private String irbType;
 
+  @SerializedName("q_in_q_enable")
+  private Boolean qInQEnable;
+
   public String getSliceId() {
     return sliceId;
   }
@@ -51,6 +54,14 @@ public class L2SliceEntity {
 
   public void setIrbType(String irbType) {
     this.irbType = irbType;
+  }
+
+  public Boolean getQInQEnable() {
+    return qInQEnable;
+  }
+
+  public void setQInQEnable(Boolean qInQEnable) {
+    this.qInQEnable = qInQEnable;
   }
 
   @Override

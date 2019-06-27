@@ -94,12 +94,12 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
   protected RestResponseBase executeImpl() throws MsfException {
     try {
       logger.methodStart();
-      logger.performance("start wait to node increasing/decreasing process.");
+      logger.performance("start wait for node increasing/decreasing process.");
       synchronized (FcNodeManager.getInstance().getFcNodeCreateAndDeleteLockObject()) {
-        logger.performance("end wait to node increasing/decreasing process.");
-        logger.performance("start wait to node update process.");
+        logger.performance("end wait for node increasing/decreasing process.");
+        logger.performance("start wait for node update process.");
         synchronized (FcNodeManager.getInstance().getFcNodeUpdateLockObject()) {
-          logger.performance("end wait to node update process.");
+          logger.performance("end wait for node update process.");
 
           SessionWrapper sessionWrapper = new SessionWrapper();
           FcNode createFcNode = null;
@@ -347,17 +347,19 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           List<LeafNodePhysicalLinkEntity> physicalLinkList = leafNodeInternalLink.getPhysicalLinkList();
 
           for (LeafNodePhysicalLinkEntity physicalLink : physicalLinkList) {
-            String oppositeNodeId = physicalLink.getOppositeNodeId();
-            localTrafficThresholdMap.put(oppositeNodeId, physicalLink.getOppositeTrafficThreshold());
-            oppositTrafficThresholdMap.put(oppositeNodeId, physicalLink.getOppositeTrafficThreshold());
+            String oppositeEcNodeId = String
+                .valueOf(createEcNodeId(Integer.valueOf(physicalLink.getOppositeNodeId()), NodeType.SPINE));
+            localTrafficThresholdMap.put(oppositeEcNodeId, physicalLink.getOppositeTrafficThreshold());
+            oppositTrafficThresholdMap.put(oppositeEcNodeId, physicalLink.getOppositeTrafficThreshold());
           }
         } else if (leafNodeInternalLink.getLagLinkList() != null) {
           List<LeafNodeLagLinkEntity> lagLinkList = leafNodeInternalLink.getLagLinkList();
 
           for (LeafNodeLagLinkEntity lagLink : lagLinkList) {
-            String oppositeNodeId = lagLink.getOppositeNodeId();
-            localTrafficThresholdMap.put(oppositeNodeId, lagLink.getOppositeTrafficThreshold());
-            oppositTrafficThresholdMap.put(oppositeNodeId, lagLink.getOppositeTrafficThreshold());
+            String oppositeEcNodeId = String
+                .valueOf(createEcNodeId(Integer.valueOf(lagLink.getOppositeNodeId()), NodeType.SPINE));
+            localTrafficThresholdMap.put(oppositeEcNodeId, lagLink.getOppositeTrafficThreshold());
+            oppositTrafficThresholdMap.put(oppositeEcNodeId, lagLink.getOppositeTrafficThreshold());
           }
         }
       }
@@ -383,17 +385,19 @@ public class FcInternalNodeNotifyRunner extends FcAbstractNodeRunnerBase {
           List<SpineNodePhysicalLinkEntity> physicalLinkList = spineNodeInternalLink.getPhysicalLinkList();
 
           for (SpineNodePhysicalLinkEntity physicalLink : physicalLinkList) {
-            String oppositeNodeId = physicalLink.getOppositeNodeId();
-            localTrafficThresholdMap.put(oppositeNodeId, physicalLink.getOppositeTrafficThreshold());
-            oppositTrafficThresholdMap.put(oppositeNodeId, physicalLink.getOppositeTrafficThreshold());
+            String oppositeEcNodeId = String
+                .valueOf(createEcNodeId(Integer.valueOf(physicalLink.getOppositeNodeId()), NodeType.LEAF));
+            localTrafficThresholdMap.put(oppositeEcNodeId, physicalLink.getOppositeTrafficThreshold());
+            oppositTrafficThresholdMap.put(oppositeEcNodeId, physicalLink.getOppositeTrafficThreshold());
           }
         } else if (spineNodeInternalLink.getLagLinkList() != null) {
           List<SpineNodeLagLinkEntity> lagLinkList = spineNodeInternalLink.getLagLinkList();
 
           for (SpineNodeLagLinkEntity lagLink : lagLinkList) {
-            String oppositeNodeId = lagLink.getOppositeNodeId();
-            localTrafficThresholdMap.put(oppositeNodeId, lagLink.getOppositeTrafficThreshold());
-            oppositTrafficThresholdMap.put(oppositeNodeId, lagLink.getOppositeTrafficThreshold());
+            String oppositeEcNodeId = String
+                .valueOf(createEcNodeId(Integer.valueOf(lagLink.getOppositeNodeId()), NodeType.LEAF));
+            localTrafficThresholdMap.put(oppositeEcNodeId, lagLink.getOppositeTrafficThreshold());
+            oppositTrafficThresholdMap.put(oppositeEcNodeId, lagLink.getOppositeTrafficThreshold());
           }
         }
       }

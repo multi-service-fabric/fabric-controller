@@ -19,7 +19,9 @@ public enum GetInfo {
 
   CTR_RECEIVE_REQ("ctr-receive_req"),
 
-  CTR_SEND_REQ("ctr-send_req");
+  CTR_SEND_REQ("ctr-send_req"),
+
+  CTR_DISK("ctr-disk");
 
   private String message;
 

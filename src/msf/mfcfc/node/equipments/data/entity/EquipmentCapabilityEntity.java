@@ -19,6 +19,9 @@ public class EquipmentCapabilityEntity {
   @SerializedName("traffic")
   private EquipmentTrafficEntity traffic;
 
+  @SerializedName("q_in_q")
+  private EquipmentQInQEntity qInQ;
+
   public EquipmentVpnEntity getVpn() {
     return vpn;
   }
@@ -49,6 +52,14 @@ public class EquipmentCapabilityEntity {
 
   public void setTraffic(EquipmentTrafficEntity traffic) {
     this.traffic = traffic;
+  }
+
+  public EquipmentQInQEntity getQInQ() {
+    return qInQ;
+  }
+
+  public void setQInQ(EquipmentQInQEntity qInQ) {
+    this.qInQ = qInQ;
   }
 
   @Override

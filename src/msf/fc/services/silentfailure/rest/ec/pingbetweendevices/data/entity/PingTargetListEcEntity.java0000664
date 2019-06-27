@@ -1,0 +1,36 @@
+
+package msf.fc.services.silentfailure.rest.ec.pingbetweendevices.data.entity;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+public class PingTargetListEcEntity {
+
+  @SerializedName("src")
+  private SrcEcEntity src;
+
+  @SerializedName("dst")
+  private DstEcEntity dst;
+
+  public SrcEcEntity getSrc() {
+    return src;
+  }
+
+  public void setSrc(SrcEcEntity src) {
+    this.src = src;
+  }
+
+  public DstEcEntity getDst() {
+    return dst;
+  }
+
+  public void setDst(DstEcEntity dst) {
+    this.dst = dst;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

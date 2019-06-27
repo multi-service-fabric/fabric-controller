@@ -27,6 +27,9 @@ public class OperationCreateUpdateL2VlanIfOptionEcEntity {
   @SerializedName("loopback_interface")
   private OperationLoopbackInterfaceEcEntity loopbackInterface;
 
+  @SerializedName("q_in_q")
+  private Boolean qInQ;
+
   @SerializedName("update_vlan_ifs")
   private List<OperationUpdateVlanIfEcEntity> updateVlanIfList;
 
@@ -76,6 +79,14 @@ public class OperationCreateUpdateL2VlanIfOptionEcEntity {
 
   public void setLoopbackInterface(OperationLoopbackInterfaceEcEntity loopbackInterface) {
     this.loopbackInterface = loopbackInterface;
+  }
+
+  public Boolean getQInQ() {
+    return qInQ;
+  }
+
+  public void setQInQ(Boolean qInQ) {
+    this.qInQ = qInQ;
   }
 
   public List<OperationUpdateVlanIfEcEntity> getUpdateVlanIfList() {

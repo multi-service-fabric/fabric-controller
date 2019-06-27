@@ -5,7 +5,9 @@ public enum LeafNodeUpdateAction {
 
   CHG_LEAF_TYPE("chg_leaf_type"),
 
-  RECOVER_NODE("recover_node");
+  RECOVER_NODE("recover_node"),
+
+  CHG_EQUIPMENT_TYPE("chg_equipment_type");
 
   private String message;
 

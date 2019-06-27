@@ -3,6 +3,7 @@ package msf.fc.node.nodes.spines;
 
 import org.eclipse.jetty.http.HttpStatus;
 
+import msf.fc.common.config.FcConfigManager;
 import msf.fc.db.dao.clusters.FcNodeOperationInfoDao;
 import msf.mfcfc.common.constant.ErrorCode;
 import msf.mfcfc.common.constant.NodeOperationStatus;
@@ -69,6 +70,9 @@ public class FcSpineNodeCreateScenario extends FcAbstractSpineNodeScenarioBase<S
       requestBody.validate();
 
       logger.debug("requestBody=" + request.getRequestBody());
+
+      int maxSpineNum = FcConfigManager.getInstance().getDataConfSwClusterData().getSwCluster().getMaxSpineNum();
+      ParameterCheckUtil.checkNumberRange(Integer.parseInt(requestBody.getNodeId()), 1, maxSpineNum);
 
       this.request = request;
       this.requestBody = requestBody;

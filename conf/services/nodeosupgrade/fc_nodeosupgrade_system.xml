@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<systemConf xmlns="http://fc.msf/services/nodeosupgrade/common/config/type/system">
+    <nodeOsUpgrade>
+        <!-- Detour IGP cost(Internal link IF) -->
+        <internalLinkDetourIgpCost>10000</internalLinkDetourIgpCost>
+    </nodeOsUpgrade>
+</systemConf>
+

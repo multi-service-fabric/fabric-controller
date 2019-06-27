@@ -21,9 +21,11 @@ public class FcTrafficCycleWaker extends TimerTask {
 
   private FcTrafficNoticeThread fcTrafficNoticeThread;
 
-  private Date isRunningTime;
-  private Date beforeIsRunningTime;
-  private Date wakeupTime;
+  private Date lastTimeTriedToWakeUpThread;
+
+  private Date timeTriedToWakeUpThreadBeforeLast;
+
+  private Date wakeUpTime;
 
   private boolean isFirst = true;
 
@@ -43,7 +45,7 @@ public class FcTrafficCycleWaker extends TimerTask {
       logger.methodStart();
       if (isFirst) {
 
-        logger.debug("First time wakeup.");
+        logger.debug("First time wake up.");
         isFirst = false;
         while (true) {
 
@@ -60,8 +62,8 @@ public class FcTrafficCycleWaker extends TimerTask {
         }
       }
 
-      beforeIsRunningTime = isRunningTime;
-      isRunningTime = new Date();
+      timeTriedToWakeUpThreadBeforeLast = lastTimeTriedToWakeUpThread;
+      lastTimeTriedToWakeUpThread = new Date();
 
       if (fcTrafficNoticeThread.isRunning()) {
 
@@ -69,8 +71,8 @@ public class FcTrafficCycleWaker extends TimerTask {
         return;
       }
 
-      wakeupTime = new Date();
-      fcTrafficNoticeThread.setWakeupFlag(true);
+      wakeUpTime = new Date();
+      fcTrafficNoticeThread.setWakeUpFlag(true);
       synchronized (fcTrafficNoticeThread) {
         fcTrafficNoticeThread.notify();
       }
@@ -125,7 +127,7 @@ public class FcTrafficCycleWaker extends TimerTask {
         return false;
       }
 
-      if (isRunningTime == null || beforeIsRunningTime == null) {
+      if (lastTimeTriedToWakeUpThread == null || timeTriedToWakeUpThreadBeforeLast == null) {
 
         logger.trace("Traffic: checkStatus() RunningTime no data : return true.");
         return true;
@@ -133,12 +135,13 @@ public class FcTrafficCycleWaker extends TimerTask {
 
       int interval = FcConfigManager.getInstance().getSystemConfTraffic().getExecCycle();
 
-      if ((isRunningTime.getTime() - beforeIsRunningTime.getTime()) > (TimeUnit.SECONDS.toMillis(interval) * 1.5)) {
+      if ((lastTimeTriedToWakeUpThread.getTime()
+          - timeTriedToWakeUpThreadBeforeLast.getTime()) > (TimeUnit.SECONDS.toMillis(interval) * 1.5)) {
         logger.trace("Traffic: checkStatus() Run timing is fail : return false.");
         return false;
       }
 
-      if ((isRunningTime.getTime() - wakeupTime.getTime()) > (10 * TimeUnit.SECONDS.toMillis(interval))) {
+      if ((lastTimeTriedToWakeUpThread.getTime() - wakeUpTime.getTime()) > (10 * TimeUnit.SECONDS.toMillis(interval))) {
         logger.trace("Traffic: checkStatus() FcTrafficNoticeThread Running at long time : return false.");
         return false;
       }

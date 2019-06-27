@@ -60,6 +60,9 @@ public class NodeCreateNodeEcEntity {
   @SerializedName("irb_type")
   private String irbType;
 
+  @SerializedName("q_in_q_type")
+  private String qInQType;
+
   @SerializedName("virtual_link")
   private NodeVirtualLinkEcEntity virtualLink;
 
@@ -216,6 +219,14 @@ public class NodeCreateNodeEcEntity {
 
   public void setIrbType(String irbType) {
     this.irbType = irbType;
+  }
+
+  public String getQInQType() {
+    return qInQType;
+  }
+
+  public void setQInQType(String qInQType) {
+    this.qInQType = qInQType;
   }
 
   @Override

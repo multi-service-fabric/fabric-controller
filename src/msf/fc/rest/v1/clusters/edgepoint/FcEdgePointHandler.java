@@ -107,9 +107,9 @@ public class FcEdgePointHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param edgePointId
-   *          edge-point ID (URI parameter)
+   *          Edge-point ID (URI parameter)
    * @param userType
-   *          User type (URI parameter)
+   *          User type
    * @return response data
    */
   @GET
@@ -142,7 +142,7 @@ public class FcEdgePointHandler extends AbstractRestHandler {
    * @param clusterId
    *          Cluster ID (URI parameter)
    * @param edgePointId
-   *          edge-point ID (URI parameter)
+   *          Edge-point ID (URI parameter)
    * @return response data
    */
   @DELETE

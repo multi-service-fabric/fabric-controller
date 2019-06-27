@@ -433,9 +433,9 @@ public abstract class FcAbstractL3CpRunnerBase extends FcAbstractCpRunnerBase {
 
       FcVlanIfPK vlanIfPk = new FcVlanIfPK();
       Set<String> vlanIfIdSet = createVlanIfIdSet(sessionWrapper, node.getNodeInfoId());
-      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, node.getNodeInfoId().intValue());
+      int vlanIfId = getNextVlanIfId(sessionWrapper, vlanIfIdSet, node.getNodeInfoId());
       vlanIfPk.setVlanIfId(vlanIfId);
-      vlanIfPk.setNodeInfoId(node.getNodeInfoId().intValue());
+      vlanIfPk.setNodeInfoId(node.getNodeInfoId());
       FcVlanIf vlanIf = new FcVlanIf();
       vlanIf.setId(vlanIfPk);
       newL3Cp.setVlanIf(vlanIf);

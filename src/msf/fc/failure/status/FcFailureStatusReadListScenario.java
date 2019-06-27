@@ -198,6 +198,8 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
       setMap(ifInfoEcAllMap.get(InterfaceType.LAG_IF), logicalIfLag);
       physicalIfEntityList.add(getIfFailureEntity(logicalIfLag, fcNode, clusterId));
     }
+
+    sortFailureStatusIfFailureEntity(physicalIfEntityList);
     if (vlanEcEntity == null) {
       return;
     }
@@ -241,7 +243,7 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
   }
 
   private List<FailureStatusNodeFailureEntity> getNodesStatus(Map<String, FcNode> fcNodeMap,
-      List<NodeEcEntity> allNodes, int clusterId) throws MsfException {
+      List<NodeEcEntity> allNodes, int clusterId) {
 
     List<FailureStatusNodeFailureEntity> nodes = new ArrayList<>();
 
@@ -263,6 +265,8 @@ public class FcFailureStatusReadListScenario extends FcAbstractFailureStatusScen
         nodes.add(getNodeFailureEntity(clusterId, nodeType, FailureStatus.DOWN, nodeId));
       }
     }
+
+    sortFailureStatusNodeFailureEntity(nodes);
     return nodes;
   }
 

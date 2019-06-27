@@ -121,5 +121,9 @@
         <!-- End value of the inner VLAN ID's range for creating L3VNI -->
         <l3VniVlanIdEndPos>2999</l3VniVlanIdEndPos>
     </irb>
+    <node>
+        <!-- Start position of LagIF ID -->
+        <lagIfIdStartPos>11</lagIfIdStartPos>
+    </node>
 </systemConf>
 

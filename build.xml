@@ -72,8 +72,8 @@
 			</filterchain>
 		</copy>
 		<replace file="./.work/${ant.project.name}_extensions.txt">
-		   <replacefilter token="/" value="." />
-		   <replacefilter token=".class" value="" />
+			<replacefilter token="/" value="." />
+			<replacefilter token=".class" value="" />
 		</replace>
 		<copy file="./.work/${ant.project.name}_extensions.txt" tofile="./.work/${ant.project.name}_extensions2.txt" overwrite="true">
 			<filterchain>
@@ -91,7 +91,7 @@
 			</not>
 		</condition>
 		<antcall target = "extensionFunctionAndUp"/>
-		<antcall target = "exetensionFunctionZero"/>
+		<antcall target = "extensionFunctionZero"/>
 		<delete dir="./.work"/>
 	</target>
 
@@ -118,7 +118,7 @@
 		<antcall target = "noneExtensionFunctionZero"/>
 	</target>
 
-	<target name="exetensionFunctionZero" unless="isExtensions" >
+	<target name="extensionFunctionZero" unless="isExtensions" >
 		<copy file="./.work/${ant.project.name}_extensions.txt" tofile="./conf/services/sys/fc_extensions.cnf" overwrite="true" />
 	</target>
 
@@ -140,15 +140,64 @@
 	</target>
 
   <target description="make release file." depends="makeExtensionsConfig" name="release">
-    <tar destfile="release/msf-controller.tar">
+	<mkdir dir="./.work" />
+  	<copy file="./conf/fc_log4j2.xml" tofile="./.work/fc_log4j2.xml" overwrite="true" />
+	<copy file="./conf/services/sys/fc_extensions.cnf" tofile="./.work/checkData.txt" overwrite="true" />
+	<replace file="./.work/checkData.txt"
+		token="msf.fc.services.ctrlstsnotify.FcCtrlStsNotifyManager" value="" >
+	</replace>
+  	<length file="./conf/services/sys/fc_extensions.cnf" property="fc_extensions.len" />
+  	<length file="./.work/checkData.txt" property="checkData.len" />
+	<condition property="isFcCtrlStsNotifyManager" >
+		<equals arg1="${fc_extensions.len}" arg2="${checkData.len}" />
+	</condition>
+	<antcall target = "checkFcCtrlStsNotifyManager" />
+
+  	<tar destfile="release/${ant.project.name}_${now.time}.tar">
       <tarfileset dir="./lib" includes="**/*" prefix="lib" />
-      <tarfileset dir="./script" includes="**/*" prefix="bin" />
+      <tarfileset dir="./script/program" includes="**/*" prefix="bin" />
       <tarfileset dir="./conf" includes="**/*" prefix="conf" />
       <tarfileset dir="./sql" includes="**/*" prefix="sql" />
     </tar>
-    <gzip src="release/msf-controller.tar" destfile="release/msf-controller.tar.gz" />
-    <delete file="release/msf-controller.tar" />
+    <gzip src="release/${ant.project.name}_${now.time}.tar" destfile="release/${ant.project.name}_${now.time}.tar.gz" />
+    <delete file="release/${ant.project.name}_${now.time}.tar" />
+  	<copy file="./.work/fc_log4j2.xml" tofile="./conf/fc_log4j2.xml" overwrite="true" />
+  	<delete dir="./.work"/>
 
+  </target>
+
+  <path id="xpath.classpath">
+	<pathelement location="script/mainte/services/renewal/java/bin" />
+  </path>
+
+  <target name="xpathClean">
+  	<delete dir="script/mainte/services/renewal/java/bin" />
+  </target>
+
+  <target name="xpathBuild">
+  	<mkdir dir="script/mainte/services/renewal/java/bin" />
+	<javac debug="true" debuglevel="${debuglevel}" destdir="script/mainte/services/renewal/java/bin" includeantruntime="false" source="${source}" target="${target}">
+	  <src path="script/mainte/services/renewal/java/src" />
+	  <classpath refid="xpath.classpath" />
+	</javac>
+  </target>
+
+  <target name="xpathJar" depends="xpathClean,xpathBuild">
+	<jar destfile="script/mainte/services/renewal/lib/xpath.jar">
+	  <manifest>
+	  <attribute name="Main-Class" value="xpath.XPath" />
+	  </manifest>
+	  <fileset dir="script/mainte/services/renewal/java/bin" />
+	</jar>
+  </target>
+
+  <target name="checkFcCtrlStsNotifyManager" if="isFcCtrlStsNotifyManager" >
+    <replace file="./conf/fc_log4j2.xml">
+      <replacefilter token="&lt;Configuration status=&quot;off&quot; shutdownHook=&quot;disable&quot; packages=&quot;msf.fc.services.ctrlstsnotify&quot; &gt;" value="&lt;Configuration status=&quot;off&quot; shutdownHook=&quot;disable&quot; &gt;" />
+      <replacefilter token="    &lt;FcNotify name=&quot;FcNotify&quot;&gt;&#x0A;      &lt;PatternLayout pattern=&quot;${logFormat}&quot; /&gt;&#x0A;    &lt;/FcNotify&gt;&#x0A;" value="" />
+      <replacefilter token="    &lt;Async name=&quot;Async&quot; includeLocation=&quot;true&quot;&gt;&#x0A;      &lt;AppenderRef ref=&quot;FcNotify&quot; /&gt;&#x0A;    &lt;/Async&gt;&#x0A;" value="" />
+      <replacefilter token="      &lt;AppenderRef ref=&quot;Async&quot; level=&quot;${notifyLogLevel}&quot; /&gt;&#x0A;" value="" />
+    </replace>
   </target>
 
 </project>

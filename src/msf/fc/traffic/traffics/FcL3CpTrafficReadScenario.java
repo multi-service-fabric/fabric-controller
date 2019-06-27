@@ -100,7 +100,7 @@ public class FcL3CpTrafficReadScenario extends FcAbstractCpsTrafficScenarioBase<
 
         FcNodeDao fcNodeDao = new FcNodeDao();
 
-        FcNode fcNode = fcNodeDao.read(session, fcL3Cp.getVlanIf().getId().getNodeInfoId().longValue());
+        FcNode fcNode = fcNodeDao.read(session, fcL3Cp.getVlanIf().getId().getNodeInfoId());
 
         if (fcNode == null) {
 

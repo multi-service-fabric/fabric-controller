@@ -1,0 +1,38 @@
+
+package msf.mfcfc.services.priorityroutes.scenario.internalifs.data.entity;
+
+import java.util.List;
+
+import org.apache.commons.lang.builder.ToStringBuilder;
+
+import com.google.gson.annotations.SerializedName;
+
+public class InternalLinkIfPriorityNodesEntity {
+
+  @SerializedName("leafs")
+  private List<InternalLinkIfPriorityLeafsEntity> leafList;
+
+  @SerializedName("spines")
+  private List<InternalLinkIfPrioritySpinesEntity> spineList;
+
+  public List<InternalLinkIfPriorityLeafsEntity> getLeafList() {
+    return leafList;
+  }
+
+  public void setLeafList(List<InternalLinkIfPriorityLeafsEntity> leafList) {
+    this.leafList = leafList;
+  }
+
+  public List<InternalLinkIfPrioritySpinesEntity> getSpineList() {
+    return spineList;
+  }
+
+  public void setSpineList(List<InternalLinkIfPrioritySpinesEntity> spineList) {
+    this.spineList = spineList;
+  }
+
+  @Override
+  public String toString() {
+    return ToStringBuilder.reflectionToString(this);
+  }
+}

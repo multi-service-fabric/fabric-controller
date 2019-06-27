@@ -51,6 +51,9 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
 
   private static final MsfLogger logger = MsfLogger.getInstance(FcClusterLinkInterfaceCreateRunner.class);
 
+  @SuppressWarnings("unused")
+  private ClusterLinkIfRequest request;
+
   private ClusterLinkIfCreateRequestBody requestBody;
 
   protected static final Integer CLUSTER_LINK_IF_ADDRESS_PREFIX = 30;
@@ -190,6 +193,9 @@ public class FcClusterLinkInterfaceCreateRunner extends FcAbstractClusterLinkInt
         targetIf.setIfId(lagIfId);
       }
       fcClusterLinkIf.setTrafficThreshold(requestBody.getTrafficThreshold());
+      fcClusterLinkIf.setIgpCost(requestBody.getIgpCost());
+      fcClusterLinkIf.setIpv4Addr(requestBody.getIpv4Address());
+      fcClusterLinkIf.setPortStatus((requestBody.getPortStatus() == null) ? true : requestBody.getPortStatus());
 
       OperationAddInterClusterLinkOptionEcEntity linkAddOption = new OperationAddInterClusterLinkOptionEcEntity();
       linkAddOption.setTargetIf(targetIf);

@@ -33,6 +33,9 @@ public class FcInternalLinkIf implements Serializable {
   @Column(name = "igp_cost")
   private Integer igpCost;
 
+  @Column(name = "old_igp_cost")
+  private Integer oldIgpCost;
+
   @Column(name = "traffic_threshold")
   private Double trafficThreshold;
 
@@ -48,7 +51,7 @@ public class FcInternalLinkIf implements Serializable {
   private List<FcInternalLinkIf> oppositeInternalLinkIfs;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lag_if_id")
+  @JoinColumn(name = "lag_if_info_id")
   private FcLagIf lagIf;
 
   @ManyToOne(fetch = FetchType.LAZY)
@@ -72,6 +75,14 @@ public class FcInternalLinkIf implements Serializable {
 
   public void setIgpCost(Integer igpCost) {
     this.igpCost = igpCost;
+  }
+
+  public Integer getOldIgpCost() {
+    return this.oldIgpCost;
+  }
+
+  public void setOldIgpCost(Integer oldIgpCost) {
+    this.oldIgpCost = oldIgpCost;
   }
 
   public Double getTrafficThreshold() {
@@ -134,6 +145,36 @@ public class FcInternalLinkIf implements Serializable {
 
   public void setPhysicalIf(FcPhysicalIf physicalIf) {
     this.physicalIf = physicalIf;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((internalLinkIfId == null) ? 0 : internalLinkIfId.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null) {
+      return false;
+    }
+    if (!(obj instanceof FcInternalLinkIf)) {
+      return false;
+    }
+    FcInternalLinkIf other = (FcInternalLinkIf) obj;
+    if (internalLinkIfId == null) {
+      if (other.internalLinkIfId != null) {
+        return false;
+      }
+    } else if (!internalLinkIfId.equals(other.internalLinkIfId)) {
+      return false;
+    }
+    return true;
   }
 
   @Override

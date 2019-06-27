@@ -205,7 +205,7 @@ public class FcL2CpCreateDeleteRunner extends FcAbstractL2CpRunnerBase {
           isFoundPairCp = true;
           FcNode pairNode = getNodeAndCheck(sessionWrapper, Integer.valueOf(body.getValue().getEdgePointId()));
 
-          checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId().intValue(), null,
+          checkPairCpVlanIdAndPortMode(sessionWrapper, portMode, vlanId, pairNode.getNodeInfoId(), null,
               body.getValue().getPortMode(), body.getValue().getVlanId());
 
           checkCreateTargetNode(sessionWrapper, pairCpId, edgePointId,

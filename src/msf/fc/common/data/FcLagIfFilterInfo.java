@@ -26,7 +26,7 @@ public class FcLagIfFilterInfo implements Serializable {
   private FcLagIfFilterInfoPK id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "lag_if_id", insertable = false, updatable = false)
+  @JoinColumn(name = "lag_if_info_id", insertable = false, updatable = false)
   private FcLagIf lagIf;
 
   public FcLagIfFilterInfo() {

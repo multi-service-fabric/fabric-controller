@@ -10,21 +10,6 @@ import msf.mfcfc.core.scenario.RestRequestBase;
 
 public class LogReadRequest extends RestRequestBase {
 
-  public LogReadRequest(String requestBody, String notificationAddress, String notificationPort, String logType,
-      String logLevel, String controller, String cluster, String startDate, String endDate, Integer limitNumber,
-      String searchString, String mergeType) {
-    super(requestBody, notificationAddress, notificationPort);
-    this.logType = logType;
-    this.logLevel = logLevel;
-    this.controller = controller;
-    this.cluster = cluster;
-    this.startDate = startDate;
-    this.endDate = endDate;
-    this.limitNumber = limitNumber;
-    this.searchString = searchString;
-    this.mergeType = mergeType;
-  }
-
   private String logType;
 
   private String logLevel;
@@ -42,6 +27,21 @@ public class LogReadRequest extends RestRequestBase {
   private String searchString;
 
   private String mergeType;
+
+  public LogReadRequest(String requestBody, String notificationAddress, String notificationPort, String logType,
+      String logLevel, String controller, String cluster, String startDate, String endDate, Integer limitNumber,
+      String searchString, String mergeType) {
+    super(requestBody, notificationAddress, notificationPort);
+    this.logType = logType;
+    this.logLevel = logLevel;
+    this.controller = controller;
+    this.cluster = cluster;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.limitNumber = limitNumber;
+    this.searchString = searchString;
+    this.mergeType = mergeType;
+  }
 
   public String getLogType() {
     return logType;

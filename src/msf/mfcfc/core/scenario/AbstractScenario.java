@@ -36,6 +36,8 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
 
   private boolean isRegistAsyncRecord = false;
 
+  private boolean isAlreadyRegisteredAsyncRecord = false;
+
   protected void setRestIfType(SynchronousType syncType) {
     if (logger.isDebugEnabled()) {
       logger.methodStart(new String[] { "syncType" }, new Object[] { syncType });
@@ -61,13 +63,21 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
       OperationManager opManager = OperationManager.getInstance();
 
       boolean isGetRequest = HttpMethod.GET.equals(request.getRequestMethodEnum());
-      OperationExecutionStatus opExeStatus = opManager.getOperationExecutionStatus(operationType, isGetRequest);
+      OperationExecutionStatus opExeStatus = opManager.getOperationExecutionStatus(operationType, isGetRequest,
+          specialOperationType);
 
       if (opExeStatus == OperationExecutionStatus.ALLOWED) {
+        if (operationId == null) {
 
-        operationId = opManager.assignOperationId();
+          operationId = opManager.assignOperationId();
+        } else {
+
+          opManager.assignOperationId(operationId);
+
+          this.isAlreadyRegisteredAsyncRecord = true;
+          this.isRegistAsyncRecord = true;
+        }
         logger.info("Assign operationId={0} .", operationId);
-
       } else if (opExeStatus == OperationExecutionStatus.NOT_ALLOWED) {
         throw new MsfException(ErrorCode.SYSTEM_STATUS_ERROR, "System can not accept a request.");
       }
@@ -117,7 +127,7 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
       }
 
       runner.setScenarioType(this.syncType, this.operationType, this.systemIfType, this.lowerSystemSyncType,
-          this.restRequestType, operationId);
+          this.restRequestType, operationId, this.reservationRequestType, this.specialOperationType);
 
       AsyncExecutor executor = AsyncExecutor.getInstance();
 
@@ -148,7 +158,8 @@ public abstract class AbstractScenario<T extends RestRequestBase> extends Abstra
         this.checkParameter(request);
         this.initializeRestIf(request);
 
-        if (this.syncType == SynchronousType.ASYNC && this.restRequestType == RestRequestType.NORMAL) {
+        if (this.syncType == SynchronousType.ASYNC && this.restRequestType == RestRequestType.NORMAL
+            && !this.isAlreadyRegisteredAsyncRecord) {
           this.registAsyncRecord(request);
         }
 
